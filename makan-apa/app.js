@@ -1,4 +1,4 @@
-// --- KONFIGURASI API BACKEND (PINTAR UNTUK LAPTOP & TELEFON) ---
+// --- KONFIGURASI 100% STATIK (KALIS PELAYAN TIDUR) ---
 const API_URL = "restaurants.json";
 
 // 8 Kategori Makanan Ikonik (Simetri Sempurna 45°)
@@ -34,7 +34,7 @@ const ITEMS_PER_PAGE = 10;
 
 // DOM Elemen
 const canvas = document.getElementById("wheel-canvas");
-const ctx = canvas.getContext("2d");
+const ctx = canvas ? canvas.getContext("2d") : null;
 const spinBtn = document.getElementById("spin-btn");
 const spinBtnText = document.getElementById("spin-btn-text");
 const pinPointer = document.getElementById("pin-pointer");
@@ -135,34 +135,47 @@ if (themeToggleBtn) {
 
 initTheme();
 
-// --- 2. MUAT TURUN DATA DARI FASTAPI ---
+// --- 2. MUAT TURUN DATA (KALIS 404 & SENTIASA LUKIS RODA) ---
 async function fetchRestaurants() {
-    try {
-        const response = await fetch(API_URL);
-        const json = await response.json();
-        allRestaurants = json.data;
+    drawWheel(); // Lukis roda terus!
 
-        // Buang sebarang pendua nama teras dalam paparan
-        const uniqueMap = new Map();
-        allRestaurants.forEach(r => {
-            const clean = r.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-            if (!uniqueMap.has(clean)) {
-                uniqueMap.set(clean, r);
+    const possibleUrls = [
+        "restaurants.json",
+        "./restaurants.json",
+        "/makan-apa/restaurants.json"
+    ];
+
+    for (const url of possibleUrls) {
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                const json = await response.json();
+                allRestaurants = json.data || [];
+
+                const uniqueMap = new Map();
+                allRestaurants.forEach(r => {
+                    const clean = r.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    if (!uniqueMap.has(clean)) {
+                        uniqueMap.set(clean, r);
+                    }
+                });
+                allRestaurants = Array.from(uniqueMap.values());
+
+                console.log(`✅ Berjaya memuatkan ${allRestaurants.length} kedai dari: ${url}`);
+                applyFilters();
+                drawWheel();
+                return;
             }
-        });
-        allRestaurants = Array.from(uniqueMap.values());
-
-        applyFilters();
-        drawWheel();
-    } catch (error) {
-        console.error("Gagal hubungi backend:", error);
-        drawWheel();
+        } catch (err) {
+            // Cuba laluan seterusnya
+        }
     }
+    console.warn("⚠️ Fail restaurants.json tidak ditemui.");
 }
 
 // --- 3. LUKIS RODA 8 HIRISAN (CANVAS) ---
 function drawWheel() {
-    if (!canvas) return;
+    if (!canvas || !ctx) return;
     const numSegments = FOOD_CATEGORIES.length;
     const arcSize = (2 * Math.PI) / numSegments;
     const centerX = canvas.width / 2;
@@ -207,7 +220,6 @@ function drawWheel() {
         ctx.restore();
     }
 
-    // Pusat Roda Tanda Soal '?' Hitam & Emas Gemuk
     ctx.beginPath();
     ctx.arc(centerX, centerY, 32, 0, 2 * Math.PI);
     ctx.fillStyle = "#1F2937";
@@ -223,7 +235,7 @@ function drawWheel() {
     ctx.fillText("?", centerX, centerY + 2);
 }
 
-// --- FUNGSI SEMAKAN KATEGORI KETAT (STRICT MATCH) ---
+// --- FUNGSI SEMAKAN KATEGORI KETAT ---
 function isShopMatchCategory(shop, categoryLabel) {
     const cat = (shop.category || "").toLowerCase();
     const carb = (shop.carb_type || "").toLowerCase();
@@ -259,17 +271,6 @@ function isShopMatchCategory(shop, categoryLabel) {
     return false;
 }
 
-// Tentukan Kategori Roda Bagi Sesuatu Kedai (Reverse Mapping)
-function getShopCategoryLabel(shop) {
-    for (const cat of FOOD_CATEGORIES) {
-        if (isShopMatchCategory(shop, cat.label)) {
-            return cat.label;
-        }
-    }
-    return "Nasi"; // Default
-}
-
-// --- FUNGSI DERIA RASA (MOD MAK BUYUNG) ---
 function isShopMatchTaste(shop, taste) {
     if (!taste || taste === "all") return true;
     const text = `${shop.name} ${shop.category} ${shop.carb_type} ${shop.address} ${shop.taste_tags || ''}`.toLowerCase();
@@ -306,7 +307,6 @@ function renderTasteBadges(tagsString) {
     if (!tagsString) return '';
     const tags = tagsString.split(',').map(t => t.trim().toLowerCase());
     let html = '';
-    
     tags.forEach(t => {
         if (t === 'masam') html += `<span class="tag" style="background:#FEF9C3; color:#854D0E;">🍋 Masam-Masam</span>`;
         if (t === 'pedas') html += `<span class="tag" style="background:#FEE2E2; color:#991B1B;">🌶️ Pedas Berapi</span>`;
@@ -329,22 +329,11 @@ function getSignatureDish(shop) {
     if (text.includes("wanjo")) return "Nasi Lemak Sambal Sotong & Paru Goreng Rangup 🔥";
     if (text.includes("aboy cafe")) return "Western Platter Portion Besar & Cheesy Loaded Fries 🍔";
     if (text.includes("suatu perjalanan")) return "Specialty Coffee Barista, Croffle & Pasta Santai ☕🍰";
-    if (text.includes("yummy coin")) return "Pancake Syiling 10-Yen Viral Panas Meleleh 🥞";
-    if (text.includes("crg") || text.includes("chicken rice")) return "Nasi Ayam Hainan Roast & Steamed Juicy 🍗";
-    if (text.includes("mee mamu")) return "Mee Goreng Mamak Basah Telur Mata & Sotong 🍛";
-    if (text.includes("mari steamboat")) return "Shabu-shabu & Daging Perap Unlimited Tanpa Had Masa 🍲";
     if (text.includes("hakim")) return "Roti Canai Tsunami Banjir & Ayam Goreng Berempah Panas 🫓";
     if (text.includes("tandoor")) return "Roti Naan Garlic Cheese Panas & Ayam Tandoori Berempah 🫓🍗";
-    
-    if (text.includes("nasi")) return "Nasi Berlauk Panas, Ayam Goreng Berempah & Sambal Padu 🍛";
-    if (text.includes("burger") || text.includes("western")) return "Chicken Chop Crispy, Lamb Grill & Burger Bakar 🍔";
-    if (text.includes("mi") || text.includes("sup")) return "Mee Sup Hirup Panas, Daging Lembut & Sambal Kicap 🍜";
-    if (text.includes("kopi")) return "Roti Bakar Telur Goyang & Kopi Tarik Kaw ☕";
-    if (text.includes("mamak")) return "Roti Canai Garing Banjir & Teh Tarik Halia 🫓";
     return "Hidangan Istimewa Pilihan Ramai (Paling Disyorkan!) ✨";
 }
 
-// --- 4. LOGIK PENAPIS KAWASAN SENARAI & RODA (BEBAS GPS) ---
 function matchShopArea(shop, area) {
     if (area === "all") return true;
     const addr = (shop.address || "").toLowerCase();
@@ -372,13 +361,11 @@ function matchShopArea(shop, area) {
     return true;
 }
 
-// --- 5. LOGIK PENAPIS UTAMA ---
+// --- 4. LOGIK PENAPIS UTAMA ---
 function applyFilters() {
     filteredRestaurants = allRestaurants.filter(r => {
-        // 1. Tapis Kawasan (Aktif pada kedua-dua tab Roda & Senarai)
         if (!matchShopArea(r, activeAreaFilter)) return false;
 
-        // 2. Mod Mengidam VS Mod Normal
         if (isCravingModeActive) {
             if (!isShopMatchTaste(r, activeTasteFilter)) return false;
         } else {
@@ -386,7 +373,6 @@ function applyFilters() {
             if (mappedCat && !isShopMatchCategory(r, mappedCat)) return false;
         }
 
-        // 3. Tapis Bajet
         if (activeBudgetFilter === "Marhaen") {
             if (!r.budget_tier.includes("Marhaen") && !r.budget_tier.includes("<RM10")) return false;
         } else if (activeBudgetFilter === "Mid") {
@@ -400,7 +386,6 @@ function applyFilters() {
 
     filteredRestaurants.sort((a, b) => a.name.localeCompare(b.name, 'ms', { sensitivity: 'base' }));
 
-    // Kemas kini Indikator Status Roda
     if (wheelFilterStatus) {
         let areaLabel = "Semua Kawasan";
         if (activeAreaFilter === "kebun_tpg") areaLabel = "Jln Kebun/TPG";
@@ -451,7 +436,7 @@ function applySearchToList() {
     renderListView();
 }
 
-// --- 6. LOGIK PUTARAN RODA PINTAR (MATEMATIK TEPAT 100% KALIS SALAH KATEGORI) ---
+// --- 5. LOGIK PUTARAN RODA PINTAR ---
 function spinWheel() {
     if (isSpinning) return;
 
@@ -464,45 +449,29 @@ function spinWheel() {
     if (resultCard) resultCard.classList.add("hidden");
     spinBtn.disabled = true;
 
-    const numSegments = FOOD_CATEGORIES.length; // 8 Segmen
-    const arcSize = (2 * Math.PI) / numSegments; // 45 Darjah
+    // Pilih kedai pemenang dari senarai filtered
+    const targetShop = filteredRestaurants[Math.floor(Math.random() * filteredRestaurants.length)];
+    currentSelectedShop = targetShop;
 
-    // 1. Tentukan Kategori Menang Dahulu
-    let targetCategoryLabel = mapFilterToCategory(activeFoodFilter);
-    let targetSegmentIndex;
-
-    // Jika pengguna dah kunci filter (cth: Western), wajib pilih hirisan itu
-    if (targetCategoryLabel && !isCravingModeActive) {
-        targetSegmentIndex = FOOD_CATEGORIES.findIndex(c => c.label === targetCategoryLabel);
-        if (targetSegmentIndex === -1) targetSegmentIndex = Math.floor(Math.random() * numSegments);
-    } else {
-        // Cari kategori yang ADA kedai dalam senarai semasa sahaja (supaya tak kena kategori kosong!)
-        const availableCategories = [];
-        FOOD_CATEGORIES.forEach((cat, idx) => {
-            const hasShops = filteredRestaurants.some(r => isShopMatchCategory(r, cat.label));
-            if (hasShops) availableCategories.push(idx);
-        });
-
-        if (availableCategories.length > 0) {
-            targetSegmentIndex = availableCategories[Math.floor(Math.random() * availableCategories.length)];
-        } else {
-            targetSegmentIndex = Math.floor(Math.random() * numSegments);
+    // Padankan kategori roda
+    let targetCategoryLabel = "Nasi";
+    for (const cat of FOOD_CATEGORIES) {
+        if (isShopMatchCategory(targetShop, cat.label)) {
+            targetCategoryLabel = cat.label;
+            break;
         }
     }
 
-    const winningCat = FOOD_CATEGORIES[targetSegmentIndex];
+    let targetSegmentIndex = FOOD_CATEGORIES.findIndex(c => c.label === targetCategoryLabel);
+    if (targetSegmentIndex === -1) targetSegmentIndex = 0;
 
-    // 2. Kira Sudut Berhenti Tepat di Bawah Jarum (12 o'clock / 270 darjah)
-    // Titik tengah segmen sasaran
-    const segmentCenterAngle = (targetSegmentIndex * arcSize) + (arcSize / 2);
-    // Jarum berada di 3*PI/2 (270 darjah)
-    const pointerAngle = 1.5 * Math.PI;
-    
-    // Sudut putaran yang diperlukan (Normalised)
-    let stopAngle = (pointerAngle - segmentCenterAngle) % (2 * Math.PI);
-    if (stopAngle < 0) stopAngle += 2 * Math.PI;
+    const numSegments = FOOD_CATEGORIES.length;
+    const arcSize = (2 * Math.PI) / numSegments;
 
-    // Tambah 6 hingga 8 pusingan penuh untuk efek dramatik
+    const desiredAngleAtPointer = (targetSegmentIndex * arcSize) + (arcSize / 2);
+    const targetPointerAngle = (3 * Math.PI / 2);
+    const stopAngleNormalized = (2 * Math.PI + targetPointerAngle - desiredAngleAtPointer) % (2 * Math.PI);
+
     const extraRounds = (6 + Math.floor(Math.random() * 3)) * (2 * Math.PI);
     const startAngle = currentAngle;
     const currentAngleNormalized = currentAngle % (2 * Math.PI);
@@ -519,7 +488,6 @@ function spinWheel() {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / spinDuration, 1);
         
-        // Easing Deceleration Lembut (Cubic Out)
         const easeOut = 1 - Math.pow(1 - progress, 3);
         currentAngle = startAngle + (targetAngle - startAngle) * easeOut;
         drawWheel();
@@ -529,46 +497,14 @@ function spinWheel() {
         } else {
             isSpinning = false;
             spinBtn.disabled = false;
-            lastWinningCategory = winningCat;
-            
-            // 3. SELEPAS RODA BERHENTI, CARI KEDAI YANG SEPADAN DENGAN KATEGORI INI SAHAJA!
-            determineWinner(winningCat);
+            lastWinningCategory = FOOD_CATEGORIES[targetSegmentIndex];
+            displayWinnerCard(targetShop, lastWinningCategory);
         }
     }
 
     requestAnimationFrame(animate);
 }
 
-// Paparkan Kad Pemenang Berdasarkan Kategori Roda yang Menang
-function determineWinner(winningCategory, excludeShopId = null) {
-    // Tapis kedai yang padan dengan kategori roda yang menang
-    let matchingShops = filteredRestaurants.filter(r => isShopMatchCategory(r, winningCategory.label));
-
-    // Jika tiada dalam filtered, cari dalam allRestaurants yang sepadan kategori
-    if (matchingShops.length === 0) {
-        matchingShops = allRestaurants.filter(r => isShopMatchCategory(r, winningCategory.label));
-    }
-
-    if (excludeShopId && matchingShops.length > 1) {
-        matchingShops = matchingShops.filter(r => r.id !== excludeShopId);
-    }
-
-    if (matchingShops.length === 0) {
-        alert(`Tiada kedai sepadan untuk ${winningCategory.label}. Sila cuba putar lagi!`);
-        return;
-    }
-
-    const selectedShop = matchingShops[Math.floor(Math.random() * matchingShops.length)];
-    currentSelectedShop = selectedShop;
-
-    displayWinnerCard(selectedShop, winningCategory);
-}
-    }
-
-    requestAnimationFrame(animate);
-}
-
-// Paparkan Kad Pemenang dengan Waze & Maps
 function displayWinnerCard(shop, category) {
     if (!shop) return;
 
@@ -581,7 +517,6 @@ function displayWinnerCard(shop, category) {
     if (resultCategory) resultCategory.innerText = shop.category;
     if (resultBudget) resultBudget.innerText = shop.budget_tier;
     
-    // Waktu Buka & Cuti
     const hours = shop.operating_hours || "10:00 AM - 10:00 PM";
     const closed = shop.closed_days || "Tiada Cuti";
     if (resultHours) {
@@ -594,7 +529,6 @@ function displayWinnerCard(shop, category) {
 
     if (resultAddress) resultAddress.innerText = `📍 ${shop.address}`;
     
-    // Pautan Waze & Maps Mengikut Koordinat Sebenar
     const lat = shop.latitude;
     const lon = shop.longitude;
     const encodedDest = encodeURIComponent(shop.name + " " + shop.address);
@@ -615,7 +549,7 @@ function displayWinnerCard(shop, category) {
     if (resultCard) resultCard.classList.remove("hidden");
 }
 
-// --- 7. RENDER SENARAI KEDAI DENGAN INFO OPERASI & NAVIGASI 10 KEDAI ---
+// --- 6. RENDER SENARAI KEDAI DENGAN NAVIGASI 10 KEDAI ---
 function renderListView() {
     restaurantsList.innerHTML = "";
     if (searchFilteredRestaurants.length === 0) {
@@ -663,7 +597,6 @@ function renderListView() {
         restaurantsList.appendChild(item);
     });
 
-    // Baris Navigasi Muka Surat
     if (totalPages > 1) {
         const paginationBox = document.createElement("div");
         paginationBox.style.cssText = "display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding:8px 4px; border-top:1px solid var(--border-color);";
@@ -753,7 +686,7 @@ profileModal.addEventListener("click", (e) => {
     if (e.target === profileModal) profileModal.classList.add("hidden");
 });
 
-// --- 8. TOGGLE VIEW ---
+// --- 7. TOGGLE VIEW ---
 toggleWheelBtn.addEventListener("click", () => {
     toggleWheelBtn.classList.add("active");
     toggleListBtn.classList.remove("active");
@@ -768,7 +701,7 @@ toggleListBtn.addEventListener("click", () => {
     wheelView.classList.add("hidden");
 });
 
-// --- 9. TOGGLE & LISTENER MOD MENGIDAM ---
+// --- 8. TOGGLE & LISTENER MOD MENGIDAM ---
 if (toggleCravingModeBtn) {
     toggleCravingModeBtn.addEventListener("click", () => {
         isCravingModeActive = !isCravingModeActive;
@@ -837,7 +770,7 @@ if (btnRerollResult) {
     });
 }
 
-// Penapis Kawasan Senarai & Roda (Bebas Masalah GPS!)
+// Penapis Kawasan Senarai & Roda (Aktif Global)
 window.setAreaFilter = function(area, btn) {
     document.querySelectorAll(".area-chip").forEach(c => c.classList.remove("active"));
     btn.classList.add("active");
@@ -852,7 +785,7 @@ window.pilihTierDerma = function(tierName, amount) {
     }
 };
 
-// --- 10. MODAL SOKONGAN ---
+// --- 9. MODAL SOKONGAN ---
 openSuggestBtn.addEventListener("click", () => {
     suggestFormView.classList.remove("hidden");
     suggestSuccessView.classList.add("hidden");
@@ -924,56 +857,5 @@ contactForm.addEventListener("submit", (e) => {
 
 spinBtn.addEventListener("click", spinWheel);
 
+// Mulakan aplikasi
 fetchRestaurants();
-
-// --- 4. MUAT TURUN DATA DARI FASTAPI (KALIS BEKU & AUTO-RETRY) ---
-// --- 2. MUAT TURUN DATA (KALIS BEKU, KALIS 404 & SENTIASA LUKIS RODA!) ---
-async function fetchRestaurants() {
-    // 🚀 LUKIS RODA SERTA-MERTA! (Supaya roda 8-warna terus menyala tanpa tunggu data!)
-    drawWheel();
-
-    // Senarai laluan pintar untuk mencari fail data
-    const possibleUrls = [
-        "restaurants.json",
-        "./restaurants.json",
-        "/makan-apa/restaurants.json",
-        "/restaurants.json"
-    ];
-
-    let loaded = false;
-
-    for (const url of possibleUrls) {
-        try {
-            const response = await fetch(url);
-            if (response.ok) {
-                const json = await response.json();
-                allRestaurants = json.data || [];
-
-                // Bersihkan sebarang pendua nama teras
-                const uniqueMap = new Map();
-                allRestaurants.forEach(r => {
-                    const clean = r.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-                    if (!uniqueMap.has(clean)) {
-                        uniqueMap.set(clean, r);
-                    }
-                });
-                allRestaurants = Array.from(uniqueMap.values());
-
-                console.log(`✅ Berjaya memuatkan ${allRestaurants.length} kedai dari: ${url}`);
-                applyFilters();
-                drawWheel();
-                loaded = true;
-                break;
-            }
-        } catch (err) {
-            // Cuba laluan seterusnya jika gagal
-        }
-    }
-
-    if (!loaded) {
-        console.warn("⚠️ Amaran: Fail restaurants.json tidak ditemui dalam semua laluan.");
-        if (wheelFilterStatus) {
-            wheelFilterStatus.innerText = "⚠️ Pangkalan data sedang diselaraskan...";
-        }
-    }
-}

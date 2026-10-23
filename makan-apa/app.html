@@ -171,7 +171,7 @@
                     <span>🔤 Disusun A - Z</span>
                 </div>
             </div>
-            <div id="restaurants.json" class="restaurant-cards-container" style="width: 100%;"></div>
+            <div id="restaurants-list" class="restaurant-cards-container" style="width: 100%;"></div>
         </main>
 
         <!-- 9. Footer Padat -->
@@ -437,7 +437,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('sw.js')
                     .then((reg) => console.log('🚀 Service Worker Makan Apa? Aktif!', reg.scope))
                     .catch((err) => console.log('⚠️ Service Worker gagal:', err));
             });
