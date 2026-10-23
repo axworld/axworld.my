@@ -137,7 +137,7 @@ initTheme();
 
 // --- 2. MUAT TURUN DATA (KALIS 404 & SENTIASA LUKIS RODA) ---
 async function fetchRestaurants() {
-    drawWheel(); // Lukis roda terus!
+    drawWheel();
 
     const possibleUrls = [
         "restaurants.json",
@@ -436,29 +436,27 @@ function applySearchToList() {
     renderListView();
 }
 
-// --- 5. LOGIK PUTARAN RODA PINTAR (GERENTI PUSING 100% & KALIS HANG!) ---
+// --- 5. LOGIK PUTARAN RODA PINTAR (GERENTI PUSING 100%) ---
 function spinWheel() {
     if (isSpinning) return;
 
     if (filteredRestaurants.length === 0) {
-        alert("Alamak! Tiada kedai yang padan dengan gabungan pilihan ini. Sila ubah kawasan atau selera ya darling!");
+        alert("Alamak! Tiada kedai yang padan dengan gabungan pilihan ini. Sila ubah kawasan atau selera ya!");
         return;
     }
 
     isSpinning = true;
     if (resultCard) {
         resultCard.classList.add("hidden");
-        resultCard.style.display = "none"; // Sorokkan masa pusing
+        resultCard.style.display = "none";
     }
     spinBtn.disabled = true;
 
-    const numSegments = FOOD_CATEGORIES.length; // 8 Segmen
-    const arcSize = (2 * Math.PI) / numSegments; // 45 Darjah
+    const numSegments = FOOD_CATEGORIES.length;
+    const arcSize = (2 * Math.PI) / numSegments;
 
-    // 1. Tentukan Hirisan Sasaran
     let targetSegmentIndex = Math.floor(Math.random() * numSegments);
 
-    // Jika pengguna pilih filter makanan tertentu, paksa roda berhenti di situ!
     const mappedCat = mapFilterToCategory(activeFoodFilter);
     if (mappedCat && !isCravingModeActive) {
         const foundIdx = FOOD_CATEGORIES.findIndex(c => c.label === mappedCat);
@@ -467,14 +465,12 @@ function spinWheel() {
 
     const winningCat = FOOD_CATEGORIES[targetSegmentIndex];
 
-    // 2. Kira Sudut Pendaratan Tepat di Bawah Jarum (12 o'clock / 270 darjah)
     const segmentCenterAngle = (targetSegmentIndex * arcSize) + (arcSize / 2);
     const pointerAngle = 1.5 * Math.PI;
     
     let stopAngle = (pointerAngle - segmentCenterAngle) % (2 * Math.PI);
     if (stopAngle < 0) stopAngle += 2 * Math.PI;
 
-    // Tambah 6 hingga 8 pusingan dramatik
     const extraRounds = (6 + Math.floor(Math.random() * 3)) * (2 * Math.PI);
     const startAngle = currentAngle;
     const currentAngleNormalized = currentAngle % (2 * Math.PI);
@@ -491,7 +487,6 @@ function spinWheel() {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / spinDuration, 1);
         
-        // Easing Deceleration Lembut (Cubic Out)
         const easeOut = 1 - Math.pow(1 - progress, 3);
         currentAngle = startAngle + (targetAngle - startAngle) * easeOut;
         drawWheel();
@@ -507,6 +502,28 @@ function spinWheel() {
     }
 
     requestAnimationFrame(animate);
+}
+
+function determineWinner(winningCategory, excludeShopId = null) {
+    let matchingShops = filteredRestaurants.filter(r => isShopMatchCategory(r, winningCategory.label));
+
+    if (matchingShops.length === 0) {
+        matchingShops = allRestaurants.filter(r => isShopMatchCategory(r, winningCategory.label));
+    }
+
+    if (excludeShopId && matchingShops.length > 1) {
+        matchingShops = matchingShops.filter(r => r.id !== excludeShopId);
+    }
+
+    if (matchingShops.length === 0) {
+        alert(`Tiada kedai sepadan untuk ${winningCategory.label}. Sila cuba putar lagi!`);
+        return;
+    }
+
+    const selectedShop = matchingShops[Math.floor(Math.random() * matchingShops.length)];
+    currentSelectedShop = selectedShop;
+
+    displayWinnerCard(selectedShop, winningCategory);
 }
 
 function displayWinnerCard(shop, category) {
@@ -551,13 +568,13 @@ function displayWinnerCard(shop, category) {
 
     if (btnRerollResult) btnRerollResult.style.display = "block";
     
-    // 🚀 BUKA KUNCI KAD KEPUTUSAN & PAKSA PAPAR (GERENTI KELUAR!)
+    // 🚀 BUKA KUNCI KAD KEPUTUSAN & PAKSA PAPAR!
     if (resultCard) {
         resultCard.classList.remove("hidden");
         resultCard.style.display = "block";
-        // Skrol lembut ke bawah supaya pengguna nampak kad pemenang!
         resultCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
+} // <-- INI KURUNGAN PENUTUP YANG TERTINGGAL TADI!
 
 // --- 6. RENDER SENARAI KEDAI DENGAN NAVIGASI 10 KEDAI ---
 function renderListView() {
