@@ -446,7 +446,10 @@ function spinWheel() {
     }
 
     isSpinning = true;
-    if (resultCard) resultCard.classList.add("hidden");
+    if (resultCard) {
+        resultCard.classList.add("hidden");
+        resultCard.style.display = "none"; // Sorokkan masa pusing
+    }
     spinBtn.disabled = true;
 
     const numSegments = FOOD_CATEGORIES.length; // 8 Segmen
@@ -547,8 +550,14 @@ function displayWinnerCard(shop, category) {
     }
 
     if (btnRerollResult) btnRerollResult.style.display = "block";
-    if (resultCard) resultCard.classList.remove("hidden");
-}
+    
+    // 🚀 BUKA KUNCI KAD KEPUTUSAN & PAKSA PAPAR (GERENTI KELUAR!)
+    if (resultCard) {
+        resultCard.classList.remove("hidden");
+        resultCard.style.display = "block";
+        // Skrol lembut ke bawah supaya pengguna nampak kad pemenang!
+        resultCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
 
 // --- 6. RENDER SENARAI KEDAI DENGAN NAVIGASI 10 KEDAI ---
 function renderListView() {

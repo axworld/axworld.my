@@ -159,36 +159,37 @@ body {
     transition: all 0.2s ease;
 }
 
-/* Penapis Makanan Aktif (Oren Selera) */
-.food-chip.active {
-    background: #FF5A36 !important;
+/* --- WARNA PENAPIS BAJET MENGIKUT TAHAP POKET --- */
+
+/* 1. Bila Pilih 'Semua Bajet' (Kelabu Gelap Elegan) */
+.budget-chip.active[data-budget="all"] {
+    background: #4B5563 !important;
+    border-color: #4B5563 !important;
     color: #FFF !important;
-    border-color: #FF5A36 !important;
-    box-shadow: 0 3px 8px rgba(255, 90, 54, 0.3);
 }
 
-/* Penapis Bajet Aktif (Hijau Segar) */
-.budget-chip.active {
+/* 2. Bila Pilih 'Marhaen' (Hijau Jimat) */
+.budget-chip.active[data-budget="Marhaen"] {
     background: #10B981 !important;
-    color: #FFF !important;
     border-color: #10B981 !important;
-    box-shadow: 0 3px 8px rgba(16, 185, 129, 0.3);
+    color: #FFF !important;
+    box-shadow: 0 3px 8px rgba(16, 185, 129, 0.35);
 }
 
-/* Penapis Radius Jarak Aktif (Indigo Moden) */
-.radius-chip.active {
-    background: #4F46E5 !important;
+/* 3. Bila Pilih 'Medium' (Kuning Amber) */
+.budget-chip.active[data-budget="Mid"] {
+    background: #F59E0B !important;
+    border-color: #F59E0B !important;
     color: #FFF !important;
-    border-color: #4F46E5 !important;
-    box-shadow: 0 3px 8px rgba(79, 70, 229, 0.3);
+    box-shadow: 0 3px 8px rgba(245, 158, 11, 0.35);
 }
 
-/* Penapis Kawasan Senarai Aktif (Teal Segar) */
-.area-chip.active {
-    background: #0D9488 !important;
+/* 4. Bila Pilih 'Kayangan' (Ungu Mewah / Royal Purple) */
+.budget-chip.active[data-budget="Kayangan"] {
+    background: #8B5CF6 !important;
+    border-color: #8B5CF6 !important;
     color: #FFF !important;
-    border-color: #0D9488 !important;
-    box-shadow: 0 3px 8px rgba(13, 148, 136, 0.3);
+    box-shadow: 0 3px 8px rgba(139, 92, 246, 0.35);
 }
 
 /* --- 3. TOGGLE VIEW --- */
