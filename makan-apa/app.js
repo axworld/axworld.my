@@ -436,7 +436,7 @@ function applySearchToList() {
     renderListView();
 }
 
-// --- 5. LOGIK PUTARAN RODA PINTAR ---
+// --- 5. LOGIK PUTARAN RODA PINTAR (GERENTI PUSING 100% & KALIS HANG!) ---
 function spinWheel() {
     if (isSpinning) return;
 
@@ -449,29 +449,29 @@ function spinWheel() {
     if (resultCard) resultCard.classList.add("hidden");
     spinBtn.disabled = true;
 
-    // Pilih kedai pemenang dari senarai filtered
-    const targetShop = filteredRestaurants[Math.floor(Math.random() * filteredRestaurants.length)];
-    currentSelectedShop = targetShop;
+    const numSegments = FOOD_CATEGORIES.length; // 8 Segmen
+    const arcSize = (2 * Math.PI) / numSegments; // 45 Darjah
 
-    // Padankan kategori roda
-    let targetCategoryLabel = "Nasi";
-    for (const cat of FOOD_CATEGORIES) {
-        if (isShopMatchCategory(targetShop, cat.label)) {
-            targetCategoryLabel = cat.label;
-            break;
-        }
+    // 1. Tentukan Hirisan Sasaran
+    let targetSegmentIndex = Math.floor(Math.random() * numSegments);
+
+    // Jika pengguna pilih filter makanan tertentu, paksa roda berhenti di situ!
+    const mappedCat = mapFilterToCategory(activeFoodFilter);
+    if (mappedCat && !isCravingModeActive) {
+        const foundIdx = FOOD_CATEGORIES.findIndex(c => c.label === mappedCat);
+        if (foundIdx !== -1) targetSegmentIndex = foundIdx;
     }
 
-    let targetSegmentIndex = FOOD_CATEGORIES.findIndex(c => c.label === targetCategoryLabel);
-    if (targetSegmentIndex === -1) targetSegmentIndex = 0;
+    const winningCat = FOOD_CATEGORIES[targetSegmentIndex];
 
-    const numSegments = FOOD_CATEGORIES.length;
-    const arcSize = (2 * Math.PI) / numSegments;
+    // 2. Kira Sudut Pendaratan Tepat di Bawah Jarum (12 o'clock / 270 darjah)
+    const segmentCenterAngle = (targetSegmentIndex * arcSize) + (arcSize / 2);
+    const pointerAngle = 1.5 * Math.PI;
+    
+    let stopAngle = (pointerAngle - segmentCenterAngle) % (2 * Math.PI);
+    if (stopAngle < 0) stopAngle += 2 * Math.PI;
 
-    const desiredAngleAtPointer = (targetSegmentIndex * arcSize) + (arcSize / 2);
-    const targetPointerAngle = (3 * Math.PI / 2);
-    const stopAngleNormalized = (2 * Math.PI + targetPointerAngle - desiredAngleAtPointer) % (2 * Math.PI);
-
+    // Tambah 6 hingga 8 pusingan dramatik
     const extraRounds = (6 + Math.floor(Math.random() * 3)) * (2 * Math.PI);
     const startAngle = currentAngle;
     const currentAngleNormalized = currentAngle % (2 * Math.PI);
@@ -488,6 +488,7 @@ function spinWheel() {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / spinDuration, 1);
         
+        // Easing Deceleration Lembut (Cubic Out)
         const easeOut = 1 - Math.pow(1 - progress, 3);
         currentAngle = startAngle + (targetAngle - startAngle) * easeOut;
         drawWheel();
@@ -497,8 +498,8 @@ function spinWheel() {
         } else {
             isSpinning = false;
             spinBtn.disabled = false;
-            lastWinningCategory = FOOD_CATEGORIES[targetSegmentIndex];
-            displayWinnerCard(targetShop, lastWinningCategory);
+            lastWinningCategory = winningCat;
+            determineWinner(winningCat);
         }
     }
 
