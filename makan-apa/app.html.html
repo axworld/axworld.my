@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Makan Apa? - Penentu Selera Marhaen & Wifey</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Pautan PWA Rasmi -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF5A36">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="logo.png">
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- 1. Header: Logo 3D & Suis Mod Gelap -->
+        <header class="app-header">
+            <div class="brand">
+                <img src="logo.png" alt="Makan Apa?" class="brand-logo" onerror="this.style.display='none'; document.getElementById('fallback-title').style.display='block';">
+                <h1 id="fallback-title" class="brand-name" style="display:none;">Makan Apa?</h1>
+            </div>
+            <div class="header-controls">
+                <button id="theme-toggle-btn" class="btn-theme-toggle" title="Tukar Mod Siang/Malam">🌙</button>
+                <div class="location-badge">
+                    <span class="pin-icon">📍</span>
+                    <span id="current-location-text">Kawasan Pilihan</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 2. PILIH MOOD: NORMAL VS MAK BUYUNG MENGIDAM -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Pilih Mood:</span>
+            <button id="toggle-craving-mode-btn" class="chip" style="background:#FFF1F2; border-color:#FDA4AF; color:#E11D48; font-weight:800; padding:6px 14px; cursor:pointer;">
+                🤰 Mod Mengidam (Mak Buyung)
+            </button>
+        </div>
+
+        <!-- 3. PENAPIS KAWASAN UTAMA (TERUS DI ATAS SKRIN!) -->
+        <section class="filters-section" style="margin-bottom:10px;">
+            <div class="chips-scroll">
+                <div class="chips-scroll" style="width: max-content; display: flex; gap: 6px;">
+                    <button class="chip active area-chip" onclick="setAreaFilter('all', this)">Semua Kawasan</button>
+                    <button class="chip area-chip" onclick="setAreaFilter('kebun_tpg', this)">📍 Jln Kebun / TPG</button>
+                    <button class="chip area-chip" onclick="setAreaFilter('shah_alam', this)">📍 Shah Alam</button>
+                    <button class="chip area-chip" onclick="setAreaFilter('subang', this)">📍 Subang</button>
+                    <button class="chip area-chip" onclick="setAreaFilter('ttdi_damansara', this)">📍 TTDI / Damansara</button>
+                    <button class="chip area-chip" onclick="setAreaFilter('bangi_kajang', this)">📍 Bangi / Kajang</button>
+                    <button class="chip area-chip" onclick="setAreaFilter('kl', this)">📍 KL / Kg Baru</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. PENAPIS BIASA (MOD NORMAL / WIFEY EMO) -->
+        <section id="normal-filters-section" class="filters-section">
+            <div class="chips-scroll">
+                <button class="chip active food-chip" data-filter="all">Semua Makanan</button>
+                <button class="chip food-chip" data-filter="Nasi">🍚 Nasi</button>
+                <button class="chip food-chip" data-filter="Mi">🍜 Mi</button>
+                <button class="chip food-chip" data-filter="Western">🍔 Western</button>
+                <button class="chip food-chip" data-filter="Kopitiam">☕ Kopitiam</button>
+                <button class="chip food-chip" data-filter="Mamak">🍛 Mamak</button>
+                <button class="chip food-chip" data-filter="KafeHunting">🍰 Kafe & Dessert</button>
+            </div>
+            
+            <div class="chips-scroll budget-scroll">
+                <button class="chip active budget-chip" data-budget="all">Semua Bajet</button>
+                <button class="chip budget-chip" data-budget="Marhaen">🟢 Marhaen (&lt;RM10)</button>
+                <button class="chip budget-chip" data-budget="Mid">🟡 Medium (RM10-30)</button>
+                <button class="chip budget-chip" data-budget="Kayangan">🔴 Kayangan (&gt;RM30)</button>
+            </div>
+        </section>
+
+        <!-- 5. PENAPIS DERIA RASA (MOD MENGIDAM) -->
+        <section id="craving-filters-section" class="filters-section hidden" style="background:#FFF1F2; padding:12px; border-radius:14px; border:1px solid #FECDD3; margin-bottom:14px;">
+            <div style="font-size:11px; font-weight:800; color:#BE123C; margin-bottom:8px; display:flex; justify-content:space-between;">
+                <span>TEKAK MAK BUYUNG MENGIDAM APA SEKARANG? 🤤</span>
+                <span id="craving-status-hint" style="font-weight:700;">Semua Rasa</span>
+            </div>
+            <div class="chips-scroll">
+                <button class="chip active taste-chip" data-taste="all">Apa-apa Sahaja</button>
+                <button class="chip taste-chip" data-taste="masam">🍋 Masam-Masam</button>
+                <button class="chip taste-chip" data-taste="pedas">🌶️ Pedas Berapi</button>
+                <button class="chip taste-chip" data-taste="manis">🍧 Manis & Sejuk</button>
+                <button class="chip taste-chip" data-taste="sup">🍲 Sup Hirup Panas</button>
+                <button class="chip taste-chip" data-taste="banjir">🍛 Kuah Campur Banjir</button>
+            </div>
+        </section>
+
+        <!-- 6. Toggle View: Roda vs Senarai -->
+        <div class="view-toggle">
+            <button id="toggle-wheel-btn" class="toggle-btn active">🎰 Roda Pilihan</button>
+            <button id="toggle-list-btn" class="toggle-btn">📋 Senarai Kedai (<span id="count-tab-top">0</span>)</button>
+        </div>
+
+        <!-- 7. MOD RODA PUTARAN -->
+        <main id="wheel-view" class="view-panel">
+            <div id="wheel-filter-status" style="text-align:center; font-size:12px; font-weight:700; color:#EA580C; background:#FFEDD5; padding:6px 14px; border-radius:99px; margin-bottom:12px; display:inline-block;">
+                🎡 Mod Putaran: Memuatkan...
+            </div>
+
+            <div class="wheel-wrapper">
+                <div id="pin-pointer" class="pin-pointer">
+                    <svg width="36" height="46" viewBox="0 0 36 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 44L11 30C5 26 2 20 2 14C2 5.5 9 1.5 18 1.5C27 1.5 34 5.5 34 14C34 20 31 26 25 30L18 44Z" 
+                              fill="#F59E0B" stroke="#1F2937" stroke-width="3" stroke-linejoin="round"/>
+                        <circle cx="18" cy="15" r="5" fill="#1F2937"/>
+                    </svg>
+                </div>
+                <canvas id="wheel-canvas" width="320" height="320"></canvas>
+            </div>
+
+            <div class="action-section">
+                <button id="spin-btn" class="spin-button">
+                    <span class="btn-text" id="spin-btn-text">PUTAR KEPUTUSAN! 🎲</span>
+                </button>
+            </div>
+
+            <!-- Kad Keputusan Menang -->
+            <div id="result-card" class="result-card hidden">
+                <div class="result-badge">🎉 REZEKI TEKAK ANDA:</div>
+                <div id="result-craving" class="craving-highlight">🍚 NASI</div>
+                <h2 id="result-name" class="result-title">Nama Kedai</h2>
+                
+                <div class="result-tags">
+                    <span id="result-category" class="tag tag-cat">Kategori</span>
+                    <span id="result-budget" class="tag tag-budget">Bajet</span>
+                </div>
+
+                <div id="result-tastes-box" style="margin-bottom:8px; display:flex; justify-content:center; gap:4px; flex-wrap:wrap;"></div>
+
+                <p id="result-hours" style="font-size:12px; font-weight:700; color:#059669; margin-bottom:4px;">⏰ Buka: 10:00 AM - 10:00 PM</p>
+                <p id="result-address" class="result-address" style="margin-bottom:10px;">Alamat Kedai</p>
+                
+                <!-- DUA BUTANG NAVIGASI: WAZE & GOOGLE MAPS -->
+                <div class="result-actions" style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                        <a id="result-waze-btn" href="#" target="_blank" class="btn-action" style="background:#00D8F6; color:#000; font-weight:800;">🚗 Buka Waze</a>
+                        <a id="result-gmaps-btn" href="#" target="_blank" class="btn-action" style="background:#34A853; color:#FFF; font-weight:800;">🗺️ Google Maps</a>
+                    </div>
+                    <button id="btn-reroll-result" type="button" class="btn-suggest" style="margin:0; font-size:13px; padding:10px; border-color:#F59E0B; color:#B45309; background:#FFFBEB;">
+                        🔄 Tak Berkenan Kedai Ni? Putar Kedai Lain!
+                    </button>
+                </div>
+                
+                <!-- Amaran Penafian Mesra (Micro-Disclaimer) -->
+                <p style="font-size:10px; color:var(--text-muted); margin-top:8px; line-height:1.4;">
+                    ⚠️ <i>Nota: Waktu operasi tertakluk kepada cuti semasa peniaga. Deria rasa mengikut tekak masing-masing ya!</i>
+                </p>
+
+                <button id="btn-report-result" class="btn-link-report">
+                    ⚠️ <b>MAKLUMAT SALAH ATAU KEDAI TUTUP? LAPOR KAT SINI</b>
+                </button>
+            </div>
+        </main>
+
+        <!-- 8. MOD SENARAI KEDAI A-Z -->
+        <main id="list-view" class="view-panel hidden">
+            <div class="list-controls" style="margin-bottom: 12px; width: 100%;">
+                <input type="text" id="list-search-input" placeholder="🔍 Cari nama kedai atau menu mengidam..." 
+                       style="width:100%; padding:10px 14px; border-radius:12px; border:2px solid var(--border-color); background:var(--input-bg); color:var(--text-main); font-family:inherit; font-weight:600; font-size:13px; margin-bottom:6px; outline:none;">
+                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:var(--text-muted); padding:0 4px;">
+                    <span id="list-count-label">Menunjukkan 0 kedai</span>
+                    <span>🔤 Disusun A - Z</span>
+                </div>
+            </div>
+            <div id="restaurants-list" class="restaurant-cards-container" style="width: 100%;"></div>
+        </main>
+
+        <!-- 9. Footer Padat -->
+        <footer class="app-footer">
+            <button id="open-suggest-btn" class="btn-suggest">
+                ➕ Tahu Port Lagi Padu? Cadang Kat Sini!
+            </button>
+            <div class="footer-actions-row">
+                <button id="open-tip-btn" class="btn-footer-pill btn-tip">
+                    ☕ Belanja Kopi
+                </button>
+                <button id="open-contact-btn" class="btn-footer-pill btn-contact">
+                    💬 Hubungi Admin
+                </button>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- MODAL 1: BORANG CADANGAN -->
+    <div id="suggest-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div id="suggest-form-view">
+                <div class="modal-header">
+                    <h3>Cadangkan Port Makan 🍜</h3>
+                    <button id="close-suggest-btn" class="btn-close-modal">✕</button>
+                </div>
+                <form id="suggest-form">
+                    <div class="form-group">
+                        <label>Nama Kedai / Warung</label>
+                        <input type="text" id="suggest-name" placeholder="cth: Restoran Hakim Seksyen 7" required
+                               oninvalid="this.setCustomValidity('Sila isi nama kedai ya!')" oninput="this.setCustomValidity('')">
+                    </div>
+                    <div class="form-group">
+                        <label>Kawasan / Lokasi</label>
+                        <input type="text" id="suggest-area" placeholder="cth: Seksyen 7, Shah Alam" required
+                               oninvalid="this.setCustomValidity('Sila isi kawasan kedai ya!')" oninput="this.setCustomValidity('')">
+                    </div>
+                    <div class="form-group">
+                        <label>Jenis Makanan / Karbo</label>
+                        <select id="suggest-carb">
+                            <option value="Nasi">🍚 Nasi</option>
+                            <option value="Mi">🍜 Mi / Bihun</option>
+                            <option value="Western">🍔 Burger / Western</option>
+                            <option value="Kopitiam">☕ Kopitiam / Kopi</option>
+                            <option value="Mamak">🍛 Mamak / Roti Canai</option>
+                            <option value="KafeHunting">🍰 Kafe & Dessert</option>
+                            <option value="Lain-lain">Lain-lain</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Anggaran Bajet</label>
+                        <select id="suggest-budget">
+                            <option value="Marhaen (<RM10)">🟢 Marhaen (&lt; RM10)</option>
+                            <option value="Mid (RM10-30)">🟡 Mid (RM10 - RM30)</option>
+                            <option value="Kayangan (>RM30)">🔴 Kayangan (&gt; RM30)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pautan Media Sosial / Maps (Pilihan)</label>
+                        <input type="url" id="suggest-link" placeholder="Pautan TikTok / FB / Maps">
+                    </div>
+                    <button type="submit" class="btn-submit-suggest">Hantar Cadangan 🚀</button>
+                </form>
+            </div>
+
+            <div id="suggest-success-view" class="success-card-view hidden">
+                <div class="success-icon">🎉</div>
+                <h3 class="success-title">Terima Kasih Banyak!</h3>
+                <p id="success-message" class="success-desc">
+                    Cadangan kedai dah selamat sampai ke meja kami! Nanti kami semak kelayakan sebelum masukkan ke roda ya.
+                </p>
+                <div class="success-actions">
+                    <button id="btn-continue-spin" class="btn-action btn-waze">🎰 Sambung Putar Roda</button>
+                    <button id="btn-suggest-another" class="btn-suggest" style="margin-top: 8px;">➕ Cadang Port Lain</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: DERMA GOOGLE PLAY TIER -->
+    <div id="tip-modal" class="modal-overlay hidden">
+        <div class="modal-card" style="background:#18181B; color:#F4F4F5; border-radius:24px 24px 0 0;">
+            <div class="modal-header" style="border-bottom:1px solid #27272A; padding-bottom:12px;">
+                <h3 style="color:#FFF; font-size:16px;">Sokong Pembangun (Donate) ☕</h3>
+                <button id="close-tip-btn" class="btn-close-modal" style="color:#A1A1AA;">✕</button>
+            </div>
+            
+            <div style="padding:16px 0;">
+                <p style="font-size:13px; font-weight:700; color:#FFF; text-align:center; margin-bottom:4px;">
+                    Terima kasih menggunakan Makan Apa?
+                </p>
+                <p style="font-size:11px; color:#A1A1AA; text-align:center; margin-bottom:16px;">
+                    Sokongan anda memastikan aplikasi kekal percuma, bebas iklan & pelayan sentiasa aktif!
+                </p>
+
+                <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px;">
+                    <div style="background:#27272A; border-radius:14px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-size:24px;">☕</span>
+                            <div>
+                                <div style="font-size:13px; font-weight:700; color:#FFF;">Cup of Coffee</div>
+                                <div style="font-size:11px; color:#A1A1AA;">Belanja secawan kopi</div>
+                            </div>
+                        </div>
+                        <button class="btn-play-buy" onclick="pilihTierDerma('Cup of Coffee', 'RM 5.00')">RM 5.00</button>
+                    </div>
+
+                    <div style="background:#27272A; border-radius:14px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-size:24px;">🥪</span>
+                            <div>
+                                <div style="font-size:13px; font-weight:700; color:#FFF;">Sandwich</div>
+                                <div style="font-size:11px; color:#A1A1AA;">Belanja sarapan pagi santai</div>
+                            </div>
+                        </div>
+                        <button class="btn-play-buy" onclick="pilihTierDerma('Sandwich', 'RM 10.00')">RM 10.00</button>
+                    </div>
+
+                    <div style="background:#27272A; border-radius:14px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <span style="font-size:24px;">🍛</span>
+                            <div>
+                                <div style="font-size:13px; font-weight:700; color:#FFF;">Lunch Feast</div>
+                                <div style="font-size:11px; color:#A1A1AA;">Belanja kami sepinggan nasi kandar</div>
+                            </div>
+                        </div>
+                        <button class="btn-play-buy" onclick="pilihTierDerma('Lunch Feast', 'RM 20.00')">RM 20.00</button>
+                    </div>
+                </div>
+
+                <div id="play-pay-sheet" style="background:#09090B; border:1px solid #3F3F46; border-radius:16px; padding:14px; text-align:center;">
+                    <div style="font-size:12px; font-weight:700; color:#38BDF8; margin-bottom:4px;" id="selected-tier-label">
+                        Pilihan: Cup of Coffee (RM 5.00)
+                    </div>
+                    <img src="qr.png" alt="DuitNow QR" style="width:140px; height:140px; border-radius:10px; margin:8px auto; display:block;" onerror="this.style.display='none'; document.getElementById('qr-box-fallback').style.display='block';">
+                    <div id="qr-box-fallback" style="display:none; padding:20px; font-size:12px; color:#A1A1AA;">[ Sila letak fail qr.png dalam folder frontend ]</div>
+                    <span style="font-size:10px; color:#71717A;">Imbas QR DuitNow melalui mana-mana app perbankan / eWallet</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: KAD PROFIL KEDAI 2.0 -->
+    <div id="profile-modal" class="modal-overlay hidden">
+        <div class="modal-card profile-card">
+            <div class="modal-header">
+                <div>
+                    <span class="profile-badge">🪪 PROFIL KEDAI RASMI</span>
+                    <span id="profile-halal-badge" class="tag" style="background:#DCFCE7; color:#166534; font-size:10px; margin-left:6px;">🟢 Halal / Muslim-Friendly</span>
+                </div>
+                <button id="close-profile-btn" class="btn-close-modal">✕</button>
+            </div>
+            
+            <div class="profile-content">
+                <h2 id="profile-name" class="profile-title" style="margin-top:6px;">Nama Kedai</h2>
+                
+                <div class="result-tags" style="justify-content: flex-start; margin-bottom: 8px; gap:6px;">
+                    <span id="profile-category" class="tag tag-cat">Kategori</span>
+                    <span id="profile-budget" class="tag tag-budget">Bajet</span>
+                    <span id="profile-carb" class="tag" style="background:#F3F4F6; color:#4B5563;">Karbo</span>
+                </div>
+
+                <div id="profile-tastes-box" style="margin-bottom:12px; display:flex; gap:4px; flex-wrap:wrap;"></div>
+
+                <div style="background:var(--bg-subtle); border:1px solid var(--border-color); border-radius:14px; padding:10px 14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Waktu Operasi</div>
+                        <div id="profile-hours" style="font-size:12px; font-weight:800; color:#059669;">10:00 AM - 10:00 PM</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Hari Cuti</div>
+                        <div id="profile-closed" style="font-size:12px; font-weight:800; color:#DC2626;">Tiada Cuti</div>
+                    </div>
+                </div>
+
+                <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:14px; padding:12px; margin-bottom:12px;">
+                    <div style="font-size:11px; font-weight:800; color:#B45309; margin-bottom:4px;">⭐ MENU WAJIB CUBA (SIGNATURE DISH):</div>
+                    <div id="profile-signature-dish" style="font-size:13px; font-weight:700; color:#78350F; line-height:1.4;">
+                        Memuatkan menu signature...
+                    </div>
+                </div>
+
+                <div class="profile-info-box" style="margin-bottom:12px;">
+                    <p class="info-label">📍 Alamat Premis:</p>
+                    <p id="profile-address" class="info-value">Alamat Penuh</p>
+                </div>
+
+                <div class="profile-actions" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <a id="profile-waze-btn" href="#" target="_blank" class="btn-action" style="background:#00D8F6; color:#000; font-weight:800;">🚗 Buka Waze</a>
+                    <a id="profile-gmaps-btn" href="#" target="_blank" class="btn-action" style="background:#34A853; color:#FFF; font-weight:800;">🗺️ Google Maps</a>
+                </div>
+
+                <p style="font-size:10px; color:var(--text-muted); margin-top:8px; line-height:1.4; text-align:center;">
+                    ⚠️ <i>Nota: Waktu operasi tertakluk kepada cuti semasa peniaga. Deria rasa mengikut tekak masing-masing ya!</i>
+                </p>
+                
+                <button id="btn-report-profile" class="btn-link-report" style="margin-top: 10px; text-align:center; width:100%;">
+                    ⚠️ <b>MAKLUMAT KEDAI INI SILAP ATAU DAH TUTUP?</b>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: LAPOR ISU KEDAI -->
+    <div id="report-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Laporkan Isu Kedai ⚠️</h3>
+                <button id="close-report-btn" class="btn-close-modal">✕</button>
+            </div>
+            <form id="report-form">
+                <p id="report-shop-name" style="font-size: 14px; font-weight: 800; color: var(--text-main); margin-bottom: 12px;">Kedai: [Nama Kedai]</p>
+                <div class="form-group">
+                    <label>Pilih Masalah / Isu:</label>
+                    <select id="report-issue-type" required>
+                        <option value="closed">🚪 Kedai dah tutup kekal / gulung tikar</option>
+                        <option value="wrong_menu">🍜 Jenis makanan / menu salah</option>
+                        <option value="wrong_location">📍 Alamat / lokasi pada peta salah</option>
+                        <option value="name_change">🏷️ Kedai dah tukar nama baru</option>
+                        <option value="other">💬 Masalah lain</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Catatan Tambahan (Pilihan):</label>
+                    <input type="text" id="report-notes" placeholder="cth: Dah pindah deretan kedai sebelah">
+                </div>
+                <button type="submit" class="btn-submit-suggest" style="background:#DC2626;">Hantar Laporan 🚨</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 5: HUBUNGI ADMIN -->
+    <div id="contact-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Hubungi Admin / Maklum Balas 💬</h3>
+                <button id="close-contact-btn" class="btn-close-modal">✕</button>
+            </div>
+            <form id="contact-form">
+                <div class="form-group">
+                    <label>Nama / Nama Samaran</label>
+                    <input type="text" id="contact-name" placeholder="cth: Hamba Allah / Ahmad" required
+                           oninvalid="this.setCustomValidity('Sila beritahu nama anda ya!')" oninput="this.setCustomValidity('')">
+                </div>
+                <div class="form-group">
+                    <label>Emel / No. Telefon (Untuk Dihubungi Semula)</label>
+                    <input type="text" id="contact-reach" placeholder="cth: ahmad@gmail.com" required
+                           oninvalid="this.setCustomValidity('Sila isi emel atau telefon untuk kami hubungi!')" oninput="this.setCustomValidity('')">
+                </div>
+                <div class="form-group">
+                    <label>Mesej / Cadangan Kolaborasi</label>
+                    <textarea id="contact-message" rows="3" style="width:100%; padding:10px; border:1px solid var(--border-color); background:var(--input-bg); color:var(--text-main); border-radius:10px; font-family:inherit; font-size:13px; outline:none;" placeholder="Tulis mesej anda kepada Admin kat sini..." required
+                              oninvalid="this.setCustomValidity('Sila tulis mesej anda sebelum hantar!')" oninput="this.setCustomValidity('')"></textarea>
+                </div>
+                <button type="submit" class="btn-submit-suggest" style="background:#059669;">Hantar Mesej ✉️</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Panggil versi muktamad app.js -->
+    <script src="app.js?v=clean_zones_v1"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((reg) => console.log('🚀 Service Worker Makan Apa? Aktif!', reg.scope))
+                    .catch((err) => console.log('⚠️ Service Worker gagal:', err));
+            });
+        }
+    </script>
+</body>
+</html>

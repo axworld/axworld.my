@@ -1,140 +1,601 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>axworld.my — Under Construction</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Cinzel:wght@800&display=swap" rel="stylesheet">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Makan Apa? - axworld.my</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #09090B;
+            --card-dark: #18181B;
+            --border-dark: #27272A;
+            --primary: #FF5A36;
+            --primary-hover: #E04826;
+            --text-main: #F4F4F5;
+            --text-muted: #A1A1AA;
+        }
 
-    body {
-      width: 100vw;
-      height: 100vh;
-      background-color: #ffffff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      color: #0f172a;
-      overflow: hidden;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    .wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 24px;
-      max-width: 440px;
-    }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    /* KONTENA GAMBAR: KECIL COMEL & TERAPUNG LEMBUT */
-    .image-box {
-      width: 500px;
-      max-width: 70vw;
-      margin-bottom: 12px;
-      }
+        .wrapper {
+            width: 100%;
+            max-width: 1080px;
+            padding: 20px 24px 40px;
+            display: flex;
+            flex-direction: column;
+        }
 
-    .image-box img {
-      width: 100%;
-      height: auto;
-      display: block;
-      object-fit: contain;
-      filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.06));
-    }
+        /* --- 1. NAVIGASI ATAS --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-dark);
+            margin-bottom: 32px;
+        }
 
-    @keyframes gentleFloat {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50% {
-        transform: translateY(-8px);
-      }
-    }
+        .nav-brand {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
 
-    /* TIPOGRAFI BERSIH & MODEN */
-    .brand {
-      font-family: 'Cinzel', serif;
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 2px;
-      color: #d97706; /* Emas AXWORLD */
-      margin-bottom: 4px;
-      text-transform: uppercase;
-    }
+        .nav-links {
+            display: flex;
+            gap: 12px;
+        }
 
-    h1 {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      color: #0f172a;
-      margin-bottom: 8px;
-    }
+        .nav-btn {
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 99px;
+            transition: all 0.2s ease;
+        }
 
-    p {
-      font-size: 13px;
-      color: #64748b;
-      font-weight: 500;
-      line-height: 1.6;
-    }
+        .btn-home {
+            background: var(--card-dark);
+            color: var(--text-main);
+            border: 1px solid var(--border-dark);
+        }
 
-    /* GARIS STATUS KECIL */
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      padding: 6px 14px;
-      border-radius: 9999px;
-      margin-top: 16px;
-      font-size: 11px;
-      font-weight: 600;
-      color: #475569;
-    }
+        .btn-home:hover {
+            border-color: var(--primary);
+        }
 
-    .indicator {
-      width: 7px;
-      height: 7px;
-      background-color: #22c55e;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #22c55e;
-      animation: pulse 2s infinite;
-    }
+        .btn-contact {
+            background: #27272A;
+            color: #38BDF8;
+            border: 1px solid #3F3F46;
+        }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
-    }
-  </style>
+        /* --- 2. HERO SECTION --- */
+        .hero-split {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+            margin-bottom: 36px;
+        }
+
+        @media (min-width: 860px) {
+            .hero-split {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                gap: 50px;
+                padding: 10px 0 20px;
+            }
+
+            .hero-left {
+                flex: 1.1;
+                text-align: left !important;
+                align-items: flex-start !important;
+            }
+
+            .hero-right {
+                flex: 0.9;
+                display: flex;
+                justify-content: center;
+            }
+        }
+
+        .hero-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .badge-live {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 5px 14px;
+            border-radius: 99px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .dot-pulse {
+            width: 7px;
+            height: 7px;
+            background: #10B981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10B981;
+        }
+
+        .title {
+            font-family: 'Lilita One', cursive;
+            font-size: 44px;
+            color: #FFF;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            text-shadow: 0 4px 15px rgba(255, 90, 54, 0.25);
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        /* --- DUA BUTANG TINDAKAN (WEBAPP AKTIF & PLAY STORE COMING SOON) --- */
+        .cta-container {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 16px;
+            margin-bottom: 20px;
+        }
+
+        .btn-cta {
+            width: 100%;
+            padding: 15px 20px;
+            border-radius: 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: 800;
+            transition: all 0.2s ease;
+        }
+
+        .btn-webapp {
+            background: linear-gradient(135deg, #FF5A36, #FF2E00);
+            color: #FFF;
+            border: none;
+            box-shadow: 0 6px 20px rgba(255, 90, 54, 0.4);
+        }
+
+        .btn-webapp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 90, 54, 0.5);
+        }
+
+        /* Butang Play Store Disabled (Coming Soon) */
+        .btn-playstore-disabled {
+            background: #18181B;
+            color: #71717A;
+            border: 1px dashed #3F3F46;
+            cursor: not-allowed;
+            display: flex;
+            flex-direction: column;
+            padding: 12px 20px;
+            gap: 2px;
+            opacity: 0.85;
+        }
+
+        .playstore-sub {
+            font-size: 10px;
+            font-weight: 700;
+            color: #F59E0B;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- MOCKUP TELEFON TERAPUNG --- */
+        .hero-right {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone-mockup {
+            width: 270px;
+            height: 520px;
+            background: #000;
+            border: 8px solid #27272A;
+            border-radius: 42px;
+            box-shadow: 0 20px 50px rgba(255, 90, 54, 0.2), 0 0 0 2px #3F3F46;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            animation: floatSlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatSlow {
+            from { transform: translateY(0px) rotate(-1deg); }
+            to { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        .phone-notch {
+            position: absolute;
+            top: 10px;
+            width: 90px;
+            height: 18px;
+            background: #27272A;
+            border-radius: 99px;
+            z-index: 10;
+        }
+
+        .mockup-inner-img {
+            width: 180px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+        }
+
+        .mockup-caption {
+            font-size: 12px;
+            font-weight: 800;
+            color: #FF5A36;
+            margin-top: 14px;
+            text-align: center;
+        }
+
+        /* --- 3. SEKSYEN PANDUAN PANTAS: SAVE TO HOMESCREEN & BOOKMARK --- */
+        .guide-section {
+            background: var(--card-dark);
+            border: 1px solid var(--border-dark);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 36px;
+        }
+
+        .guide-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .guide-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #FFF;
+            margin-bottom: 6px;
+        }
+
+        .guide-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .guide-tabs {
+            display: flex;
+            background: #09090B;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-dark);
+        }
+
+        .guide-tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .guide-tab-btn.active {
+            background: #27272A;
+            color: #FFF;
+        }
+
+        .guide-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .guide-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #D4D4D8;
+        }
+
+        .step-num {
+            background: var(--primary);
+            color: white;
+            font-size: 11px;
+            font-weight: 800;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* --- 4. 3 KAD CIRI TOPI --- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 36px;
+            width: 100%;
+        }
+
+        @media (min-width: 860px) {
+            .features-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        .feature-card {
+            background: var(--card-dark);
+            border: 1px solid var(--border-dark);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .feat-icon { font-size: 28px; }
+        .feat-title { font-size: 13px; font-weight: 800; color: #FFF; margin-bottom: 4px; }
+        .feat-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+        /* --- FOOTER --- */
+        .footer {
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-dark);
+            font-size: 12px;
+            color: #71717A;
+            line-height: 1.6;
+        }
+    </style>
 </head>
 <body>
 
-  <div class="wrapper">
-    <!-- GAMBAR KREN CHIBI -->
-    <div class="image-box">
-      <img src="chibi_crane.png" alt="AXWORLD.MY Under Construction" />
+    <div class="wrapper">
+        
+        <!-- 1. Navigasi Atas -->
+        <nav class="navbar">
+            <span class="nav-brand">axworld.my / produk</span>
+            <div class="nav-links">
+                <a href="/" class="nav-btn btn-home">🏠 Home Page</a>
+                <a href="mailto:makan-apa@axworld.my" class="nav-btn btn-contact">💬 Hubungi</a>
+            </div>
+        </nav>
+
+        <!-- 2. Hero Section: Split 2 Kolum di Desktop -->
+        <section class="hero-split">
+            
+            <!-- Kolum Kiri: Info & Butang Tindakan -->
+            <div class="hero-left">
+                <div class="badge-live">
+                    <span class="dot-pulse"></span>
+                    <span>200 Port Makan Rating Tinggi • 100% Halal</span>
+                </div>
+                
+                <h1 class="title">Makan Apa? 🍜</h1>
+                <p class="subtitle">
+                    Penentu kata muktamad selera anda dan pasangan. Selesai masalah lapar dalam masa 3 saat!
+                </p>
+                <p class="subtitle" style="font-size: 12px; color: #71717A;">
+                    Pendekatan CROWDSOURCING: Ada cadangan port padu atau kedai dah tutup? Laporkan terus di dalam aplikasi.
+                </p>
+
+                <!-- DUA BUTANG TINDAKAN UTAMA -->
+                <div class="cta-container">
+                    <!-- Butang 1: Buka WebApp Segera -->
+                    <a href="https://makan-apa-pniy.onrender.com" target="_blank" class="btn-cta btn-webapp">
+                        <span>🌐 Buka WebApp Sekarang</span>
+                        <span style="font-size: 12px; font-weight: normal; opacity: 0.9;">(iOS & Android)</span>
+                    </a>
+
+                    <!-- Butang 2: Google Playstore Disabled (Coming Soon) -->
+                    <div class="btn-cta btn-playstore-disabled">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span>📱 Google Play Store</span>
+                            <span class="playstore-sub">⏳ COMING SOON</span>
+                        </div>
+                        <span style="font-size: 10px; color: #71717A;">(Sedang dalam pembangunan)</span>
+                    </div>
+                    
+                    <p style="font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 4px;">
+                        🛡️ 100% Bebas Iklan & Tidak Perlu Muat Turun Berat. Sedia disimpan terus ke Home Screen!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Kolum Kanan: Mockup Telefon Sebenar -->
+            <div class="hero-right">
+                <div class="phone-mockup">
+                    <div class="phone-notch"></div>
+                    <img src="logo.png" alt="Roda Makan Apa?" class="mockup-inner-img" onerror="this.src='https://makan-apa-pniy.onrender.com/logo.png'">
+                    <div class="mockup-caption">Putar Roda & Terus Kenyang! 🎡</div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 3. PANDUAN PANTAS: CARA SIMPAN KE HOMESCREEN & BOOKMARK -->
+        <section class="guide-section">
+            <div class="guide-header">
+                <h2 class="guide-title">📲 Cara Simpan Aplikasi ke Telefon & Laptop</h2>
+                <p class="guide-sub">Tak perlu muat turun dari kedai aplikasi yang berat. Jimat memori telefon anda!</p>
+            </div>
+
+            <!-- Tab Pemilih Panduan -->
+            <div class="guide-tabs">
+                <button class="guide-tab-btn active" onclick="switchGuide('android', this)">🤖 Android (Chrome)</button>
+                <button class="guide-tab-btn" onclick="switchGuide('ios', this)">🍎 iPhone (Safari)</button>
+                <button class="guide-tab-btn" onclick="switchGuide('pc', this)">💻 Laptop / PC</button>
+            </div>
+
+            <!-- Panduan 1: Android -->
+            <div id="guide-android" class="guide-content active">
+                <div class="steps-list">
+                    <div class="step-item">
+                        <span class="step-num">1</span>
+                        <span>Klik butang <b>"Buka WebApp Sekarang"</b> di atas menggunakan pelayar Google Chrome.</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-num">2</span>
+                        <span>Tekan ikon <b>Menu 3 Titik (⋮)</b> di penjuru atas sebelah kanan pelayar anda.</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-num">3</span>
+                        <span>Pilih <b>"Install app"</b> atau <b>"Add to Home screen"</b> (Tambahkan ke Skrin Utama). Ikon rasmi akan terus terpacak di telefon anda!</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panduan 2: iOS iPhone -->
+            <div id="guide-ios" class="guide-content">
+                <div class="steps-list">
+                    <div class="step-item">
+                        <span class="step-num">1</span>
+                        <span>Buka pautan WebApp menggunakan pelayar <b>Safari</b> di iPhone anda.</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-num">2</span>
+                        <span>Tekan butang <b>Share (Ikon Kotak Anak Panah Atas ⎋)</b> di bar navigasi bawah.</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-num">3</span>
+                        <span>Skrol ke bawah dan pilih <b>"Add to Home Screen" (Tambah ke Skrin Utama)</b>. Aplikasi akan berfungsi persis aplikasi App Store sebenar!</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panduan 3: Laptop / PC Bookmark -->
+            <div id="guide-pc" class="guide-content">
+                <div class="steps-list">
+                    <div class="step-item">
+                        <span class="step-num">1</span>
+                        <span>Buka pautan WebApp pada pelayar komputer anda (Chrome / Edge / Brave).</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-num">2</span>
+                        <span>Tekan papan kekunci <b>Ctrl + D</b> (Windows) atau <b>Cmd + D</b> (Mac) untuk simpan bookmark.</span>
+                    </div>
+                    <div class="step-item">
+                        <span class="step-num">3</span>
+                        <span>Atau klik ikon <b>Bintang (★)</b> pada bar alamat URL untuk akses sepantas kilat bila tiba waktu makan tengah hari pejabat!</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Ciri Penyelamat Rumahtangga (3 Topi) -->
+        <section class="features-grid">
+            <div class="feature-card">
+                <span class="feat-icon">🎲</span>
+                <div>
+                    <div class="feat-title">Malas Nak Fikir (Sumpah Tak Kisah)</div>
+                    <div class="feat-desc">Putar roda 8-hirisan simetri untuk dapatkan 1 jawapan muktamad tanpa pening bertekak.</div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <span class="feat-icon">😤</span>
+                <div>
+                    <div class="feat-title">Senarai Kedai Pilihan</div>
+                    <div class="feat-desc">Kunci selera pilihan (Western/Nasi/Mamak) dengan ciri 'Tak Berkenan? Putar Kedai Lain!'.</div>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <span class="feat-icon">🤰</span>
+                <div>
+                    <div class="feat-title">Mak Buyung Mengidam</div>
+                    <div class="feat-desc">Tapis kedai mengikut deria rasa: Masam-Masam, Pedas Berapi, Manis Sejuk, atau Kuah Banjir.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Footer -->
+        <footer class="footer">
+            <p>© 2026 <b>axworld.my</b>. Hak Cipta Terpelihara.</p>
+        </footer>
+
     </div>
 
-    <!-- TEKS ELEGAN -->
-    <div class="brand">AXWORLD.MY</div>
-    <h1>Building Something Great</h1>
-    
-    <!-- STATUS AKTIF -->
-    <div class="status-pill">
-      <span class="indicator"></span>
-      <span>System Deployment in Progress</span>
-    </div>
-  </div>
+    <!-- Skrip Interaktif Pertukaran Tab Panduan -->
+    <script>
+        function switchGuide(type, btn) {
+            document.querySelectorAll('.guide-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.guide-content').forEach(c => c.classList.remove('active'));
+            
+            btn.classList.add('active');
+            const target = document.getElementById('guide-' + type);
+            if (target) target.classList.add('active');
+        }
+    </script>
 
 </body>
 </html>

@@ -1,0 +1,24 @@
+{
+  "name": "Makan Apa? - Penentu Selera Marhaen",
+  "short_name": "Makan Apa?",
+  "description": "Penentu kata muktamad selera makan anda dan pasangan dalam masa 3 saat!",
+  "start_url": "/?source=pwa",
+  "display": "standalone",
+  "background_color": "#09090B",
+  "theme_color": "#FF5A36",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

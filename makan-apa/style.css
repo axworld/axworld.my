@@ -1,0 +1,749 @@
+/* --- RESET & PEMBOLEHUBAH TEMA (LIGHT & DARK MODE) --- */
+:root {
+    --bg-page: #F3F4F6;
+    --bg-shell: #FAF8F5; /* Cream lembut */
+    --bg-card: #FFFFFF;
+    --bg-subtle: #F9FAFB;
+    --border-color: #E5E7EB;
+    --text-main: #1F2937;
+    --text-muted: #6B7280;
+    --modal-overlay: rgba(0, 0, 0, 0.5);
+    --input-bg: #FFFFFF;
+}
+
+/* TEMA MOD GELAP (OLED PITCH BLACK & NEON AMBER) */
+body.dark-mode {
+    --bg-page: #050505;
+    --bg-shell: #09090B; /* Deep Charcoal */
+    --bg-card: #18181B; /* Kad Gelap */
+    --bg-subtle: #27272A;
+    --border-color: #3F3F46;
+    --text-main: #F4F4F5;
+    --text-muted: #A1A1AA;
+    --modal-overlay: rgba(0, 0, 0, 0.75);
+    --input-bg: #27272A;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg-page);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    transition: background-color 0.3s ease;
+}
+
+/* Bingkai Telefon Pintar */
+.app-container {
+    width: 100%;
+    max-width: 430px;
+    background-color: var(--bg-shell);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 16px 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+/* --- 1. HEADER (LOGO 3D, SUIS DARK MODE & BADGE LOKASI) --- */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+}
+
+.brand-logo {
+    height: 52px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.1));
+}
+
+.brand-name {
+    font-family: 'Lilita One', cursive, sans-serif;
+    font-size: 26px;
+    color: var(--text-main);
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Butang Suis Mod Gelap (Moon/Sun Toggle) */
+.btn-theme-toggle {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--text-main);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+}
+
+.btn-theme-toggle:active {
+    transform: scale(0.92);
+}
+
+.location-badge {
+    background-color: var(--bg-card);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+}
+
+.location-badge:active {
+    transform: scale(0.96);
+}
+
+/* --- 2. PENAPIS PANTAS (TIGA BARIS) --- */
+.filters-section {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.chips-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+}
+.chips-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.chip {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Penapis Makanan Aktif (Oren Selera) */
+.food-chip.active {
+    background: #FF5A36 !important;
+    color: #FFF !important;
+    border-color: #FF5A36 !important;
+    box-shadow: 0 3px 8px rgba(255, 90, 54, 0.3);
+}
+
+/* Penapis Bajet Aktif (Hijau Segar) */
+.budget-chip.active {
+    background: #10B981 !important;
+    color: #FFF !important;
+    border-color: #10B981 !important;
+    box-shadow: 0 3px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* Penapis Radius Jarak Aktif (Indigo Moden) */
+.radius-chip.active {
+    background: #4F46E5 !important;
+    color: #FFF !important;
+    border-color: #4F46E5 !important;
+    box-shadow: 0 3px 8px rgba(79, 70, 229, 0.3);
+}
+
+/* Penapis Kawasan Senarai Aktif (Teal Segar) */
+.area-chip.active {
+    background: #0D9488 !important;
+    color: #FFF !important;
+    border-color: #0D9488 !important;
+    box-shadow: 0 3px 8px rgba(13, 148, 136, 0.3);
+}
+
+/* --- 3. TOGGLE VIEW --- */
+.view-toggle {
+    display: flex;
+    background: var(--bg-subtle);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 18px;
+    border: 1px solid var(--border-color);
+}
+
+.toggle-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.toggle-btn.active {
+    background: var(--bg-card);
+    color: var(--text-main);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+/* --- 4. MOD RODA PUTARAN --- */
+.view-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.view-panel.hidden {
+    display: none !important;
+}
+
+.wheel-wrapper {
+    position: relative;
+    margin: 18px 0 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* JARUM PIN STATIK */
+.pin-pointer {
+    position: absolute;
+    top: -18px;
+    z-index: 30;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+    pointer-events: none;
+}
+
+#wheel-canvas {
+    border-radius: 50%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    background: #FFF;
+}
+
+.action-section {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.spin-button {
+    width: 100%;
+    background: linear-gradient(135deg, #FF5A36, #FF2E00);
+    border: none;
+    border-radius: 16px;
+    padding: 16px 20px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(255, 46, 0, 0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: transform 0.1s ease;
+}
+
+.spin-button:active {
+    transform: scale(0.98);
+}
+
+.btn-text {
+    font-size: 17px;
+    font-weight: 800;
+}
+
+/* --- KAD KEPUTUSAN POP-UP --- */
+.result-card {
+    background: var(--bg-card);
+    border-radius: 18px;
+    padding: 18px;
+    width: 100%;
+    border: 2px solid #FFEDD5;
+    box-shadow: 0 10px 25px rgba(255, 90, 54, 0.1);
+    text-align: center;
+    margin-top: 10px;
+    animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+body.dark-mode .result-card {
+    border-color: #EA580C;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.result-card.hidden {
+    display: none !important;
+}
+
+@keyframes popUp {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.result-badge {
+    font-size: 11px;
+    font-weight: 800;
+    color: #EA580C;
+    letter-spacing: 0.5px;
+}
+
+.craving-highlight {
+    font-size: 18px;
+    font-weight: 800;
+    color: #FF5A36;
+    margin: 4px 0 10px;
+}
+
+.result-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.result-tags {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+}
+
+.tag-cat { background: #FEF3C7; color: #92400E; }
+.tag-budget { background: #DCFCE7; color: #166534; }
+
+body.dark-mode .tag-cat { background: #78350F; color: #FDE68A; }
+body.dark-mode .tag-budget { background: #064E3B; color: #A7F3D0; }
+
+.result-address {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+}
+
+.btn-action {
+    display: inline-block;
+    background: #1F2937;
+    color: #FFF;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 11px 20px;
+    border-radius: 12px;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+}
+
+body.dark-mode .btn-action {
+    background: #3F3F46;
+}
+
+.btn-link-report {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    display: inline-block;
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.btn-link-report:hover {
+    color: #DC2626;
+}
+
+/* --- 5. MOD SENARAI KEDAI --- */
+.restaurant-cards-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.restaurant-item {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.restaurant-item:active {
+    transform: scale(0.98);
+}
+
+.restaurant-item-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.restaurant-item-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* --- 6. FOOTER: BUTANG SEBELAH-MENYEBELAH --- */
+.app-footer {
+    margin-top: auto;
+    padding: 18px 0 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn-suggest {
+    width: 100%;
+    padding: 11px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg-card);
+    border: 2px dashed var(--border-color);
+    color: var(--text-muted);
+}
+
+.btn-suggest:hover {
+    border-color: #FF5A36;
+    color: #FF5A36;
+}
+
+.footer-actions-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+}
+
+.btn-footer-pill {
+    padding: 11px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn-footer-pill:active {
+    transform: scale(0.97);
+}
+
+.btn-tip {
+    background: #FEF3C7;
+    border: 1px solid #FCD34D;
+    color: #92400E;
+}
+
+body.dark-mode .btn-tip {
+    background: #78350F;
+    border-color: #B45309;
+    color: #FDE68A;
+}
+
+.btn-contact {
+    background: #ECFDF5;
+    border: 1px solid #A7F3D0;
+    color: #065F46;
+}
+
+body.dark-mode .btn-contact {
+    background: #064E3B;
+    border-color: #059669;
+    color: #A7F3D0;
+}
+
+/* --- 7. MODAL UMUM --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--modal-overlay);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 100;
+}
+
+.modal-overlay.hidden {
+    display: none !important;
+}
+
+.modal-card {
+    background: var(--bg-card);
+    width: 100%;
+    max-width: 430px;
+    border-radius: 24px 24px 0 0;
+    padding: 20px 24px 30px;
+    animation: slideUp 0.3s ease-out;
+    border-top: 1px solid var(--border-color);
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.modal-header h3 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.btn-close-modal {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 4px;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-main);
+    border-radius: 10px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+}
+
+.btn-submit-suggest {
+    width: 100%;
+    background: #FF5A36;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* --- KAD TERIMA KASIH COMEL --- */
+.success-card-view {
+    text-align: center;
+    padding: 20px 10px;
+}
+
+.success-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.success-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.success-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.success-card-view.hidden {
+    display: none !important;
+}
+
+/* --- KAD PROFIL KEDAI --- */
+.profile-card {
+    text-align: left;
+}
+
+.profile-badge {
+    font-size: 11px;
+    font-weight: 800;
+    color: #FF5A36;
+    letter-spacing: 0.5px;
+}
+
+.profile-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.profile-info-box {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 16px;
+}
+
+.info-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.info-value {
+    font-size: 13px;
+    color: var(--text-main);
+    line-height: 1.4;
+    font-weight: 600;
+}
+
+/* --- MOD MENGIDAM (MAK BUYUNG) --- */
+.taste-chip {
+    background: var(--bg-card);
+    border: 1px solid #FECDD3;
+    color: #9F1239;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+body.dark-mode .taste-chip {
+    background: #27272A;
+    border-color: #881337;
+    color: #FDA4AF;
+}
+
+.taste-chip.active {
+    background: #E11D48 !important;
+    color: #FFF !important;
+    border-color: #E11D48 !important;
+    box-shadow: 0 3px 10px rgba(225, 29, 72, 0.35);
+    transform: scale(1.02);
+}
+
+/* Butang Buy Gaya Google Play */
+.btn-play-buy {
+    background: #0284C7;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-play-buy:active {
+    transform: scale(0.96);
+}
+
+/* Kunci Kelas .hidden */
+.hidden {
+    display: none !important;
+}
+
+/* --- BUANG SEMUA PALANG SLIDER / SCROLLBAR (BIAR LICIN 100%) --- */
+
+/* Sembunyikan scrollbar untuk semua pelayar (Chrome, Safari, Firefox, Edge) */
+.chips-scroll,
+.area-chips-container,
+.restaurant-cards-container,
+#restaurants-list {
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE & Edge */
+    overflow-x: auto;
+}
+
+.chips-scroll::-webkit-scrollbar,
+.area-chips-container::-webkit-scrollbar,
+.restaurant-cards-container::-webkit-scrollbar,
+#restaurants-list::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari, Opera */
+    width: 0 !important;
+    height: 0 !important;
+}
+
+/* Pastikan bekas senarai kedai tidak tersepit dalam kotak max-height */
+.restaurant-cards-container {
+    max-height: none !important;
+    overflow-y: visible !important;
+}
