@@ -927,36 +927,53 @@ spinBtn.addEventListener("click", spinWheel);
 fetchRestaurants();
 
 // --- 4. MUAT TURUN DATA DARI FASTAPI (KALIS BEKU & AUTO-RETRY) ---
+// --- 2. MUAT TURUN DATA (KALIS BEKU, KALIS 404 & SENTIASA LUKIS RODA!) ---
 async function fetchRestaurants() {
-    // 1. Lukis roda serta-merta supaya skrin tidak kosong putih!
+    // 🚀 LUKIS RODA SERTA-MERTA! (Supaya roda 8-warna terus menyala tanpa tunggu data!)
     drawWheel();
 
-    try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error("Pelayan sedang memanaskan kuali...");
-        
-        const json = await response.json();
-        allRestaurants = json.data || [];
+    // Senarai laluan pintar untuk mencari fail data
+    const possibleUrls = [
+        "restaurants.json",
+        "./restaurants.json",
+        "/makan-apa/restaurants.json",
+        "/restaurants.json"
+    ];
 
-        // Buang sebarang pendua nama teras
-        const uniqueMap = new Map();
-        allRestaurants.forEach(r => {
-            const clean = r.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-            if (!uniqueMap.has(clean)) {
-                uniqueMap.set(clean, r);
+    let loaded = false;
+
+    for (const url of possibleUrls) {
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                const json = await response.json();
+                allRestaurants = json.data || [];
+
+                // Bersihkan sebarang pendua nama teras
+                const uniqueMap = new Map();
+                allRestaurants.forEach(r => {
+                    const clean = r.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    if (!uniqueMap.has(clean)) {
+                        uniqueMap.set(clean, r);
+                    }
+                });
+                allRestaurants = Array.from(uniqueMap.values());
+
+                console.log(`✅ Berjaya memuatkan ${allRestaurants.length} kedai dari: ${url}`);
+                applyFilters();
+                drawWheel();
+                loaded = true;
+                break;
             }
-        });
-        allRestaurants = Array.from(uniqueMap.values());
-
-        // Susun & kemas kini senarai kedai
-        applyFilters();
-        drawWheel();
-    } catch (error) {
-        console.warn("Status Pelayan:", error.message);
-        if (wheelFilterStatus) {
-            wheelFilterStatus.innerText = "⏳ Sedang memanaskan pelayan... Sila tunggu sebentar!";
+        } catch (err) {
+            // Cuba laluan seterusnya jika gagal
         }
-        // Cuba hubungi semula secara automatik selepas 4 saat jika pelayan baru bangun tidur
-        setTimeout(fetchRestaurants, 4000);
+    }
+
+    if (!loaded) {
+        console.warn("⚠️ Amaran: Fail restaurants.json tidak ditemui dalam semua laluan.");
+        if (wheelFilterStatus) {
+            wheelFilterStatus.innerText = "⚠️ Pangkalan data sedang diselaraskan...";
+        }
     }
 }
