@@ -868,9 +868,79 @@ window.pilihTierDerma = function(tierName, amount) {
     }
 };
 
-// --- 9. MODAL SOKONGAN & PENGHANTARAN BORANG KE GOOGLE SHEETS ---
+// --- FUNGSI LAPORKAN ISU KEDAI ---
+function triggerReportModal() {
+    if (!currentSelectedShop) return;
+    
+    // 1. Tutup modal profil kedai dahulu supaya modal laporan nampak di depan!
+    if (profileModal) {
+        profileModal.classList.add("hidden");
+    }
+    
+    // 2. Masukkan nama kedai dan buka modal laporan
+    if (reportShopName) {
+        reportShopName.innerText = `Kedai: ${currentSelectedShop.name}`;
+    }
+    if (reportModal) {
+        reportModal.classList.remove("hidden");
+    }
+}
 
-// A. Borang Cadangan Kedai
+if (btnReportResult) btnReportResult.addEventListener("click", triggerReportModal);
+if (btnReportProfile) btnReportProfile.addEventListener("click", triggerReportModal);
+
+// Tutup Modal Laporan
+if (closeReportBtn) closeReportBtn.addEventListener("click", () => reportModal.classList.add("hidden"));
+if (reportModal) {
+    reportModal.addEventListener("click", (e) => {
+        if (e.target === reportModal) reportModal.classList.add("hidden");
+    });
+}
+
+// Buka Modal Cadangan
+if (openSuggestBtn) {
+    openSuggestBtn.addEventListener("click", () => {
+        if (suggestFormView) suggestFormView.classList.remove("hidden");
+        if (suggestSuccessView) suggestSuccessView.classList.add("hidden");
+        if (suggestModal) suggestModal.classList.remove("hidden");
+    });
+}
+if (closeSuggestBtn) closeSuggestBtn.addEventListener("click", () => suggestModal.classList.add("hidden"));
+if (suggestModal) {
+    suggestModal.addEventListener("click", (e) => {
+        if (e.target === suggestModal) suggestModal.classList.add("hidden");
+    });
+}
+
+// Buka Modal Derma (Tip Kopi)
+if (openTipBtn) {
+    openTipBtn.addEventListener("click", () => {
+        if (tipModal) tipModal.classList.remove("hidden");
+    });
+}
+if (closeTipBtn) closeTipBtn.addEventListener("click", () => tipModal.classList.add("hidden"));
+if (tipModal) {
+    tipModal.addEventListener("click", (e) => {
+        if (e.target === tipModal) tipModal.classList.add("hidden");
+    });
+}
+
+// Buka Modal Hubungi Admin
+if (openContactBtn) {
+    openContactBtn.addEventListener("click", () => {
+        if (contactModal) contactModal.classList.remove("hidden");
+    });
+}
+if (closeContactBtn) closeContactBtn.addEventListener("click", () => contactModal.classList.add("hidden"));
+if (contactModal) {
+    contactModal.addEventListener("click", (e) => {
+        if (e.target === contactModal) contactModal.classList.add("hidden");
+    });
+}
+
+// --- PENGHANTARAN BORANG KE GOOGLE SHEETS ---
+
+// 1. Hantar Borang Cadangan Kedai
 if (suggestForm) {
     suggestForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -896,9 +966,11 @@ if (suggestForm) {
                 body: JSON.stringify(payload)
             });
 
-            successMessage.innerText = `Cadangan kedai '${payload.shop_name}' dah selamat sampai ke Google Sheets kami! Nanti kami semak kelayakan sebelum masukkan ke roda ya. ❤️`;
-            suggestFormView.classList.add("hidden");
-            suggestSuccessView.classList.remove("hidden");
+            if (successMessage) {
+                successMessage.innerText = `Cadangan kedai '${payload.shop_name}' dah selamat sampai ke Google Sheets kami! Nanti kami semak kelayakan sebelum masukkan ke roda ya. ❤️`;
+            }
+            if (suggestFormView) suggestFormView.classList.add("hidden");
+            if (suggestSuccessView) suggestSuccessView.classList.remove("hidden");
             suggestForm.reset();
         } catch (err) {
             alert("Ralat menghantar cadangan. Sila cuba sebentar lagi.");
@@ -909,7 +981,15 @@ if (suggestForm) {
     });
 }
 
-// B. Borang Laporan Isu Kedai
+if (btnContinueSpin) btnContinueSpin.addEventListener("click", () => suggestModal.classList.add("hidden"));
+if (btnSuggestAnother) {
+    btnSuggestAnother.addEventListener("click", () => {
+        if (suggestSuccessView) suggestSuccessView.classList.add("hidden");
+        if (suggestFormView) suggestFormView.classList.remove("hidden");
+    });
+}
+
+// 2. Hantar Borang Laporan Isu Kedai
 if (reportForm) {
     reportForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -935,7 +1015,7 @@ if (reportForm) {
 
             alert(`Terima kasih! Laporan mengenai '${payload.shop_name}' berjaya direkodkan terus ke sistem semakan admin. 🛡️`);
             reportForm.reset();
-            reportModal.classList.add("hidden");
+            if (reportModal) reportModal.classList.add("hidden");
         } catch (err) {
             alert("Ralat menghantar laporan. Sila periksa sambungan internet.");
         } finally {
@@ -945,7 +1025,7 @@ if (reportForm) {
     });
 }
 
-// C. Borang Hubungi Admin
+// 3. Hantar Borang Hubungi Admin
 if (contactForm) {
     contactForm.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -971,7 +1051,7 @@ if (contactForm) {
 
             alert(`Terima kasih ${payload.sender_name}! Mesej anda telah masuk ke pangkalan data admin. Kami akan hubungi anda semula! ✉️❤️`);
             contactForm.reset();
-            contactModal.classList.add("hidden");
+            if (contactModal) contactModal.classList.add("hidden");
         } catch (err) {
             alert("Ralat menghantar mesej.");
         } finally {
