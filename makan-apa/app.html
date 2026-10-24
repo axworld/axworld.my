@@ -12,6 +12,7 @@
     <!-- Pautan PWA Rasmi -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#FF5A36">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="logo.png">
@@ -21,7 +22,6 @@
     <div class="app-container">
         
         <!-- 1. Header: Logo 3D & Suis Mod Gelap -->
-        <!-- 1. Header Bersih: Logo 3D & Suis Mod Malam Sahaja (GPS Dibuang!) -->
         <header class="app-header">
             <div class="brand">
                 <img src="logo.png" alt="Makan Apa?" class="brand-logo" onerror="this.style.display='none'; document.getElementById('fallback-title').style.display='block';">
@@ -43,15 +43,13 @@
         <!-- 3. PENAPIS KAWASAN UTAMA (TERUS DI ATAS SKRIN!) -->
         <section class="filters-section" style="margin-bottom:10px;">
             <div class="chips-scroll">
-                <div class="chips-scroll" style="width: max-content; display: flex; gap: 6px;">
-                    <button class="chip active area-chip" onclick="setAreaFilter('all', this)">Semua Kawasan</button>
-                    <button class="chip area-chip" onclick="setAreaFilter('kebun_tpg', this)">📍 Jln Kebun / TPG</button>
-                    <button class="chip area-chip" onclick="setAreaFilter('shah_alam', this)">📍 Shah Alam</button>
-                    <button class="chip area-chip" onclick="setAreaFilter('subang', this)">📍 Subang</button>
-                    <button class="chip area-chip" onclick="setAreaFilter('ttdi_damansara', this)">📍 TTDI / Damansara</button>
-                    <button class="chip area-chip" onclick="setAreaFilter('bangi_kajang', this)">📍 Bangi / Kajang</button>
-                    <button class="chip area-chip" onclick="setAreaFilter('kl', this)">📍 KL / Kg Baru</button>
-                </div>
+                <button class="chip active area-chip" onclick="setAreaFilter('all', this)">Semua Kawasan</button>
+                <button class="chip area-chip" onclick="setAreaFilter('kebun_tpg', this)">📍 Jln Kebun / TPG</button>
+                <button class="chip area-chip" onclick="setAreaFilter('shah_alam', this)">📍 Shah Alam</button>
+                <button class="chip area-chip" onclick="setAreaFilter('subang', this)">📍 Subang</button>
+                <button class="chip area-chip" onclick="setAreaFilter('ttdi_damansara', this)">📍 TTDI / Damansara</button>
+                <button class="chip area-chip" onclick="setAreaFilter('bangi_kajang', this)">📍 Bangi / Kajang</button>
+                <button class="chip area-chip" onclick="setAreaFilter('kl', this)">📍 KL / Kg Baru</button>
             </div>
         </section>
 
@@ -134,20 +132,19 @@
                 <div id="result-tastes-box" style="margin-bottom:8px; display:flex; justify-content:center; gap:4px; flex-wrap:wrap;"></div>
 
                 <p id="result-hours" style="font-size:12px; font-weight:700; color:#059669; margin-bottom:4px;">⏰ Buka: 10:00 AM - 10:00 PM</p>
-                <p id="result-address" class="result-address" style="margin-bottom:10px;">Alamat Kedai</p>
+                <p id="result-address" class="result-address" style="margin-bottom:12px;">Alamat Kedai</p>
                 
-                <!-- DUA BUTANG NAVIGASI: WAZE & GOOGLE MAPS -->
+                <!-- SATU BUTANG NAVIGASI TUNGGAL (GOOGLE MAPS SAHAJA!) -->
                 <div class="result-actions" style="display:flex; flex-direction:column; gap:8px;">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                        <a id="result-waze-btn" href="#" target="_blank" class="btn-action" style="background:#00D8F6; color:#000; font-weight:800;">🚗 Buka Waze</a>
-                        <a id="result-gmaps-btn" href="#" target="_blank" class="btn-action" style="background:#34A853; color:#FFF; font-weight:800;">🗺️ Google Maps</a>
-                    </div>
-                    <button id="btn-reroll-result" type="button" class="btn-suggest" style="margin:0; font-size:13px; padding:10px; border-color:#F59E0B; color:#B45309; background:#FFFBEB;">
+                    <a id="result-gmaps-btn" href="#" target="_blank" class="btn-action" style="background:#16A34A; color:#FFF; font-weight:800; padding:13px 20px; font-size:15px; border-radius:14px; box-shadow:0 4px 12px rgba(22, 163, 74, 0.3);">
+                        🗺️ Pandu Terus ke Kedai (Google Maps)
+                    </a>
+                    <button id="btn-reroll-result" type="button" class="btn-suggest" style="margin:0; font-size:13px; padding:11px; border-color:#F59E0B; color:#B45309; background:#FFFBEB;">
                         🔄 Tak Berkenan Kedai Ni? Putar Kedai Lain!
                     </button>
                 </div>
                 
-                <!-- Amaran Penafian Mesra (Micro-Disclaimer) -->
+                <!-- Amaran Penafian Mesra -->
                 <p style="font-size:10px; color:var(--text-muted); margin-top:8px; line-height:1.4;">
                     ⚠️ <i>Nota: Waktu operasi tertakluk kepada cuti semasa peniaga. Deria rasa mengikut tekak masing-masing ya!</i>
                 </p>
@@ -171,7 +168,7 @@
             <div id="restaurants-list" class="restaurant-cards-container" style="width: 100%;"></div>
         </main>
 
-        <!-- 9. Footer Padat -->
+        <!-- 9. Footer Padat: Butang Sebelah-Menyebelah -->
         <footer class="app-footer">
             <button id="open-suggest-btn" class="btn-suggest">
                 ➕ Tahu Port Lagi Padu? Cadang Kat Sini!
@@ -312,7 +309,7 @@
         </div>
     </div>
 
-    <!-- MODAL 3: KAD PROFIL KEDAI 2.0 -->
+    <!-- MODAL 3: KAD PROFIL KEDAI 2.0 (GOOGLE MAPS TUNGGAL) -->
     <div id="profile-modal" class="modal-overlay hidden">
         <div class="modal-card profile-card">
             <div class="modal-header">
@@ -357,9 +354,11 @@
                     <p id="profile-address" class="info-value">Alamat Penuh</p>
                 </div>
 
-                <div class="profile-actions" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                    <a id="profile-waze-btn" href="#" target="_blank" class="btn-action" style="background:#00D8F6; color:#000; font-weight:800;">🚗 Buka Waze</a>
-                    <a id="profile-gmaps-btn" href="#" target="_blank" class="btn-action" style="background:#34A853; color:#FFF; font-weight:800;">🗺️ Google Maps</a>
+                <!-- SATU BUTANG NAVIGASI GOOGLE MAPS SAHAJA -->
+                <div class="profile-actions">
+                    <a id="profile-gmaps-btn" href="#" target="_blank" class="btn-action" style="background:#16A34A; color:#FFF; font-weight:800; padding:13px 20px; font-size:14px; border-radius:14px; box-shadow:0 4px 12px rgba(22, 163, 74, 0.3);">
+                        🗺️ Pandu Terus ke Kedai (Google Maps)
+                    </a>
                 </div>
 
                 <p style="font-size:10px; color:var(--text-muted); margin-top:8px; line-height:1.4; text-align:center;">
@@ -430,7 +429,7 @@
     </div>
 
     <!-- Panggil versi muktamad app.js -->
-    <script src="app.js?v=clean_zones_v1"></script>
+    <script src="app.js?v=gmaps_only_v1"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
