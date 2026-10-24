@@ -143,38 +143,71 @@ initTheme();
 async function fetchRestaurants() {
     drawWheel();
 
+    const CACHE_KEY = "makan_apa_shops_cache";
+    const CACHE_TIME_KEY = "makan_apa_cache_time";
+    const CACHE_DURATION = 30 * 60 * 1000; // 30 Minit (dalam milisaat)
+
+    const cachedData = localStorage.getItem(CACHE_KEY);
+    const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+    const isCacheValid = cachedData && cachedTime && (Date.now() - parseInt(cachedTime) < CACHE_DURATION);
+
+    // 1. Guna data cache jika masih sah (Buka sekelip mata!)
+    if (isCacheValid) {
+        try {
+            allRestaurants = JSON.parse(cachedData);
+            console.log(`⚡ Memuatkan ${allRestaurants.length} kedai dari cache pantas.`);
+            applyFilters();
+            drawWheel();
+            return;
+        } catch (e) {
+            localStorage.removeItem(CACHE_KEY);
+        }
+    }
+
+    // 2. Jika cache tiada atau sudah tamat, tarik data terkini dari Google Sheets
     try {
         const response = await fetch(API_URL);
         if (response.ok) {
             const json = await response.json();
-            
-            if (Array.isArray(json)) {
-                allRestaurants = json;
-            } else if (json.data && Array.isArray(json.data)) {
-                allRestaurants = json.data;
-            } else if (json.restaurants && Array.isArray(json.restaurants)) {
-                allRestaurants = json.restaurants;
-            } else {
-                allRestaurants = [];
+            const rawShops = json.data || (Array.isArray(json) ? json : []);
+
+            if (rawShops.length > 0) {
+                // Tapis duplikasi
+                const uniqueMap = new Map();
+                rawShops.forEach(r => {
+                    const clean = (r.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                    if (clean && !uniqueMap.has(clean)) {
+                        uniqueMap.set(clean, r);
+                    }
+                });
+                allRestaurants = Array.from(uniqueMap.values());
+
+                // Simpan ke cache untuk pelawat seterusnya
+                localStorage.setItem(CACHE_KEY, JSON.stringify(allRestaurants));
+                localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+
+                console.log(`✅ Berjaya memuatkan ${allRestaurants.length} kedai dari Google Sheets Live.`);
+                applyFilters();
+                drawWheel();
+                return;
             }
-
-            // Buang kedai duplikasi jika ada
-            const uniqueMap = new Map();
-            allRestaurants.forEach(r => {
-                const clean = (r.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-                if (clean && !uniqueMap.has(clean)) {
-                    uniqueMap.set(clean, r);
-                }
-            });
-            allRestaurants = Array.from(uniqueMap.values());
-
-            console.log(`✅ Berjaya memuatkan ${allRestaurants.length} kedai dari Google Sheets!`);
-            applyFilters();
-            drawWheel();
-            return;
         }
     } catch (err) {
-        console.error("⚠️ Ralat memuat turun data dari Google Sheets:", err);
+        console.warn("⚠️ Google Sheets lambat / terhad, menggunakan sandaran restaurants.json...", err);
+    }
+
+    // 3. Sandaran kecemasan: Baca restaurants.json jika Sheets tidak dapat dihubungi
+    try {
+        const fallbackRes = await fetch("restaurants.json");
+        if (fallbackRes.ok) {
+            const fallbackJson = await fallbackRes.json();
+            allRestaurants = fallbackJson.data || fallbackJson;
+            applyFilters();
+            drawWheel();
+            console.log("🛡️ Sandaran restaurants.json berjaya dimuatkan.");
+        }
+    } catch (fallbackErr) {
+        console.error("Kesesakan pangkalan data:", fallbackErr);
     }
 }
 
@@ -700,6 +733,17 @@ function openStoreProfile(shop) {
         profileSignatureDish.innerText = getSignatureDish(shop);
     }
 
+    // Paparan Lencana Halal (Diletakkan di dalam fungsi supaya pemboleh ubah 'shop' sah)
+    const profileHalalBadge = document.getElementById("profile-halal-badge");
+    if (profileHalalBadge) {
+        if (shop.is_halal_verified == 1 || shop.is_halal_verified === "1") {
+            profileHalalBadge.style.display = "inline-block";
+            profileHalalBadge.innerText = "🟢 Halal / Muslim-Friendly";
+        } else {
+            profileHalalBadge.style.display = "none";
+        }
+    }
+
     const lat = shop.latitude;
     const lon = shop.longitude;
     const encodedDest = encodeURIComponent(shop.name + " " + (shop.address || ""));
@@ -716,6 +760,7 @@ function openStoreProfile(shop) {
 if (closeProfileBtn) {
     closeProfileBtn.addEventListener("click", () => profileModal.classList.add("hidden"));
 }
+
 if (profileModal) {
     profileModal.addEventListener("click", (e) => {
         if (e.target === profileModal) profileModal.classList.add("hidden");
@@ -823,91 +868,116 @@ window.pilihTierDerma = function(tierName, amount) {
     }
 };
 
-// --- 9. MODAL SOKONGAN & BORANG ---
-if (openSuggestBtn) {
-    openSuggestBtn.addEventListener("click", () => {
-        suggestFormView.classList.remove("hidden");
-        suggestSuccessView.classList.add("hidden");
-        suggestModal.classList.remove("hidden");
-    });
-}
+// --- 9. MODAL SOKONGAN & PENGHANTARAN BORANG KE GOOGLE SHEETS ---
 
-if (closeSuggestBtn) closeSuggestBtn.addEventListener("click", () => suggestModal.classList.add("hidden"));
-if (suggestModal) {
-    suggestModal.addEventListener("click", (e) => {
-        if (e.target === suggestModal) suggestModal.classList.add("hidden");
-    });
-}
-
+// A. Borang Cadangan Kedai
 if (suggestForm) {
-    suggestForm.addEventListener("submit", (e) => {
+    suggestForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const name = document.getElementById("suggest-name").value;
-        successMessage.innerText = `Cadangan kedai '${name}' dah selamat sampai ke meja kami! Nanti kami semak kelayakan sebelum masukkan ke roda ya. ❤️`;
-        suggestFormView.classList.add("hidden");
-        suggestSuccessView.classList.remove("hidden");
-        suggestForm.reset();
+        const submitBtn = suggestForm.querySelector("button[type='submit']");
+        const originalText = submitBtn.innerText;
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Menghantar...";
+
+        const payload = {
+            form_type: "suggest",
+            shop_name: document.getElementById("suggest-name").value,
+            area: document.getElementById("suggest-area").value,
+            carb_type: document.getElementById("suggest-carb").value,
+            budget: document.getElementById("suggest-budget").value,
+            link: document.getElementById("suggest-link").value
+        };
+
+        try {
+            await fetch(API_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            successMessage.innerText = `Cadangan kedai '${payload.shop_name}' dah selamat sampai ke Google Sheets kami! Nanti kami semak kelayakan sebelum masukkan ke roda ya. ❤️`;
+            suggestFormView.classList.add("hidden");
+            suggestSuccessView.classList.remove("hidden");
+            suggestForm.reset();
+        } catch (err) {
+            alert("Ralat menghantar cadangan. Sila cuba sebentar lagi.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+        }
     });
 }
 
-if (btnContinueSpin) btnContinueSpin.addEventListener("click", () => suggestModal.classList.add("hidden"));
-if (btnSuggestAnother) {
-    btnSuggestAnother.addEventListener("click", () => {
-        suggestSuccessView.classList.add("hidden");
-        suggestFormView.classList.remove("hidden");
-    });
-}
-
-if (openTipBtn) openTipBtn.addEventListener("click", () => tipModal.classList.remove("hidden"));
-if (closeTipBtn) closeTipBtn.addEventListener("click", () => tipModal.classList.add("hidden"));
-if (tipModal) {
-    tipModal.addEventListener("click", (e) => {
-        if (e.target === tipModal) tipModal.classList.add("hidden");
-    });
-}
-
-function triggerReportModal() {
-    if (!currentSelectedShop) return;
-    reportShopName.innerText = `Kedai: ${currentSelectedShop.name}`;
-    reportModal.classList.remove("hidden");
-}
-
-if (btnReportResult) btnReportResult.addEventListener("click", triggerReportModal);
-if (btnReportProfile) btnReportProfile.addEventListener("click", triggerReportModal);
-
-if (closeReportBtn) closeReportBtn.addEventListener("click", () => reportModal.classList.add("hidden"));
-if (reportModal) {
-    reportModal.addEventListener("click", (e) => {
-        if (e.target === reportModal) reportModal.classList.add("hidden");
-    });
-}
-
+// B. Borang Laporan Isu Kedai
 if (reportForm) {
-    reportForm.addEventListener("submit", (e) => {
+    reportForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        alert(`Terima kasih darling! Laporan mengenai '${currentSelectedShop ? currentSelectedShop.name : 'Kedai'}' berjaya direkodkan. Komuniti amat menghargai bantuan anda! 🛡️`);
-        reportForm.reset();
-        reportModal.classList.add("hidden");
+        const submitBtn = reportForm.querySelector("button[type='submit']");
+        const originalText = submitBtn.innerText;
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Merekod Laporan...";
+
+        const payload = {
+            form_type: "report",
+            shop_name: currentSelectedShop ? currentSelectedShop.name : "Tidak Diketahui",
+            issue_type: document.getElementById("report-issue-type").value,
+            notes: document.getElementById("report-notes").value
+        };
+
+        try {
+            await fetch(API_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            alert(`Terima kasih! Laporan mengenai '${payload.shop_name}' berjaya direkodkan terus ke sistem semakan admin. 🛡️`);
+            reportForm.reset();
+            reportModal.classList.add("hidden");
+        } catch (err) {
+            alert("Ralat menghantar laporan. Sila periksa sambungan internet.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+        }
     });
 }
 
-if (openContactBtn) {
-    openContactBtn.addEventListener("click", () => contactModal.classList.remove("hidden"));
-}
-if (closeContactBtn) closeContactBtn.addEventListener("click", () => contactModal.classList.add("hidden"));
-if (contactModal) {
-    contactModal.addEventListener("click", (e) => {
-        if (e.target === contactModal) contactModal.classList.add("hidden");
-    });
-}
-
+// C. Borang Hubungi Admin
 if (contactForm) {
-    contactForm.addEventListener("submit", (e) => {
+    contactForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const name = document.getElementById("contact-name").value;
-        alert(`Terima kasih ${name}! Mesej anda dah selamat sampai ke peti masuk admin. Kami akan balas secepat mungkin! ✉️❤️`);
-        contactForm.reset();
-        contactModal.classList.add("hidden");
+        const submitBtn = contactForm.querySelector("button[type='submit']");
+        const originalText = submitBtn.innerText;
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Menghantar Mesej...";
+
+        const payload = {
+            form_type: "contact",
+            sender_name: document.getElementById("contact-name").value,
+            contact_info: document.getElementById("contact-reach").value,
+            message: document.getElementById("contact-message").value
+        };
+
+        try {
+            await fetch(API_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            alert(`Terima kasih ${payload.sender_name}! Mesej anda telah masuk ke pangkalan data admin. Kami akan hubungi anda semula! ✉️❤️`);
+            contactForm.reset();
+            contactModal.classList.add("hidden");
+        } catch (err) {
+            alert("Ralat menghantar mesej.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+        }
     });
 }
 
