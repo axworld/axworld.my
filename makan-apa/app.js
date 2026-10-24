@@ -4,8 +4,8 @@
  * Domain: axworld.my/makan-apa/
  */
 
-// --- KONFIGURASI 100% STATIK (KALIS PELAYAN TIDUR) ---
-const API_URL = "restaurants.json";
+// --- KONFIGURASI LIVE SYNC (GOOGLE SHEETS BACKEND) ---
+const API_URL = "https://script.google.com/macros/s/AKfycbzBEzpI3MMWW9vZhsMG8-ikFZLqzqJuFZW14QG34D-Y3iI_lI8RP6unVOjBqbLweN0L/exec";
 
 // 8 Kategori Makanan Ikonik (Simetri Sempurna 45° - Reka Bentuk Asal)
 const FOOD_CATEGORIES = [
@@ -143,49 +143,39 @@ initTheme();
 async function fetchRestaurants() {
     drawWheel();
 
-    const possibleUrls = [
-        "restaurants.json",
-        "./restaurants.json",
-        "/makan-apa/restaurants.json"
-    ];
-
-    for (const url of possibleUrls) {
-        try {
-            const response = await fetch(url);
-            if (response.ok) {
-                const json = await response.json();
-                
-                // Menampung kedua-dua format: json.data atau array terus
-                if (Array.isArray(json)) {
-                    allRestaurants = json;
-                } else if (json.data && Array.isArray(json.data)) {
-                    allRestaurants = json.data;
-                } else if (json.restaurants && Array.isArray(json.restaurants)) {
-                    allRestaurants = json.restaurants;
-                } else {
-                    allRestaurants = [];
-                }
-
-                // Buang kedai duplikasi jika ada
-                const uniqueMap = new Map();
-                allRestaurants.forEach(r => {
-                    const clean = (r.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-                    if (clean && !uniqueMap.has(clean)) {
-                        uniqueMap.set(clean, r);
-                    }
-                });
-                allRestaurants = Array.from(uniqueMap.values());
-
-                console.log(`✅ Berjaya memuatkan ${allRestaurants.length} kedai dari: ${url}`);
-                applyFilters();
-                drawWheel();
-                return;
+    try {
+        const response = await fetch(API_URL);
+        if (response.ok) {
+            const json = await response.json();
+            
+            if (Array.isArray(json)) {
+                allRestaurants = json;
+            } else if (json.data && Array.isArray(json.data)) {
+                allRestaurants = json.data;
+            } else if (json.restaurants && Array.isArray(json.restaurants)) {
+                allRestaurants = json.restaurants;
+            } else {
+                allRestaurants = [];
             }
-        } catch (err) {
-            // Cuba url seterusnya
+
+            // Buang kedai duplikasi jika ada
+            const uniqueMap = new Map();
+            allRestaurants.forEach(r => {
+                const clean = (r.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (clean && !uniqueMap.has(clean)) {
+                    uniqueMap.set(clean, r);
+                }
+            });
+            allRestaurants = Array.from(uniqueMap.values());
+
+            console.log(`✅ Berjaya memuatkan ${allRestaurants.length} kedai dari Google Sheets!`);
+            applyFilters();
+            drawWheel();
+            return;
         }
+    } catch (err) {
+        console.error("⚠️ Ralat memuat turun data dari Google Sheets:", err);
     }
-    console.warn("⚠️ Fail restaurants.json tidak ditemui.");
 }
 
 // --- 3. LUKIS RODA 8 HIRISAN ASAL (CANVAS SEPERTI REKAAN ASAL DARLING) ---
