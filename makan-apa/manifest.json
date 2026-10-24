@@ -1,8 +1,9 @@
 {
-  "name": "Makan Apa? - Penentu Selera Marhaen",
+  "name": "Makan Apa? - Jom Putar",
   "short_name": "Makan Apa?",
   "description": "Penentu kata muktamad selera makan anda dan pasangan dalam masa 3 saat!",
-  "start_url": "/?source=pwa",
+  "start_url": "/makan-apa/app.html?source=pwa",
+  "scope": "/makan-apa/",
   "display": "standalone",
   "background_color": "#09090B",
   "theme_color": "#FF5A36",
