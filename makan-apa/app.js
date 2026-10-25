@@ -1077,28 +1077,10 @@ window.salinNoAkaunTnG = function() {
     }
 };
 
-// 2. Salin Terus & Buka Aplikasi TnG Secara Pintar
-window.bukaAppTnGPintar = function() {
-    const el = document.getElementById("tng-acc-number");
-    const noAkaun = el ? el.innerText.trim() : "161979912543";
-    
-    // Auto-salin nombor ke papan keratan (clipboard)
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(noAkaun);
-    }
-
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    if (isAndroid) {
-        // Melancarkan aplikasi TnG menggunakan Android Intent rasmi
-        window.location.href = "intent://#Intent;scheme=tngewallet;package=my.com.tngdigital.ewallet;end";
-    } else if (isIOS) {
-        // Melancarkan aplikasi TnG di iOS
-        window.location.href = "tngewallet://";
-    } else {
-        // Jika dibuka dari desktop/laptop
-        alert(`Nombor akaun (${noAkaun}) telah disalin! Sila buka aplikasi Touch 'n Go di telefon anda.`);
+window.pilihTierDerma = function(tierName, amount) {
+    const label = document.getElementById("selected-tier-label");
+    if (label) {
+        label.innerText = `Pilihan: ${tierName} (${amount})`;
     }
 };
 

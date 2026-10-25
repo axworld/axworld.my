@@ -246,7 +246,7 @@
         </div>
     </div>
 
-    <!-- MODAL 2: TIP KOPI & DERMA (DENGAN PEMBUNGKUS LENGKAP) -->
+    <!-- MODAL 2: TIP KOPI & DERMA (VERSI QR MESRA PRIVASI) -->
     <div id="tip-modal" class="modal-overlay hidden">
         <div class="modal-card" style="max-width: 380px;">
             <div class="modal-header">
@@ -274,30 +274,29 @@
                 </button>
             </div>
 
-            <!-- Kad Maklumat Pembayaran Touch 'n Go / DuitNow -->
-            <div class="donation-card-box" style="padding: 14px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1);">
-                <p id="selected-tier-label" style="font-weight: 700; color: #38BDF8; font-size: 13px; margin-bottom: 10px;">
-                    Pilihan: Cup of Coffee (RM 5.00)
+            <!-- Kad Paparan DuitNow QR (Privasi Terlindung) -->
+            <div class="donation-card-box" style="padding: 16px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1);">
+                <p id="selected-tier-label" style="font-weight: 700; color: #38BDF8; font-size: 13px; margin-bottom: 12px;">
+                    Pilihan: Secawan Kopi (RM 5.00)
                 </p>
 
-                <div style="background: rgba(0, 92, 171, 0.15); border: 1px dashed #0284C7; padding: 10px; border-radius: 8px; margin-bottom: 12px;">
-                    <span style="font-size: 11px; color: #94A3B8; display: block;">No. Akaun Touch 'n Go eWallet:</span>
-                    <b id="tng-acc-number" style="font-size: 16px; color: #F8FAFC; letter-spacing: 1px;">161979912543</b>
+                <!-- Paparan Imej QR -->
+                <div style="display: inline-block; padding: 10px; background: #ffffff; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin-bottom: 12px;">
+                    <img src="qr.jpg" alt="DuitNow QR" style="width: 170px; height: 170px; display: block; object-fit: contain; margin: 0 auto;" onerror="this.style.display='none'; document.getElementById('qr-fallback-msg').style.display='block';">
+                    <div id="qr-fallback-msg" style="display:none; color:#DC2626; font-size:11px; font-weight:700; padding:10px;">
+                        ⚠️ Fail qr.jpg belum dijumpai dalam folder.
+                    </div>
                 </div>
 
-                <!-- Butang Tindakan Khas Mobile -->
-<div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-  <button type="button" onclick="salinNoAkaunTnG()" style="flex: 1; min-width: 120px; background: #334155; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 600; font-size: 12px; cursor: pointer;">
-    📋 Salin Nombor
-  </button>
-  
-  <button type="button" onclick="bukaAppTnGPintar()" style="flex: 1; min-width: 120px; background: #005CAB; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
-    💙 Buka App TnG
-  </button>
-</div>
+                <!-- Butang Tindakan Khas Pengguna Mobile -->
+                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                    <a href="qr.jpg" download="DuitNow_MakanApa.png" style="flex: 1; min-width: 130px; background: #0284C7; color: #fff; text-decoration: none; padding: 10px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                        📥 Simpan QR ke Galeri
+                    </a>
+                </div>
 
                 <p style="font-size: 11px; color: #94A3B8; margin-top: 10px; line-height: 1.4;">
-                    💡 <i>Salin nombor di atas, kemudian buka aplikasi TnG untuk buat pemindahan terus. Terima kasih banyak atas sokongan anda!</i>
+                    💡 <i>Tekan butang di atas untuk simpan kod QR, kemudian buka aplikasi perbankan atau TnG eWallet > tekan <b>Scan</b> > pilih <b>Scan from Gallery / Album</b>.</i>
                 </p>
             </div>
         </div>
