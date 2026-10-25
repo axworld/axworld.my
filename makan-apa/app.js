@@ -1061,6 +1061,16 @@ if (contactForm) {
     });
 }
 
+window.salinNoAkaunTnG = function() {
+    const el = document.getElementById("tng-acc-number");
+    const noAkaun = el ? el.innerText.trim() : "161979912543";
+    navigator.clipboard.writeText(noAkaun).then(() => {
+        alert("Nombor akaun Touch 'n Go (" + noAkaun + ") berjaya disalin! Sila buka app TnG untuk selesaikan pemindahan. ❤️");
+    }).catch(() => {
+        prompt("Sila salin nombor akaun ini secara manual:", noAkaun);
+    });
+};
+
 if (spinBtn) spinBtn.addEventListener("click", spinWheel);
 
 // Mulakan aplikasi
