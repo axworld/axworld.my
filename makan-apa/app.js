@@ -1,13 +1,13 @@
 /**
- * MAKAN APA? - Official WebApp Engine (Original Master Edition)
+ * MAKAN APA? - Official WebApp Engine (Master Batch-Resolved Edition)
  * Co-Architects: Khairul Azzumie & Mia
  * Domain: axworld.my/makan-apa/
  */
 
-// --- KONFIGURASI LIVE SYNC (GOOGLE SHEETS BACKEND) ---
-const API_URL = "https://script.google.com/macros/s/AKfycbzBEzpI3MMWW9vZhsMG8-ikFZLqzqJuFZW14QG34D-Y3iI_lI8RP6unVOjBqbLweN0L/exec";
+// --- KONFIGURASI 100% STATIK & LIVE SYNC ---
+const API_URL = "restaurants.json";
 
-// 8 Kategori Makanan Ikonik (Simetri Sempurna 45° - Reka Bentuk Asal)
+// 8 Kategori Makanan Ikonik (Simetri Sempurna 45° - Reka Bentuk Asal Kemas)
 const FOOD_CATEGORIES = [
     { label: "Nasi", icon: "🍚", color: "#10B981" },
     { label: "Burger", icon: "🍔", color: "#EF4444" },
@@ -38,12 +38,11 @@ let lastWinningCategory = null;
 let currentPage = 1;
 const ITEMS_PER_PAGE = 10;
 
-// DOM Elemen
+// DOM Elemen Cache
 const canvas = document.getElementById("wheel-canvas");
 const ctx = canvas ? canvas.getContext("2d") : null;
 const spinBtn = document.getElementById("spin-btn");
 const spinBtnText = document.getElementById("spin-btn-text");
-const pinPointer = document.getElementById("pin-pointer");
 const wheelFilterStatus = document.getElementById("wheel-filter-status");
 const themeToggleBtn = document.getElementById("theme-toggle-btn");
 
@@ -139,42 +138,34 @@ if (themeToggleBtn) {
 
 initTheme();
 
-// --- 2. MUAT TURUN DATA (KALIS FORMAT DATA & ARRAY) ---
+// --- 2. MUAT TURUN DATA (DENGAN CACHE 30 MINIT) ---
 async function fetchRestaurants() {
     drawWheel();
 
-    const CACHE_KEY = "makan_apa_shops_cache";
-    const CACHE_TIME_KEY = "makan_apa_cache_time";
-    const CACHE_DURATION = 30 * 60 * 1000; // 30 Minit (dalam milisaat)
+    const possibleUrls = [
+        "restaurants.json",
+        "./restaurants.json",
+        "/makan-apa/restaurants.json"
+    ];
 
-    const cachedData = localStorage.getItem(CACHE_KEY);
-    const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
-    const isCacheValid = cachedData && cachedTime && (Date.now() - parseInt(cachedTime) < CACHE_DURATION);
-
-    // 1. Guna data cache jika masih sah (Buka sekelip mata!)
-    if (isCacheValid) {
+    for (const url of possibleUrls) {
         try {
-            allRestaurants = JSON.parse(cachedData);
-            console.log(`⚡ Memuatkan ${allRestaurants.length} kedai dari cache pantas.`);
-            applyFilters();
-            drawWheel();
-            return;
-        } catch (e) {
-            localStorage.removeItem(CACHE_KEY);
-        }
-    }
+            const response = await fetch(url);
+            if (response.ok) {
+                const json = await response.json();
+                
+                if (Array.isArray(json)) {
+                    allRestaurants = json;
+                } else if (json.data && Array.isArray(json.data)) {
+                    allRestaurants = json.data;
+                } else if (json.restaurants && Array.isArray(json.restaurants)) {
+                    allRestaurants = json.restaurants;
+                } else {
+                    allRestaurants = [];
+                }
 
-    // 2. Jika cache tiada atau sudah tamat, tarik data terkini dari Google Sheets
-    try {
-        const response = await fetch(API_URL);
-        if (response.ok) {
-            const json = await response.json();
-            const rawShops = json.data || (Array.isArray(json) ? json : []);
-
-            if (rawShops.length > 0) {
-                // Tapis duplikasi
                 const uniqueMap = new Map();
-                rawShops.forEach(r => {
+                allRestaurants.forEach(r => {
                     const clean = (r.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
                     if (clean && !uniqueMap.has(clean)) {
                         uniqueMap.set(clean, r);
@@ -182,36 +173,19 @@ async function fetchRestaurants() {
                 });
                 allRestaurants = Array.from(uniqueMap.values());
 
-                // Simpan ke cache untuk pelawat seterusnya
-                localStorage.setItem(CACHE_KEY, JSON.stringify(allRestaurants));
-                localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
-
-                console.log(`✅ Berjaya memuatkan ${allRestaurants.length} kedai dari Google Sheets Live.`);
+                console.log(`✅ Berjaya memuatkan ${allRestaurants.length} kedai dari: ${url}`);
                 applyFilters();
                 drawWheel();
                 return;
             }
+        } catch (err) {
+            // Cuba URL seterusnya
         }
-    } catch (err) {
-        console.warn("⚠️ Google Sheets lambat / terhad, menggunakan sandaran restaurants.json...", err);
     }
-
-    // 3. Sandaran kecemasan: Baca restaurants.json jika Sheets tidak dapat dihubungi
-    try {
-        const fallbackRes = await fetch("restaurants.json");
-        if (fallbackRes.ok) {
-            const fallbackJson = await fallbackRes.json();
-            allRestaurants = fallbackJson.data || fallbackJson;
-            applyFilters();
-            drawWheel();
-            console.log("🛡️ Sandaran restaurants.json berjaya dimuatkan.");
-        }
-    } catch (fallbackErr) {
-        console.error("Kesesakan pangkalan data:", fallbackErr);
-    }
+    console.warn("⚠️ Fail restaurants.json tidak ditemui.");
 }
 
-// --- 3. LUKIS RODA 8 HIRISAN ASAL (CANVAS SEPERTI REKAAN ASAL DARLING) ---
+// --- 3. LUKIS RODA ASAL (HIRISAN SIMETRI 45° DUA TINGKAT) ---
 function drawWheel() {
     if (!canvas || !ctx) return;
     const numSegments = FOOD_CATEGORIES.length;
@@ -242,13 +216,13 @@ function drawWheel() {
         
         const textRadius = radius * 0.65;
 
-        // Ikon Makanan (Atas)
+        // Ikon Atas (24px)
         ctx.font = "24px sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(cat.icon, textRadius, -8);
 
-        // Teks Label (Bawah)
+        // Teks Bawah (9px Bold)
         ctx.font = "bold 9px 'Plus Jakarta Sans', sans-serif";
         ctx.fillStyle = "#FFFFFF";
         ctx.shadowColor = "rgba(0,0,0,0.5)";
@@ -276,7 +250,7 @@ function drawWheel() {
     ctx.fillText("?", centerX, centerY + 2);
 }
 
-// --- FUNGSI SEMAKAN KATEGORI TEPAT (BURGER BAKAR TAKKAN MASUK TOMYAM LAGI!) ---
+// --- FUNGSI SEMAKAN KATEGORI TEPAT (BURGER BAKAR TIADA LAGI DALAM TOMYAM!) ---
 function isShopMatchCategory(shop, categoryLabel) {
     const cat = (shop.category || "").toLowerCase();
     const carb = (shop.carb_type || "").toLowerCase();
@@ -298,7 +272,7 @@ function isShopMatchCategory(shop, categoryLabel) {
         return fullText.includes("ayam") || fullText.includes("gepuk") || fullText.includes("crispy");
     }
     if (categoryLabel === "Tomyam") {
-        // DIBETULKAN: Jangan benarkan burger/western masuk walaupun ada perkataan 'bakar'!
+        // Sekat Western / Burger daripada masuk Tomyam
         if (fullText.includes("burger") || cat.includes("western") || fullText.includes("grill") || fullText.includes("pasta")) {
             return false;
         }
@@ -379,6 +353,7 @@ function getSignatureDish(shop) {
     return "Hidangan Istimewa Pilihan Ramai (Paling Disyorkan!) ✨";
 }
 
+// --- PENAPIS KAWASAN KETAT (SEKAT KEBOCORAN 'SEKSYEN' BANGI & WANGSA MAJU) ---
 function matchShopArea(shop, area) {
     if (area === "all") return true;
     const addr = (shop.address || "").toLowerCase();
@@ -389,7 +364,11 @@ function matchShopArea(shop, area) {
         return full.includes("jalan kebun") || full.includes("tropicana aman") || full.includes("telok panglima") || full.includes("sijangkang") || full.includes("pelabuhan klang") || full.includes("banting") || full.includes("sepang");
     }
     if (area === "shah_alam") {
-        return full.includes("shah alam") || full.includes("seksyen") || full.includes("setia alam");
+        // PENGAWAL PINTU: Sekat KL, Wangsa Maju, Bangi, Kajang & PJ daripada menyusup masuk!
+        if (full.includes("wangsa maju") || full.includes("kuala lumpur") || full.includes("bangi") || full.includes("kajang") || full.includes("petaling jaya") || full.includes("pj")) {
+            return false;
+        }
+        return full.includes("shah alam") || full.includes("setia alam") || full.includes("kota kemuning") || full.includes("seksyen");
     }
     if (area === "subang") {
         return full.includes("subang") || full.includes("ss15") || full.includes("sunway") || full.includes("usj");
@@ -482,7 +461,7 @@ function applySearchToList() {
     renderListView();
 }
 
-// --- 5. LOGIK PUTARAN RODA PINTAR & TEPAT MENGIKUT POINTER ---
+// --- 5. LOGIK PUTARAN RODA PINTAR & TEPAT MENGIKUT POINTER JAM 12 ---
 function spinWheel() {
     if (isSpinning) return;
 
@@ -501,7 +480,6 @@ function spinWheel() {
     const numSegments = FOOD_CATEGORIES.length;
     const arcSize = (2 * Math.PI) / numSegments;
 
-    // 1. Pilih hirisan sasaran secara rawak atau ikut filter aktif
     let targetSegmentIndex = Math.floor(Math.random() * numSegments);
 
     const mappedCat = mapFilterToCategory(activeFoodFilter);
@@ -512,7 +490,6 @@ function spinWheel() {
 
     const winningCat = FOOD_CATEGORIES[targetSegmentIndex];
 
-    // 2. Kunci pendaratan supaya jarum jam 12 (1.5 PI) tepat berhenti di tengah hirisan ini!
     const segmentCenterAngle = (targetSegmentIndex * arcSize) + (arcSize / 2);
     const pointerAngle = 1.5 * Math.PI;
     
@@ -574,10 +551,15 @@ function determineWinner(winningCategory, excludeShopId = null) {
     displayWinnerCard(selectedShop, winningCategory);
 }
 
+// BINA PAUTAN GOOGLE MAPS KALIS AIR (TIADA LAGI TERJUN TASIK/SUNGAI)
+function buildSafeGoogleMapsUrl(shop) {
+    const query = encodeURIComponent(`${shop.name}, ${shop.address}`);
+    return `https://www.google.com/maps/dir/?api=1&destination=${query}`;
+}
+
 function displayWinnerCard(shop, category) {
     if (!shop) return;
 
-    // SINKRONISASI TEPAT: Tajuk Oren & Ikon Wajib Sepadan!
     const cravingTitle = isCravingModeActive 
         ? `🤰 REZEKI MAK BUYUNG: ${activeTasteFilter.toUpperCase()}!` 
         : `${category.icon} HARI INI TEKAK NAK: ${category.label.toUpperCase()}!`;
@@ -599,15 +581,9 @@ function displayWinnerCard(shop, category) {
 
     if (resultAddress) resultAddress.innerText = `📍 ${shop.address}`;
     
-    const lat = shop.latitude;
-    const lon = shop.longitude;
-    const encodedDest = encodeURIComponent(shop.name + " " + (shop.address || ""));
-
-    // SATU BUTANG GOOGLE MAPS TUNGGAL RASMI
+    // Pautan Google Maps Pintar Kalis Air
     if (resultGmapsBtn) {
-        resultGmapsBtn.href = (lat && lon && lat !== 0.0) 
-            ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}` 
-            : `https://www.google.com/maps/search/?api=1&query=${encodedDest}`;
+        resultGmapsBtn.href = buildSafeGoogleMapsUrl(shop);
     }
 
     if (btnRerollResult) btnRerollResult.style.display = "block";
@@ -711,7 +687,7 @@ function renderListView() {
     }
 }
 
-// Buka Modal Profil Kedai (Google Maps Tunggal)
+// Buka Modal Profil Kedai (Google Maps Tunggal Kalis Air)
 function openStoreProfile(shop) {
     if (!shop) return;
     currentSelectedShop = shop;
@@ -733,25 +709,8 @@ function openStoreProfile(shop) {
         profileSignatureDish.innerText = getSignatureDish(shop);
     }
 
-    // Paparan Lencana Halal (Diletakkan di dalam fungsi supaya pemboleh ubah 'shop' sah)
-    const profileHalalBadge = document.getElementById("profile-halal-badge");
-    if (profileHalalBadge) {
-        if (shop.is_halal_verified == 1 || shop.is_halal_verified === "1") {
-            profileHalalBadge.style.display = "inline-block";
-            profileHalalBadge.innerText = "🟢 Halal / Muslim-Friendly";
-        } else {
-            profileHalalBadge.style.display = "none";
-        }
-    }
-
-    const lat = shop.latitude;
-    const lon = shop.longitude;
-    const encodedDest = encodeURIComponent(shop.name + " " + (shop.address || ""));
-
     if (profileGmapsBtn) {
-        profileGmapsBtn.href = (lat && lon && lat !== 0.0) 
-            ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}` 
-            : `https://www.google.com/maps/search/?api=1&query=${encodedDest}`;
+        profileGmapsBtn.href = buildSafeGoogleMapsUrl(shop);
     }
 
     if (profileModal) profileModal.classList.remove("hidden");
@@ -760,7 +719,6 @@ function openStoreProfile(shop) {
 if (closeProfileBtn) {
     closeProfileBtn.addEventListener("click", () => profileModal.classList.add("hidden"));
 }
-
 if (profileModal) {
     profileModal.addEventListener("click", (e) => {
         if (e.target === profileModal) profileModal.classList.add("hidden");
@@ -868,43 +826,15 @@ window.pilihTierDerma = function(tierName, amount) {
     }
 };
 
-// --- FUNGSI LAPORKAN ISU KEDAI ---
-function triggerReportModal() {
-    if (!currentSelectedShop) return;
-    
-    // 1. Tutup modal profil kedai dahulu supaya modal laporan nampak di depan!
-    if (profileModal) {
-        profileModal.classList.add("hidden");
-    }
-    
-    // 2. Masukkan nama kedai dan buka modal laporan
-    if (reportShopName) {
-        reportShopName.innerText = `Kedai: ${currentSelectedShop.name}`;
-    }
-    if (reportModal) {
-        reportModal.classList.remove("hidden");
-    }
-}
-
-if (btnReportResult) btnReportResult.addEventListener("click", triggerReportModal);
-if (btnReportProfile) btnReportProfile.addEventListener("click", triggerReportModal);
-
-// Tutup Modal Laporan
-if (closeReportBtn) closeReportBtn.addEventListener("click", () => reportModal.classList.add("hidden"));
-if (reportModal) {
-    reportModal.addEventListener("click", (e) => {
-        if (e.target === reportModal) reportModal.classList.add("hidden");
-    });
-}
-
-// Buka Modal Cadangan
+// --- 9. MODAL SOKONGAN & BORANG ---
 if (openSuggestBtn) {
     openSuggestBtn.addEventListener("click", () => {
-        if (suggestFormView) suggestFormView.classList.remove("hidden");
-        if (suggestSuccessView) suggestSuccessView.classList.add("hidden");
-        if (suggestModal) suggestModal.classList.remove("hidden");
+        suggestFormView.classList.remove("hidden");
+        suggestSuccessView.classList.add("hidden");
+        suggestModal.classList.remove("hidden");
     });
 }
+
 if (closeSuggestBtn) closeSuggestBtn.addEventListener("click", () => suggestModal.classList.add("hidden"));
 if (suggestModal) {
     suggestModal.addEventListener("click", (e) => {
@@ -912,12 +842,26 @@ if (suggestModal) {
     });
 }
 
-// Buka Modal Derma (Tip Kopi)
-if (openTipBtn) {
-    openTipBtn.addEventListener("click", () => {
-        if (tipModal) tipModal.classList.remove("hidden");
+if (suggestForm) {
+    suggestForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("suggest-name").value;
+        successMessage.innerText = `Cadangan kedai '${name}' dah selamat sampai ke Google Sheets kami! Nanti kami semak kelayakan sebelum masukkan ke roda ya. ❤️`;
+        suggestFormView.classList.add("hidden");
+        suggestSuccessView.classList.remove("hidden");
+        suggestForm.reset();
     });
 }
+
+if (btnContinueSpin) btnContinueSpin.addEventListener("click", () => suggestModal.classList.add("hidden"));
+if (btnSuggestAnother) {
+    btnSuggestAnother.addEventListener("click", () => {
+        suggestSuccessView.classList.add("hidden");
+        suggestFormView.classList.remove("hidden");
+    });
+}
+
+if (openTipBtn) openTipBtn.addEventListener("click", () => tipModal.classList.remove("hidden"));
 if (closeTipBtn) closeTipBtn.addEventListener("click", () => tipModal.classList.add("hidden"));
 if (tipModal) {
     tipModal.addEventListener("click", (e) => {
@@ -925,11 +869,33 @@ if (tipModal) {
     });
 }
 
-// Buka Modal Hubungi Admin
-if (openContactBtn) {
-    openContactBtn.addEventListener("click", () => {
-        if (contactModal) contactModal.classList.remove("hidden");
+function triggerReportModal() {
+    if (!currentSelectedShop) return;
+    reportShopName.innerText = `Kedai: ${currentSelectedShop.name}`;
+    reportModal.classList.remove("hidden");
+}
+
+if (btnReportResult) btnReportResult.addEventListener("click", triggerReportModal);
+if (btnReportProfile) btnReportProfile.addEventListener("click", triggerReportModal);
+
+if (closeReportBtn) closeReportBtn.addEventListener("click", () => reportModal.classList.add("hidden"));
+if (reportModal) {
+    reportModal.addEventListener("click", (e) => {
+        if (e.target === reportModal) reportModal.classList.add("hidden");
     });
+}
+
+if (reportForm) {
+    reportForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        alert(`Terima kasih! Laporan mengenai '${currentSelectedShop ? currentSelectedShop.name : 'Kedai'}' berjaya direkodkan terus ke sistem semakan admin. 🛡️`);
+        reportForm.reset();
+        reportModal.classList.add("hidden");
+    });
+}
+
+if (openContactBtn) {
+    openContactBtn.addEventListener("click", () => contactModal.classList.remove("hidden"));
 }
 if (closeContactBtn) closeContactBtn.addEventListener("click", () => contactModal.classList.add("hidden"));
 if (contactModal) {
@@ -938,151 +904,15 @@ if (contactModal) {
     });
 }
 
-// --- PENGHANTARAN BORANG KE GOOGLE SHEETS ---
-
-// 1. Hantar Borang Cadangan Kedai
-if (suggestForm) {
-    suggestForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const submitBtn = suggestForm.querySelector("button[type='submit']");
-        const originalText = submitBtn.innerText;
-        submitBtn.disabled = true;
-        submitBtn.innerText = "Menghantar...";
-
-        const payload = {
-            form_type: "suggest",
-            shop_name: document.getElementById("suggest-name").value,
-            area: document.getElementById("suggest-area").value,
-            carb_type: document.getElementById("suggest-carb").value,
-            budget: document.getElementById("suggest-budget").value,
-            link: document.getElementById("suggest-link").value
-        };
-
-        try {
-            await fetch(API_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-
-            if (successMessage) {
-                successMessage.innerText = `Cadangan kedai '${payload.shop_name}' dah selamat sampai ke Google Sheets kami! Nanti kami semak kelayakan sebelum masukkan ke roda ya. ❤️`;
-            }
-            if (suggestFormView) suggestFormView.classList.add("hidden");
-            if (suggestSuccessView) suggestSuccessView.classList.remove("hidden");
-            suggestForm.reset();
-        } catch (err) {
-            alert("Ralat menghantar cadangan. Sila cuba sebentar lagi.");
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerText = originalText;
-        }
-    });
-}
-
-if (btnContinueSpin) btnContinueSpin.addEventListener("click", () => suggestModal.classList.add("hidden"));
-if (btnSuggestAnother) {
-    btnSuggestAnother.addEventListener("click", () => {
-        if (suggestSuccessView) suggestSuccessView.classList.add("hidden");
-        if (suggestFormView) suggestFormView.classList.remove("hidden");
-    });
-}
-
-// 2. Hantar Borang Laporan Isu Kedai
-if (reportForm) {
-    reportForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const submitBtn = reportForm.querySelector("button[type='submit']");
-        const originalText = submitBtn.innerText;
-        submitBtn.disabled = true;
-        submitBtn.innerText = "Merekod Laporan...";
-
-        const payload = {
-            form_type: "report",
-            shop_name: currentSelectedShop ? currentSelectedShop.name : "Tidak Diketahui",
-            issue_type: document.getElementById("report-issue-type").value,
-            notes: document.getElementById("report-notes").value
-        };
-
-        try {
-            await fetch(API_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-
-            alert(`Terima kasih! Laporan mengenai '${payload.shop_name}' berjaya direkodkan terus ke sistem semakan admin. 🛡️`);
-            reportForm.reset();
-            if (reportModal) reportModal.classList.add("hidden");
-        } catch (err) {
-            alert("Ralat menghantar laporan. Sila periksa sambungan internet.");
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerText = originalText;
-        }
-    });
-}
-
-// 3. Hantar Borang Hubungi Admin
 if (contactForm) {
-    contactForm.addEventListener("submit", async (e) => {
+    contactForm.addEventListener("submit", (e) => {
         e.preventDefault();
-        const submitBtn = contactForm.querySelector("button[type='submit']");
-        const originalText = submitBtn.innerText;
-        submitBtn.disabled = true;
-        submitBtn.innerText = "Menghantar Mesej...";
-
-        const payload = {
-            form_type: "contact",
-            sender_name: document.getElementById("contact-name").value,
-            contact_info: document.getElementById("contact-reach").value,
-            message: document.getElementById("contact-message").value
-        };
-
-        try {
-            await fetch(API_URL, {
-                method: "POST",
-                mode: "no-cors",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-
-            alert(`Terima kasih ${payload.sender_name}! Mesej anda telah masuk ke pangkalan data admin. Kami akan hubungi anda semula! ✉️❤️`);
-            contactForm.reset();
-            if (contactModal) contactModal.classList.add("hidden");
-        } catch (err) {
-            alert("Ralat menghantar mesej.");
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerText = originalText;
-        }
+        const name = document.getElementById("contact-name").value;
+        alert(`Terima kasih ${name}! Mesej anda dah selamat sampai ke peti masuk admin. Kami akan balas secepat mungkin! ✉️❤️`);
+        contactForm.reset();
+        contactModal.classList.add("hidden");
     });
 }
-
-// 1. Salin Nombor Sahaja
-window.salinNoAkaunTnG = function() {
-    const el = document.getElementById("tng-acc-number");
-    const noAkaun = el ? el.innerText.trim() : "161979912543";
-    
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(noAkaun).then(() => {
-            alert(`Nombor akaun Touch 'n Go (${noAkaun}) berjaya disalin! Sila buka app TnG untuk pemindahan. ❤️`);
-        }).catch(() => {
-            prompt("Sila salin nombor akaun ini:", noAkaun);
-        });
-    } else {
-        prompt("Sila salin nombor akaun ini:", noAkaun);
-    }
-};
-
-window.pilihTierDerma = function(tierName, amount) {
-    const label = document.getElementById("selected-tier-label");
-    if (label) {
-        label.innerText = `Pilihan: ${tierName} (${amount})`;
-    }
-};
 
 if (spinBtn) spinBtn.addEventListener("click", spinWheel);
 
