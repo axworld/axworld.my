@@ -1,7 +1,7 @@
 {
   "name": "Makan Apa? - Jom Putar",
   "short_name": "Makan Apa?",
-  "start_url": "/makan-apa/app.html",
+  "start_url": "/makan-apa/index.html",
   "scope": "/makan-apa/",
   "display": "standalone",
   "background_color": "#121212",
