@@ -826,7 +826,29 @@ window.pilihTierDerma = function(tierName, amount) {
     }
 };
 
-// --- 9. MODAL SOKONGAN & BORANG ---
+// --- 9. MODAL SOKONGAN & INTEGRASI GOOGLE APPS SCRIPT (LIVE SYNC) ---
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBEzpI3MMWW9vZhsMG8-ikFZLqzqJuFZW14QG34D-Y3iI_lI8RP6unVOjBqbLweN0L/exec";
+
+// Enjin Penghantaran Kalis CORS
+async function sendToGoogleAppsScript(payload) {
+    try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            cache: "no-cache",
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+            },
+            body: JSON.stringify(payload)
+        });
+        return true;
+    } catch (err) {
+        console.error("Ralat tembak Google Apps Script:", err);
+        return false;
+    }
+}
+
+// A. BORANG 1: CADANGKAN KEDAI (Tab: Cadangan_Kedai)
 if (openSuggestBtn) {
     openSuggestBtn.addEventListener("click", () => {
         suggestFormView.classList.remove("hidden");
@@ -834,7 +856,6 @@ if (openSuggestBtn) {
         suggestModal.classList.remove("hidden");
     });
 }
-
 if (closeSuggestBtn) closeSuggestBtn.addEventListener("click", () => suggestModal.classList.add("hidden"));
 if (suggestModal) {
     suggestModal.addEventListener("click", (e) => {
@@ -843,9 +864,36 @@ if (suggestModal) {
 }
 
 if (suggestForm) {
-    suggestForm.addEventListener("submit", (e) => {
+    suggestForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+        const submitBtn = suggestForm.querySelector("button[type='submit']");
+        const originalText = submitBtn ? submitBtn.innerText : "Hantar Cadangan 🚀";
+        if (submitBtn) {
+            submitBtn.innerText = "Menghantar Cadangan... ⏳";
+            submitBtn.disabled = true;
+        }
+
         const name = document.getElementById("suggest-name").value;
+        const area = document.getElementById("suggest-area").value;
+        const carb = document.getElementById("suggest-carb").value;
+        const budget = document.getElementById("suggest-budget").value;
+        const link = document.getElementById("suggest-link").value || "";
+
+        // Tembak Data Sepadan Tepat dengan Code.gs
+        await sendToGoogleAppsScript({
+            form_type: "suggest",
+            shop_name: name,
+            area: area,
+            carb_type: carb,
+            budget: budget,
+            link: link
+        });
+
+        if (submitBtn) {
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+        }
+
         successMessage.innerText = `Cadangan kedai '${name}' dah selamat sampai ke Google Sheets kami! Nanti kami semak kelayakan sebelum masukkan ke roda ya. ❤️`;
         suggestFormView.classList.add("hidden");
         suggestSuccessView.classList.remove("hidden");
@@ -861,17 +909,10 @@ if (btnSuggestAnother) {
     });
 }
 
-if (openTipBtn) openTipBtn.addEventListener("click", () => tipModal.classList.remove("hidden"));
-if (closeTipBtn) closeTipBtn.addEventListener("click", () => tipModal.classList.add("hidden"));
-if (tipModal) {
-    tipModal.addEventListener("click", (e) => {
-        if (e.target === tipModal) tipModal.classList.add("hidden");
-    });
-}
-
+// B. BORANG 2: LAPOR ISU KEDAI (Tab: Laporan_Masalah)
 function triggerReportModal() {
-    if (!currentSelectedShop) return;
-    reportShopName.innerText = `Kedai: ${currentSelectedShop.name}`;
+    const targetName = currentSelectedShop ? currentSelectedShop.name : (resultName ? resultName.innerText : "Kedai");
+    reportShopName.innerText = `Kedai: ${targetName}`;
     reportModal.classList.remove("hidden");
 }
 
@@ -886,17 +927,40 @@ if (reportModal) {
 }
 
 if (reportForm) {
-    reportForm.addEventListener("submit", (e) => {
+    reportForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        alert(`Terima kasih! Laporan mengenai '${currentSelectedShop ? currentSelectedShop.name : 'Kedai'}' berjaya direkodkan terus ke sistem semakan admin. 🛡️`);
+        const submitBtn = reportForm.querySelector("button[type='submit']");
+        const originalText = submitBtn ? submitBtn.innerText : "Hantar Laporan 🚨";
+        if (submitBtn) {
+            submitBtn.innerText = "Merekod Laporan... ⏳";
+            submitBtn.disabled = true;
+        }
+
+        const shopName = currentSelectedShop ? currentSelectedShop.name : (resultName ? resultName.innerText : "Kedai");
+        const issueType = document.getElementById("report-issue-type").value;
+        const notes = document.getElementById("report-notes").value || "";
+
+        // Tembak Data Sepadan Tepat dengan Code.gs
+        await sendToGoogleAppsScript({
+            form_type: "report",
+            shop_name: shopName,
+            issue_type: issueType,
+            notes: notes
+        });
+
+        if (submitBtn) {
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+        }
+
+        alert(`Terima kasih! Laporan mengenai '${shopName}' berjaya direkodkan terus ke sistem semakan admin. 🛡️`);
         reportForm.reset();
         reportModal.classList.add("hidden");
     });
 }
 
-if (openContactBtn) {
-    openContactBtn.addEventListener("click", () => contactModal.classList.remove("hidden"));
-}
+// C. BORANG 3: HUBUNGI ADMIN (Tab: Mesej_Admin)
+if (openContactBtn) openContactBtn.addEventListener("click", () => contactModal.classList.remove("hidden"));
 if (closeContactBtn) closeContactBtn.addEventListener("click", () => contactModal.classList.add("hidden"));
 if (contactModal) {
     contactModal.addEventListener("click", (e) => {
@@ -905,16 +969,47 @@ if (contactModal) {
 }
 
 if (contactForm) {
-    contactForm.addEventListener("submit", (e) => {
+    contactForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+        const submitBtn = contactForm.querySelector("button[type='submit']");
+        const originalText = submitBtn ? submitBtn.innerText : "Hantar Mesej ✉️";
+        if (submitBtn) {
+            submitBtn.innerText = "Menghantar Mesej... ⏳";
+            submitBtn.disabled = true;
+        }
+
         const name = document.getElementById("contact-name").value;
+        const reach = document.getElementById("contact-reach").value;
+        const message = document.getElementById("contact-message").value;
+
+        // Tembak Data Sepadan Tepat dengan Code.gs (sender_name & contact_info)
+        await sendToGoogleAppsScript({
+            form_type: "contact",
+            sender_name: name,
+            contact_info: reach,
+            message: message
+        });
+
+        if (submitBtn) {
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+        }
+
         alert(`Terima kasih ${name}! Mesej anda dah selamat sampai ke peti masuk admin. Kami akan balas secepat mungkin! ✉️❤️`);
         contactForm.reset();
         contactModal.classList.add("hidden");
     });
 }
 
-if (spinBtn) spinBtn.addEventListener("click", spinWheel);
+// MODAL TIP / DERMA KOPI
+if (openTipBtn) openTipBtn.addEventListener("click", () => tipModal.classList.remove("hidden"));
+if (closeTipBtn) closeTipBtn.addEventListener("click", () => tipModal.classList.add("hidden"));
+if (tipModal) {
+    tipModal.addEventListener("click", (e) => {
+        if (e.target === tipModal) tipModal.classList.add("hidden");
+    });
+}
 
-// Mulakan aplikasi
+// Mulakan butang putar & muat turun data (Sekali sahaja!)
+if (spinBtn) spinBtn.addEventListener("click", spinWheel);
 fetchRestaurants();
