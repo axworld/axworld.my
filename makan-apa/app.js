@@ -1061,14 +1061,45 @@ if (contactForm) {
     });
 }
 
+// 1. Salin Nombor Sahaja
 window.salinNoAkaunTnG = function() {
     const el = document.getElementById("tng-acc-number");
     const noAkaun = el ? el.innerText.trim() : "161979912543";
-    navigator.clipboard.writeText(noAkaun).then(() => {
-        alert("Nombor akaun Touch 'n Go (" + noAkaun + ") berjaya disalin! Sila buka app TnG untuk selesaikan pemindahan. ❤️");
-    }).catch(() => {
-        prompt("Sila salin nombor akaun ini secara manual:", noAkaun);
-    });
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(noAkaun).then(() => {
+            alert(`Nombor akaun Touch 'n Go (${noAkaun}) berjaya disalin! Sila buka app TnG untuk pemindahan. ❤️`);
+        }).catch(() => {
+            prompt("Sila salin nombor akaun ini:", noAkaun);
+        });
+    } else {
+        prompt("Sila salin nombor akaun ini:", noAkaun);
+    }
+};
+
+// 2. Salin Terus & Buka Aplikasi TnG Secara Pintar
+window.bukaAppTnGPintar = function() {
+    const el = document.getElementById("tng-acc-number");
+    const noAkaun = el ? el.innerText.trim() : "161979912543";
+    
+    // Auto-salin nombor ke papan keratan (clipboard)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(noAkaun);
+    }
+
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isAndroid) {
+        // Melancarkan aplikasi TnG menggunakan Android Intent rasmi
+        window.location.href = "intent://#Intent;scheme=tngewallet;package=my.com.tngdigital.ewallet;end";
+    } else if (isIOS) {
+        // Melancarkan aplikasi TnG di iOS
+        window.location.href = "tngewallet://";
+    } else {
+        // Jika dibuka dari desktop/laptop
+        alert(`Nombor akaun (${noAkaun}) telah disalin! Sila buka aplikasi Touch 'n Go di telefon anda.`);
+    }
 };
 
 if (spinBtn) spinBtn.addEventListener("click", spinWheel);

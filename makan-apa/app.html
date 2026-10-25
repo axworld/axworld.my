@@ -277,7 +277,7 @@
             <!-- Kad Maklumat Pembayaran Touch 'n Go / DuitNow -->
             <div class="donation-card-box" style="padding: 14px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1);">
                 <p id="selected-tier-label" style="font-weight: 700; color: #38BDF8; font-size: 13px; margin-bottom: 10px;">
-                    Pilihan: Secawan Kopi (RM 5.00)
+                    Pilihan: Cup of Coffee (RM 5.00)
                 </p>
 
                 <div style="background: rgba(0, 92, 171, 0.15); border: 1px dashed #0284C7; padding: 10px; border-radius: 8px; margin-bottom: 12px;">
@@ -285,15 +285,16 @@
                     <b id="tng-acc-number" style="font-size: 16px; color: #F8FAFC; letter-spacing: 1px;">161979912543</b>
                 </div>
 
-                <!-- Butang Khas Mobile -->
-                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-                    <button type="button" onclick="salinNoAkaunTnG()" style="flex: 1; min-width: 120px; background: #334155; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 600; font-size: 12px; cursor: pointer;">
-                        📋 Salin Nombor
-                    </button>
-                    <a href="tngewallet://" style="flex: 1; min-width: 120px; background: #005CAB; color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
-                        💙 Buka App TnG
-                    </a>
-                </div>
+                <!-- Butang Tindakan Khas Mobile -->
+<div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+  <button type="button" onclick="salinNoAkaunTnG()" style="flex: 1; min-width: 120px; background: #334155; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 600; font-size: 12px; cursor: pointer;">
+    📋 Salin Nombor
+  </button>
+  
+  <button type="button" onclick="bukaAppTnGPintar()" style="flex: 1; min-width: 120px; background: #005CAB; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
+    💙 Buka App TnG
+  </button>
+</div>
 
                 <p style="font-size: 11px; color: #94A3B8; margin-top: 10px; line-height: 1.4;">
                     💡 <i>Salin nombor di atas, kemudian buka aplikasi TnG untuk buat pemindahan terus. Terima kasih banyak atas sokongan anda!</i>
@@ -422,7 +423,7 @@
     </div>
 
     <!-- Panggil versi muktamad app.js -->
-    <script src="app.js?v=app6_live"></script>
+    <script src="app.js?v=app7_tng_fixed"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
