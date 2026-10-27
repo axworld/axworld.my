@@ -353,37 +353,31 @@ function getSignatureDish(shop) {
     return "Hidangan Istimewa Pilihan Ramai (Paling Disyorkan!) ✨";
 }
 
-// --- PENAPIS KAWASAN KETAT (SEKAT KEBOCORAN 'SEKSYEN' BANGI & WANGSA MAJU) ---
+// --- PENAPIS KAWASAN KALIS BOCOR (IKUT KOLUM ZON 100% TEPAT) ---
 function matchShopArea(shop, area) {
-    if (area === "all") return true;
-    const addr = (shop.address || "").toLowerCase();
-    const name = (shop.name || "").toLowerCase();
-    const full = addr + " " + name;
+    if (!area || area === "all") return true;
+    const z = String(shop.zon || "").toLowerCase().trim();
 
-    if (area === "kebun_tpg") {
-        return full.includes("jalan kebun") || full.includes("tropicana aman") || full.includes("telok panglima") || full.includes("sijangkang") || full.includes("pelabuhan klang") || full.includes("banting") || full.includes("sepang");
-    }
-    if (area === "shah_alam") {
-        // PENGAWAL PINTU: Sekat KL, Wangsa Maju, Bangi, Kajang & PJ daripada menyusup masuk!
-        if (full.includes("wangsa maju") || full.includes("kuala lumpur") || full.includes("bangi") || full.includes("kajang") || full.includes("petaling jaya") || full.includes("pj")) {
-            return false;
-        }
-        return full.includes("shah alam") || full.includes("setia alam") || full.includes("kota kemuning") || full.includes("seksyen");
-    }
-    if (area === "subang") {
-        return full.includes("subang") || full.includes("ss15") || full.includes("sunway") || full.includes("usj");
-    }
-    if (area === "ttdi_damansara") {
-        return full.includes("ttdi") || full.includes("damansara") || full.includes("uptown") || full.includes("petaling jaya") || full.includes("ss2");
-    }
-    if (area === "bangi_kajang") {
-        return full.includes("bangi") || full.includes("kajang") || full.includes("semenyih") || full.includes("putrajaya") || full.includes("cyberjaya");
-    }
-    if (area === "kl") {
-        return full.includes("kuala lumpur") || full.includes("kampung baru") || full.includes("bangsar") || full.includes("cheras") || full.includes("gombak") || full.includes("ampang") || full.includes("setapak") || full.includes("wangsa maju");
-    }
+    if (area === "kebun_tpg") return z === "zon 1" || z === "1";
+    if (area === "shah_alam") return z === "zon 2" || z === "2";
+    if (area === "kl") return z === "zon 3" || z === "3";
+    if (area === "ttdi_damansara") return z === "zon 4" || z === "4";
+    if (area === "bangi_kajang") return z === "zon 5" || z === "5";
+    
+    // Sekat dan padam terus Subang yang dah diganti
+    if (area === "subang") return false;
+
     return true;
 }
+
+// Auto-sorok butang pill Subang lama dari paparan skrin
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".area-chip").forEach(chip => {
+        if (chip.textContent.toLowerCase().includes("subang")) {
+            chip.style.display = "none";
+        }
+    });
+});
 
 // --- 4. LOGIK PENAPIS UTAMA ---
 function applyFilters() {
