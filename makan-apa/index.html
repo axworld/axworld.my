@@ -427,8 +427,44 @@
         </div>
     </div>
 
-    <!-- Panggil versi muktamad app.js -->
-    <script src="app.js?v=app7_tng_fixed"></script>
+    <!-- MODAL PENAFIAN & KETELUSAN -->
+    <div id="disclaimer-modal" class="modal-overlay hidden">
+        <div class="modal-card" style="max-width: 480px; text-align: left;">
+            <div class="modal-header">
+                <h3>📢 Penafian & Ketelusan Komuniti</h3>
+                <button id="close-disclaimer-btn" class="btn-close-modal">✕</button>
+            </div>
+            
+            <div style="font-size:12px; line-height:1.6; color:var(--text-main); display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+                <div style="background:var(--bg-subtle, #F9FAFB); padding:10px; border-radius:10px; border-left:4px solid #10B981;">
+                    <b style="color:#10B981;">1. Bebas & Tiada Tajaan (100% Non-Sponsored):</b><br>
+                    Semua senarai premis dalam aplikasi <i>Makan Apa?</i> dipilih secara rawak atas inisiatif komuniti. Kami <b>TIDAK menerima sebarang bayaran atau 'paid review'</b> daripada pemilik kedai.
+                </div>
+
+                <div style="background:var(--bg-subtle, #F9FAFB); padding:10px; border-radius:10px; border-left:4px solid #F59E0B;">
+                    <b style="color:#F59E0B;">2. Ketepatan Waktu & Operasi:</b><br>
+                    Semakan fizikal telah dibuat semasa data dimasukkan. Namun waktu operasi, cuti, dan menu tertakluk kepada budi bicara pemilik kedai tanpa notis.
+                </div>
+
+                <div style="background:var(--bg-subtle, #F9FAFB); padding:10px; border-radius:10px; border-left:4px solid #3B82F6;">
+                    <b style="color:#3B82F6;">3. Status Halal & Mesra Muslim:</b><br>
+                    Tapisan dibuat berdasarkan pemilikan Muslim atau sajian bebas babi & alkohol (<i>no pork, no lard, no alcohol</i>).
+                </div>
+
+                <div style="background:var(--bg-subtle, #F9FAFB); padding:10px; border-radius:10px; border-left:4px solid #EC4899;">
+                    <b style="color:#EC4899;">4. Bantu Kami Kemas Kini (Crowdsourcing):</b><br>
+                    Kedai dah tutup atau pindah? Sila tekan butang <b>"Lapor Kat Sini"</b> atau <b>"Cadang Port"</b>. Bantuan anda amat berharga! ❤️
+                </div>
+            </div>
+
+            <button id="btn-ok-disclaimer" class="btn-action" style="width:100%; margin-top:16px; background:#1F2937; color:#FFF; font-weight:800; padding:10px; border-radius:10px; font-size:13px;">
+                Faham & Tutup 👌
+            </button>
+        </div>
+    </div>
+
+    <!-- PANGGIL APP.JS VERSI 8 (SATU SAHAJA DI BAWAH MODAL!) -->
+    <script src="app.js?v=app8_disclaimer"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -438,40 +474,5 @@
             });
         }
     </script>
-<!-- MODAL PENAFIAN & KETELUSAN -->
-<div id="disclaimer-modal" class="modal-overlay hidden">
-    <div class="modal-card" style="max-width: 480px; text-align: left;">
-        <div class="modal-header">
-            <h3>📢 Penafian & Ketelusan Komuniti</h3>
-            <button id="close-disclaimer-btn" class="btn-close-modal">✕</button>
-        </div>
-        
-        <div style="font-size:12px; line-height:1.6; color:var(--text-main); display:flex; flex-direction:column; gap:10px; margin-top:10px;">
-            <div style="background:var(--bg-subtle, #F9FAFB); padding:10px; border-radius:10px; border-left:4px solid #10B981;">
-                <b style="color:#10B981;">1. Bebas & Tiada Tajaan (100% Non-Sponsored):</b><br>
-                Semua senarai premis dalam aplikasi <i>Makan Apa?</i> dipilih secara rawak atas inisiatif komuniti. Kami <b>TIDAK menerima sebarang bayaran atau 'paid review'</b> daripada pemilik kedai.
-            </div>
-
-            <div style="background:var(--bg-subtle, #F9FAFB); padding:10px; border-radius:10px; border-left:4px solid #F59E0B;">
-                <b style="color:#F59E0B;">2. Ketepatan Waktu & Operasi:</b><br>
-                Semakan fizikal telah dibuat semasa data dimasukkan. Namun waktu operasi, cuti, dan menu tertakluk kepada budi bicara pemilik kedai tanpa notis.
-            </div>
-
-            <div style="background:var(--bg-subtle, #F9FAFB); padding:10px; border-radius:10px; border-left:4px solid #3B82F6;">
-                <b style="color:#3B82F6;">3. Status Halal & Mesra Muslim:</b><br>
-                Tapisan dibuat berdasarkan pemilikan Muslim atau sajian bebas babi & alkohol (<i>no pork, no lard, no alcohol</i>).
-            </div>
-
-            <div style="background:var(--bg-subtle, #F9FAFB); padding:10px; border-radius:10px; border-left:4px solid #EC4899;">
-                <b style="color:#EC4899;">4. Bantu Kami Kemas Kini (Crowdsourcing):</b><br>
-                Kedai dah tutup atau pindah? Sila tekan butang <b>"Lapor Kat Sini"</b> atau <b>"Cadang Port"</b>. Bantuan anda amat berharga! ❤️
-            </div>
-        </div>
-
-        <button id="btn-ok-disclaimer" class="btn-action" style="width:100%; margin-top:16px; background:#1F2937; color:#FFF; font-weight:800; padding:10px; border-radius:10px; font-size:13px;">
-            Faham & Tutup 👌
-        </button>
-    </div>
-</div>
 </body>
 </html>
