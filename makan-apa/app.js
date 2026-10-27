@@ -1004,6 +1004,21 @@ if (tipModal) {
     });
 }
 
+// MODAL PENAFIAN (DISCLAIMER)
+const disclaimerModal = document.getElementById("disclaimer-modal");
+const openDisclaimerBtn = document.getElementById("open-disclaimer-btn");
+const closeDisclaimerBtn = document.getElementById("close-disclaimer-btn");
+const btnOkDisclaimer = document.getElementById("btn-ok-disclaimer");
+
+if (openDisclaimerBtn) openDisclaimerBtn.addEventListener("click", () => disclaimerModal.classList.remove("hidden"));
+if (closeDisclaimerBtn) closeDisclaimerBtn.addEventListener("click", () => disclaimerModal.classList.add("hidden"));
+if (btnOkDisclaimer) btnOkDisclaimer.addEventListener("click", () => disclaimerModal.classList.add("hidden"));
+if (disclaimerModal) {
+    disclaimerModal.addEventListener("click", (e) => {
+        if (e.target === disclaimerModal) disclaimerModal.classList.add("hidden");
+    });
+}
+
 // Mulakan butang putar & muat turun data (Sekali sahaja!)
 if (spinBtn) spinBtn.addEventListener("click", spinWheel);
 fetchRestaurants();
