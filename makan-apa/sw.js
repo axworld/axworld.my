@@ -1,50 +1,63 @@
-const CACHE_NAME = "makan-apa-cache-v1";
+/**
+ * MAKAN APA? - Official Service Worker (Offline-First Edition)
+ * Co-Architects: Khairul Azzumie & Mia
+ * Domain: axworld.my/makan-apa/
+ */
+
+const CACHE_NAME = 'makan-apa-core-v1';
+
+// Senarai aset wajib simpan dalam memori telefon
 const ASSETS_TO_CACHE = [
-  "/",
-  "/style.css",
-  "/app.js",
-  "/logo.png",
-  "/manifest.json"
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './restaurants.json',
+  './logo.png',
+  './manifest.json'
 ];
 
-// Pasang aset ke memori telefon
-self.addEventListener("install", (event) => {
+// 1. Fasa Pasang (Install) & Simpan Cache
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log("📦 Menyimpan aset asas Makan Apa? ke dalam memori...");
+      console.log('📦 [Service Worker] Memuat turun aset teras ke memori...');
       return cache.addAll(ASSETS_TO_CACHE);
-    })
+    }).then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
-// Bersihkan cache lama jika ada versi baharu
-self.addEventListener("activate", (event) => {
+// 2. Fasa Aktif (Activate) & Bersihkan Cache Lama
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((keyList) => {
+    caches.keys().then((keys) => {
       return Promise.all(
-        keyList.map((key) => {
+        keys.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log("🧹 Memadamkan cache lama:", key);
+            console.log('🧹 [Service Worker] Membuang cache usang:', key);
             return caches.delete(key);
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-// Strategi: Muat turun dari rangkaian dulu, jika offline guna cache
-self.addEventListener("fetch", (event) => {
-  // Jangan cache panggilan API data restoran supaya data sentiasa terkini
-  if (event.request.url.includes("/api/")) {
-    return;
-  }
+// 3. Fasa Panggilan Rangkaian (Cache-First + Ignore Query Search)
+self.addEventListener('fetch', (event) => {
+  if (!event.request.url.startsWith(self.location.origin)) return;
 
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
+    // ✨ Tambah { ignoreSearch: true } supaya app.js?v=... tetap padan dengan cache!
+    caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(event.request);
+    }).catch(() => {
+      if (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html')) {
+        return caches.match('./index.html');
+      }
     })
   );
 });

@@ -546,6 +546,26 @@ function determineWinner(winningCategory, excludeShopId = null) {
 }
 
 // BINA PAUTAN GOOGLE MAPS KALIS AIR (TIADA LAGI TERJUN TASIK/SUNGAI)
+// Pengendali Klik Butang Google Maps Pintar & Kalis Luar Talian
+function setupSafeNavigationListener(buttonElement, shopGetter) {
+  if (!buttonElement) return;
+
+  buttonElement.addEventListener('click', (e) => {
+    // Semak sama ada peranti ada talian internet
+    if (!navigator.onLine) {
+      e.preventDefault(); // Sekat browser dari buka pautan yang akan gagal
+      const shop = shopGetter();
+      const shopName = shop ? shop.name : "kedai ini";
+      const shopAddress = shop ? shop.address : "alamat yang tertera";
+
+      alert(`📴 Anda sedang di luar talian (Offline)!\n\nGoogle Maps memerlukan internet untuk arah pemanduan langsung. Tapi jangan risau, nama & alamat dah ada di sini:\n\n📍 ${shopName}\n${shopAddress}\n\n(Arah navigasi akan berfungsi semula sebaik sahaja anda keluar ke kawasan bertalian internet! 😉)`);
+    }
+  });
+}
+
+// Pasangkan perlindungan ini kepada butang peta Kad Keputusan & Kad Profil
+setupSafeNavigationListener(resultGmapsBtn, () => currentSelectedShop);
+setupSafeNavigationListener(profileGmapsBtn, () => currentSelectedShop);
 function buildSafeGoogleMapsUrl(shop) {
     const query = encodeURIComponent(`${shop.name}, ${shop.address}`);
     return `https://www.google.com/maps/dir/?api=1&destination=${query}`;
