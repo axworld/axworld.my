@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Makan Apa? - Jom Putar</title>
+    <title>Makan Apa? - Kita Putar Je</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,6 +50,9 @@
                 <button class="chip area-chip" onclick="setAreaFilter('ttdi_damansara', this)">📍 TTDI / Damansara</button>
                 <button class="chip area-chip" onclick="setAreaFilter('bangi_kajang', this)">📍 Bangi / Kajang</button>
                 <button class="chip area-chip" onclick="setAreaFilter('kl', this)">📍 KL / Kg Baru</button>
+		<button type="button" id="btn-zon-putrajaya" class="chip" style="opacity: 0.6; filter: grayscale(100%); cursor: pointer; border-style: dashed;">
+    🔒 Putrajaya & Cyberjaya
+</button>
             </div>
         </section>
 
@@ -207,7 +210,7 @@
                     </div>
                     <div class="form-group">
                         <label>Kawasan / Lokasi</label>
-                        <input type="text" id="suggest-area" placeholder="cth: Seksyen 7, Shah Alam" required
+                        <input type="text" id="suggest-area" placeholder="cth: Presint 15 Putrajaya / Seksyen 7, Shah Alam" required
                                oninvalid="this.setCustomValidity('Sila isi kawasan kedai ya!')" oninput="this.setCustomValidity('')">
                     </div>
                     <div class="form-group">
@@ -473,6 +476,25 @@
                     .catch((err) => console.log('⚠️ Service Worker gagal:', err));
             });
         }
+// Pengendali Klik Butang Putrajaya / Cyberjaya
+const btnPutrajaya = document.getElementById('btn-zon-putrajaya');
+
+if (btnPutrajaya) {
+  btnPutrajaya.addEventListener('click', () => {
+    // 1. Paparkan mesej santai Darling
+    alert("Zon Putrajaya & Cyberjaya bakal menyusul! 🚧\n\nKorang cadang la port-port baek punya kat area situ ya? 😉");
+
+    // 2. Bonus UX: Buka terus modal cadangan & taipkan lokasinya siap-siap!
+    const suggestModal = document.getElementById('suggest-modal');
+    const suggestArea = document.getElementById('suggest-area');
+
+    if (suggestModal && suggestArea) {
+      suggestModal.classList.remove('hidden'); // Buka borang cadang
+      suggestArea.value = 'Putrajaya / Cyberjaya'; // Auto-isi kawasan!
+      suggestArea.focus();
+    }
+  });
+}
     </script>
 </body>
 </html>
