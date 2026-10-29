@@ -547,18 +547,51 @@ function determineWinner(winningCategory, excludeShopId = null) {
 
 // BINA PAUTAN GOOGLE MAPS KALIS AIR (TIADA LAGI TERJUN TASIK/SUNGAI)
 // Pengendali Klik Butang Google Maps Pintar & Kalis Luar Talian
+// Pengendali Klik Butang Google Maps Pintar (Versi Modal Khas Kalis "axworld.my says")
 function setupSafeNavigationListener(buttonElement, shopGetter) {
   if (!buttonElement) return;
 
   buttonElement.addEventListener('click', (e) => {
-    // Semak sama ada peranti ada talian internet
     if (!navigator.onLine) {
-      e.preventDefault(); // Sekat browser dari buka pautan yang akan gagal
+      e.preventDefault(); // Sekat pautan
       const shop = shopGetter();
-      const shopName = shop ? shop.name : "kedai ini";
-      const shopAddress = shop ? shop.address : "alamat yang tertera";
+      const shopName = shop ? shop.name : "Kedai Pilihan";
+      const shopAddress = shop ? shop.address : "Alamat yang tertera pada kad";
 
-      alert(`📴 Anda sedang di luar talian (Offline)!\n\nGoogle Maps memerlukan internet untuk arah pemanduan langsung. Tapi jangan risau, nama & alamat dah ada di sini:\n\n📍 ${shopName}\n${shopAddress}\n\n(Arah navigasi akan berfungsi semula sebaik sahaja anda keluar ke kawasan bertalian internet! 😉)`);
+      // Cipta Modal Khas Elegan (Tanpa tulisan "says" pelayar!)
+      const existingOfflineModal = document.getElementById('custom-offline-modal');
+      if (existingOfflineModal) existingOfflineModal.remove();
+
+      const modalHtml = `
+        <div id="custom-offline-modal" class="modal-overlay" style="z-index: 99999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.75); position: fixed; inset: 0; padding: 20px;">
+          <div class="modal-card" style="max-width: 380px; width: 100%; background: #18181B; border: 1px solid #27272A; border-radius: 20px; padding: 22px; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+              <span style="font-size: 20px;">📴</span>
+              <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #F4F4F5;">PANDUAN LUAR TALIAN</h3>
+            </div>
+            
+            <p style="font-size: 12px; color: #A1A1AA; line-height: 1.5; margin-bottom: 14px;">
+              Google Maps memerlukan talian internet untuk arah pemanduan langsung. Tapi jangan risau, maklumat kedai dah sedia ada:
+            </p>
+
+            <div style="background: #27272A; border-radius: 12px; padding: 12px; margin-bottom: 16px; border-left: 4px solid #10B981;">
+              <div style="font-weight: 800; color: #10B981; font-size: 13px; margin-bottom: 4px;">📍 ${shopName}</div>
+              <div style="font-size: 11px; color: #D4D4D8; line-height: 1.4;">${shopAddress}</div>
+            </div>
+
+            <p style="font-size: 11px; color: #71717A; margin-bottom: 16px; line-height: 1.4;">
+              💡 <i>Arah navigasi akan berfungsi semula sebaik sahaja telefon anda keluar ke kawasan bertalian internet! 😉</i>
+            </p>
+
+            <button type="button" onclick="document.getElementById('custom-offline-modal').remove()" 
+                    style="width: 100%; background: #10B981; color: #FFFFFF; font-weight: 800; padding: 12px; border-radius: 12px; border: none; font-size: 13px; cursor: pointer;">
+              Faham & Terima Kasih 👌
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
     }
   });
 }
