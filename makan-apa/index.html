@@ -471,8 +471,21 @@
         </div>
     </div>
 
-    <!-- PANGGIL APP.JS VERSI 8 (SATU SAHAJA DI BAWAH MODAL!) -->
-    <script src="app.js?v=app10_custom_alert"></script>
+    <!-- 1. PERISAI MUTLAK ANTI 'axworld.my says' (WAJIB DI ATAS APP.JS) -->
+    <script>
+        window.alert = function(message) {
+            if (typeof showCustomAlert === 'function') {
+                showCustomAlert("Pemberitahuan 📢", String(message).replace(/\n/g, "<br>"), "💡");
+            } else {
+                console.log("Alert terpintas:", message);
+            }
+        };
+    </script>
+
+    <!-- 2. PANGGIL SKRIP UTAMA APP.JS (SATU SAHAJA) -->
+    <script src="app.js?v=app11_clean_shield"></script>
+
+    <!-- 3. SERVICE WORKER & EVENT LISTENER PUTRAJAYA -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -481,25 +494,25 @@
                     .catch((err) => console.log('⚠️ Service Worker gagal:', err));
             });
         }
-// Pengendali Klik Butang Putrajaya / Cyberjaya
-const btnPutrajaya = document.getElementById('btn-zon-putrajaya');
 
-if (btnPutrajaya) {
-  btnPutrajaya.addEventListener('click', () => {
-    // 1. Paparkan mesej santai Darling
-    showCustomAlert("Zon Putrajaya & Cyberjaya 🚧", "Zon Putrajaya & Cyberjaya bakal menyusul!<br><br>Korang tolong cadangkan port-port baek punya kat area situ ya? 😉", "🔒");
+        // Pengendali Klik Butang Putrajaya / Cyberjaya
+        const btnPutrajaya = document.getElementById('btn-zon-putrajaya');
+        if (btnPutrajaya) {
+            btnPutrajaya.addEventListener('click', (e) => {
+                e.preventDefault();
+                // 1. Paparkan mesej santai Obsidian
+                showCustomAlert("Zon Putrajaya & Cyberjaya 🚧", "Zon Putrajaya & Cyberjaya bakal menyusul!<br><br>Korang tolong cadangkan port-port baek punya kat area situ ya? 😉", "🔒");
 
-    // 2. Bonus UX: Buka terus modal cadangan & taipkan lokasinya siap-siap!
-    const suggestModal = document.getElementById('suggest-modal');
-    const suggestArea = document.getElementById('suggest-area');
-
-    if (suggestModal && suggestArea) {
-      suggestModal.classList.remove('hidden'); // Buka borang cadang
-      suggestArea.value = 'Putrajaya / Cyberjaya'; // Auto-isi kawasan!
-      suggestArea.focus();
-    }
-  });
-}
+                // 2. UX: Buka terus modal cadangan & auto-isi zon
+                const suggestModal = document.getElementById('suggest-modal');
+                const suggestArea = document.getElementById('suggest-area');
+                if (suggestModal && suggestArea) {
+                    suggestModal.classList.remove('hidden');
+                    suggestArea.value = 'Putrajaya / Cyberjaya';
+                    suggestArea.focus();
+                }
+            });
+        }
     </script>
 </body>
 </html>
