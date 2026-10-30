@@ -12,6 +12,20 @@
     <!-- Pautan PWA Rasmi -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#FF5A36">
+<!-- 🌟 OPEN GRAPH & MEDIA SOSIAL PREVIEW (WHATSAPP, TELEGRAM & FB) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://axworld.my/makan-apa/">
+    <meta property="og:title" content="Makan Apa? - Kita Putar Je 🍜🎲">
+    <meta property="og:description" content="Selesai masalah gaduh pilih makan! Putar roda pintar, tapis bajet marhaen & 100 port makan legenda Lembah Klang sekarang.">
+    <meta property="og:image" content="https://axworld.my/makan-apa/logo.png">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Makan Apa? - Kita Putar Je 🍜🎲">
+    <meta name="twitter:description" content="Penentu keputusan makan no.1 di Malaysia. Putar roda, terus dapat port padu!">
+    <meta name="twitter:image" content="https://axworld.my/makan-apa/logo.png">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -458,7 +472,7 @@
     </div>
 
     <!-- PANGGIL APP.JS VERSI 8 (SATU SAHAJA DI BAWAH MODAL!) -->
-    <script src="app.js?v=app8_disclaimer"></script>
+    <script src="app.js?v=app10_custom_alert"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -473,7 +487,7 @@ const btnPutrajaya = document.getElementById('btn-zon-putrajaya');
 if (btnPutrajaya) {
   btnPutrajaya.addEventListener('click', () => {
     // 1. Paparkan mesej santai Darling
-    alert("Zon Putrajaya & Cyberjaya bakal menyusul! 🚧\n\nKorang cadang la port-port baek punya kat area situ ya? 😉");
+    showCustomAlert("Zon Putrajaya & Cyberjaya 🚧", "Zon Putrajaya & Cyberjaya bakal menyusul!<br><br>Korang tolong cadangkan port-port baek punya kat area situ ya? 😉", "🔒");
 
     // 2. Bonus UX: Buka terus modal cadangan & taipkan lokasinya siap-siap!
     const suggestModal = document.getElementById('suggest-modal');
