@@ -40,18 +40,28 @@ body {
     transition: background-color 0.3s ease;
 }
 
-/* Bingkai Telefon Pintar */
+/* 📱 PASTIKAN SKRIN PENUH DI SEMUA TELEFON ANDROID */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    background-color: var(--bg-main, #121212); /* Warna background telefon seragam dengan app */
+    overflow-x: hidden;
+}
+
 .app-container {
     width: 100%;
-    max-width: 430px;
-    background-color: var(--bg-shell);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding: 16px 20px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-    position: relative;
-    transition: background-color 0.3s ease;
+    max-width: 100%; /* Rapatkan skrin penuh di telefon bimbit */
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Cuma hadkan lebar bila dibuka di komputer / laptop / iPad besar */
+@media (min-width: 600px) {
+    .app-container {
+        max-width: 480px;
+    }
 }
 
 /* --- 1. HEADER (LOGO 3D, SUIS DARK MODE & BADGE LOKASI) --- */
