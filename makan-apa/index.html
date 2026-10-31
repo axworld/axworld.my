@@ -60,7 +60,6 @@
                 <button class="chip active area-chip" onclick="setAreaFilter('all', this)">Semua Kawasan</button>
                 <button class="chip area-chip" onclick="setAreaFilter('kebun_tpg', this)">📍 Jln Kebun / TPG</button>
                 <button class="chip area-chip" onclick="setAreaFilter('shah_alam', this)">📍 Shah Alam</button>
-                <button class="chip area-chip" onclick="setAreaFilter('subang', this)">📍 Subang</button>
                 <button class="chip area-chip" onclick="setAreaFilter('ttdi_damansara', this)">📍 TTDI / Damansara</button>
                 <button class="chip area-chip" onclick="setAreaFilter('bangi_kajang', this)">📍 Bangi / Kajang</button>
                 <button class="chip area-chip" onclick="setAreaFilter('kl', this)">📍 KL / Kg Baru</button>
@@ -471,7 +470,7 @@
         </div>
     </div>
 
-    <!-- 1. PERISAI MUTLAK ANTI 'axworld.my says' (WAJIB DI ATAS APP.JS) -->
+    <!-- 1. PERISAI MUTLAK & PENGESAN PLAY STORE (WAJIB DI ATAS APP.JS) -->
     <script>
         window.alert = function(message) {
             if (typeof showCustomAlert === 'function') {
@@ -480,10 +479,41 @@
                 console.log("Alert terpintas:", message);
             }
         };
+
+        // 🕵️ PENGESAN MOD: WEB VS PLAY STORE APK
+        const urlParams = new URLSearchParams(window.location.search);
+        const isPlayStoreApp = urlParams.get('source') === 'playstore' || localStorage.getItem('is_playstore_app') === 'true';
+
+        if (urlParams.get('source') === 'playstore') {
+            localStorage.setItem('is_playstore_app', 'true');
+        }
+
+        function laksanaModPlayStore() {
+            if (isPlayStoreApp) {
+                const kofiBtn = document.getElementById('btn-kofi-link');
+                const qrBox = document.querySelector('.donation-card-box');
+                const sepLine = qrBox ? qrBox.previousElementSibling : null;
+
+                if (kofiBtn) {
+                    kofiBtn.innerHTML = `<span>⭐</span> Sokong Kami di Google Play`;
+                    kofiBtn.href = "market://details?id=axworldmy.makanapa";
+                }
+                if (qrBox) qrBox.style.display = 'none';
+                if (sepLine) sepLine.style.display = 'none';
+                
+                console.log("📱 Mod Google Play Store Aktif: Polisi Pembayaran Dipatuhi!");
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', laksanaModPlayStore);
+        } else {
+            laksanaModPlayStore();
+        }
     </script>
 
     <!-- 2. PANGGIL SKRIP UTAMA APP.JS (SATU SAHAJA) -->
-    <script src="app.js?v=app11_clean_shield"></script>
+    <script src="app.js?v=app12_playstore_ready"></script>
 
     <!-- 3. SERVICE WORKER & EVENT LISTENER PUTRAJAYA -->
     <script>
@@ -500,10 +530,8 @@
         if (btnPutrajaya) {
             btnPutrajaya.addEventListener('click', (e) => {
                 e.preventDefault();
-                // 1. Paparkan mesej santai Obsidian
                 showCustomAlert("Zon Putrajaya & Cyberjaya 🚧", "Zon Putrajaya & Cyberjaya bakal menyusul!<br><br>Korang tolong cadangkan port-port baek punya kat area situ ya? 😉", "🔒");
 
-                // 2. UX: Buka terus modal cadangan & auto-isi zon
                 const suggestModal = document.getElementById('suggest-modal');
                 const suggestArea = document.getElementById('suggest-area');
                 if (suggestModal && suggestArea) {
