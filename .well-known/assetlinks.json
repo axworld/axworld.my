@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "axworldmy.makanapa",
+        "sha256_cert_fingerprints": ["1F:83:A5:DA:46:5D:A5:E8:E3:47:93:7B:3F:DD:16:B8:08:E4:63:15:DB:E1:97:BE:C1:47:2D:A0:6C:B8:4E:89"]
+      }
+    }]
