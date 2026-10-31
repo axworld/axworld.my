@@ -40,24 +40,32 @@ body {
     transition: background-color 0.3s ease;
 }
 
-/* 📱 PASTIKAN SKRIN PENUH DI SEMUA TELEFON ANDROID */
+/* --- GAYA TULEN HTML, BODY & BEKAS UTAMA APP --- */
 html, body {
     margin: 0;
     padding: 0;
     width: 100%;
     min-height: 100vh;
-    background-color: var(--bg-main, #121212); /* Warna background telefon seragam dengan app */
+    background-color: var(--bg-page);
+    color: var(--text-main);
     overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .app-container {
     width: 100%;
-    max-width: 100%; /* Rapatkan skrin penuh di telefon bimbit */
+    max-width: 100%; /* Melekap rapat skrin penuh di telefon bimbit */
+    min-height: 100vh;
     margin: 0 auto;
+    padding: 14px 16px 32px; /* Ruang bernafas yang selesa untuk jari */
+    display: flex;
+    flex-direction: column;
     box-sizing: border-box;
 }
 
-/* Cuma hadkan lebar bila dibuka di komputer / laptop / iPad besar */
+/* Cuma hadkan lebar 480px bila dibuka di skrin besar (Komputer / iPad) */
 @media (min-width: 600px) {
     .app-container {
         max-width: 480px;
