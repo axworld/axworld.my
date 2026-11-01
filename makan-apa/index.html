@@ -63,7 +63,7 @@
                 <button class="chip area-chip" onclick="setAreaFilter('ttdi_damansara', this)">📍 TTDI / Damansara</button>
                 <button class="chip area-chip" onclick="setAreaFilter('bangi_kajang', this)">📍 Bangi / Kajang</button>
                 <button class="chip area-chip" onclick="setAreaFilter('kl', this)">📍 KL / Kg Baru</button>
-		<button type="button" id="btn-zon-putrajaya" class="chip" style="opacity: 0.6; filter: grayscale(100%); cursor: pointer; border-style: dashed;">
+		<button type="button" id="btn-zon-putrajaya" class="chip" onclick="bukaZonPutrajaya(event)" style="opacity: 0.75; filter: grayscale(100%); cursor: pointer; border-style: dashed;">
     🔒 Putrajaya & Cyberjaya
 </button>
             </div>
@@ -515,8 +515,9 @@
     <!-- 2. PANGGIL SKRIP UTAMA APP.JS (SATU SAHAJA) -->
     <script src="app.js?v=app12_playstore_ready"></script>
 
-    <!-- 3. SERVICE WORKER & EVENT LISTENER PUTRAJAYA -->
+    <!-- 3. SERVICE WORKER & FUNGSI ZON PUTRAJAYA (100% BERSIH) -->
     <script>
+        // Pendaftaran Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
@@ -525,21 +526,27 @@
             });
         }
 
-        // Pengendali Klik Butang Putrajaya / Cyberjaya
-        const btnPutrajaya = document.getElementById('btn-zon-putrajaya');
-        if (btnPutrajaya) {
-            btnPutrajaya.addEventListener('click', (e) => {
-                e.preventDefault();
-                showCustomAlert("Zon Putrajaya & Cyberjaya 🚧", "Zon Putrajaya & Cyberjaya bakal menyusul!<br><br>Korang tolong cadangkan port-port baek punya kat area situ ya? 😉", "🔒");
+        // Fungsi Rasmi Pop-up Putrajaya & Cyberjaya (Kalis Ralat)
+        function bukaZonPutrajaya(e) {
+            if (e) e.preventDefault();
+            
+            // 1. Papar Notis Obsidian
+            if (typeof showCustomAlert === 'function') {
+                showCustomAlert("Zon Putrajaya & Cyberjaya 🚧", "Zon Putrajaya & Cyberjaya bakal menyusul tak lama lagi!<br><br>Korang tolong cadangkan port-port padu kat area situ ya? 😉", "🔒");
+            } else {
+                alert("Zon Putrajaya & Cyberjaya bakal menyusul! Jom cadangkan port makan kegemaran anda!");
+            }
 
-                const suggestModal = document.getElementById('suggest-modal');
-                const suggestArea = document.getElementById('suggest-area');
-                if (suggestModal && suggestArea) {
-                    suggestModal.classList.remove('hidden');
-                    suggestArea.value = 'Putrajaya / Cyberjaya';
-                    suggestArea.focus();
-                }
-            });
+            // 2. Buka Borang Cadang Terus
+            const suggestModal = document.getElementById('suggest-modal');
+            const suggestArea = document.getElementById('suggest-area');
+            if (suggestModal) {
+                suggestModal.classList.remove('hidden');
+            }
+            if (suggestArea) {
+                suggestArea.value = 'Putrajaya / Cyberjaya';
+                suggestArea.focus();
+            }
         }
     </script>
 </body>
