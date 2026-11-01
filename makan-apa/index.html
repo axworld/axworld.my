@@ -48,7 +48,10 @@
         </header>
 
         <!-- 2. PILIH MOOD: NORMAL VS MAK BUYUNG MENGIDAM -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div class="mood-section" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+    <span style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Pilih Mood:</span>
+    <button id="toggle-craving-mode-btn" class="chip" ...>🤰 Mod Mengidam (Mak Buyung)</button>
+</div>
             <span style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Pilih Mood:</span>
             <button id="toggle-craving-mode-btn" class="chip" style="background:#FFF1F2; border-color:#FDA4AF; color:#E11D48; font-weight:800; padding:6px 14px; cursor:pointer;">
                 🤰 Mod Mengidam (Mak Buyung)
@@ -56,7 +59,7 @@
         </div>
 
         <!-- 3. PENAPIS KAWASAN UTAMA (TERUS DI ATAS SKRIN!) -->
-        <section class="filters-section" style="margin-bottom:10px;">
+        <section id="area-filters-section" class="filters-section" style="margin-bottom:10px;">
             <div class="chips-scroll">
                 <button class="chip active area-chip" onclick="setAreaFilter('all', this)">Semua Kawasan</button>
                 <button class="chip area-chip" onclick="setAreaFilter('kebun_tpg', this)">📍 Jln Kebun / TPG</button>
