@@ -8,11 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=fullscreen_v2">
     <!-- Pautan PWA Rasmi -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#FF5A36">
-<!-- 🌟 OPEN GRAPH & MEDIA SOSIAL PREVIEW (WHATSAPP, TELEGRAM & FB) -->
+
+    <!-- 🌟 OPEN GRAPH & MEDIA SOSIAL PREVIEW (WHATSAPP, TELEGRAM & FB) -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://axworld.my/makan-apa/">
     <meta property="og:title" content="Makan Apa? - Kita Putar Je 🍜🎲">
@@ -54,7 +55,7 @@
             </button>
         </div>
 
-        <!-- 3. PENAPIS KAWASAN UTAMA (TERUS DI ATAS SKRIN!) -->
+        <!-- 3. PENAPIS KAWASAN UTAMA (5 ZON ASLI + PUTRAJAYA/CYBERJAYA) -->
         <section class="filters-section" style="margin-bottom:10px;">
             <div class="chips-scroll">
                 <button class="chip active area-chip" onclick="setAreaFilter('all', this)">Semua Kawasan</button>
@@ -63,9 +64,9 @@
                 <button class="chip area-chip" onclick="setAreaFilter('ttdi_damansara', this)">📍 TTDI / Damansara</button>
                 <button class="chip area-chip" onclick="setAreaFilter('bangi_kajang', this)">📍 Bangi / Kajang</button>
                 <button class="chip area-chip" onclick="setAreaFilter('kl', this)">📍 KL / Kg Baru</button>
-		<button type="button" id="btn-zon-putrajaya" class="chip" onclick="bukaZonPutrajaya(event)" style="opacity: 0.75; filter: grayscale(100%); cursor: pointer; border-style: dashed;">
-    🔒 Putrajaya & Cyberjaya
-</button>
+                <button type="button" id="btn-zon-putrajaya" class="chip" style="opacity: 0.6; filter: grayscale(100%); cursor: pointer; border-style: dashed;">
+                    🔒 Putrajaya & Cyberjaya
+                </button>
             </div>
         </section>
 
@@ -515,9 +516,8 @@
     <!-- 2. PANGGIL SKRIP UTAMA APP.JS (SATU SAHAJA) -->
     <script src="app.js?v=app12_playstore_ready"></script>
 
-    <!-- 3. SERVICE WORKER & FUNGSI ZON PUTRAJAYA (100% BERSIH) -->
+    <!-- 3. SERVICE WORKER & EVENT LISTENER PUTRAJAYA -->
     <script>
-        // Pendaftaran Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
@@ -526,27 +526,21 @@
             });
         }
 
-        // Fungsi Rasmi Pop-up Putrajaya & Cyberjaya (Kalis Ralat)
-        function bukaZonPutrajaya(e) {
-            if (e) e.preventDefault();
-            
-            // 1. Papar Notis Obsidian
-            if (typeof showCustomAlert === 'function') {
-                showCustomAlert("Zon Putrajaya & Cyberjaya 🚧", "Zon Putrajaya & Cyberjaya bakal menyusul tak lama lagi!<br><br>Korang tolong cadangkan port-port padu kat area situ ya? 😉", "🔒");
-            } else {
-                alert("Zon Putrajaya & Cyberjaya bakal menyusul! Jom cadangkan port makan kegemaran anda!");
-            }
+        // Pengendali Klik Butang Putrajaya / Cyberjaya
+        const btnPutrajaya = document.getElementById('btn-zon-putrajaya');
+        if (btnPutrajaya) {
+            btnPutrajaya.addEventListener('click', (e) => {
+                e.preventDefault();
+                showCustomAlert("Zon Putrajaya & Cyberjaya 🚧", "Zon Putrajaya & Cyberjaya bakal menyusul!<br><br>Korang tolong cadangkan port-port baek punya kat area situ ya? 😉", "🔒");
 
-            // 2. Buka Borang Cadang Terus
-            const suggestModal = document.getElementById('suggest-modal');
-            const suggestArea = document.getElementById('suggest-area');
-            if (suggestModal) {
-                suggestModal.classList.remove('hidden');
-            }
-            if (suggestArea) {
-                suggestArea.value = 'Putrajaya / Cyberjaya';
-                suggestArea.focus();
-            }
+                const suggestModal = document.getElementById('suggest-modal');
+                const suggestArea = document.getElementById('suggest-area');
+                if (suggestModal && suggestArea) {
+                    suggestModal.classList.remove('hidden');
+                    suggestArea.value = 'Putrajaya / Cyberjaya';
+                    suggestArea.focus();
+                }
+            });
         }
     </script>
 </body>
