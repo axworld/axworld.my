@@ -56,19 +56,22 @@ html, body {
 
 .app-container {
     width: 100%;
-    max-width: 100%; /* Melekap rapat skrin penuh di telefon bimbit */
+    max-width: 100%;
     min-height: 100vh;
-    margin: 0 auto;
-    padding: 14px 16px 32px; /* Ruang bernafas yang selesa untuk jari */
+    margin: 0;
+    padding: 14px 16px 32px;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    border: none !important;        /* ❌ Buang garisan frame */
+    box-shadow: none !important;    /* ❌ Buang bayang tepi */
+    background-color: var(--bg-page);
 }
 
-/* Cuma hadkan lebar 480px bila dibuka di skrin besar (Komputer / iPad) */
 @media (min-width: 600px) {
     .app-container {
         max-width: 480px;
+        margin: 0 auto;
     }
 }
 
