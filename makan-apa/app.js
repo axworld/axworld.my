@@ -353,20 +353,17 @@ function getSignatureDish(shop) {
     return "Hidangan Istimewa Pilihan Ramai (Paling Disyorkan!) ✨";
 }
 
-// --- PENAPIS KAWASAN KALIS BOCOR (IKUT KOLUM ZON 100% TEPAT) ---
+// --- PENAPIS KAWASAN ASLI 100% TEPAT (ZON 1 HINGGA ZON 5) ---
 function matchShopArea(shop, area) {
     if (!area || area === "all") return true;
     const z = String(shop.zon || "").toLowerCase().trim();
 
     if (area === "kebun_tpg") return z === "zon 1" || z === "1";
     if (area === "shah_alam") return z === "zon 2" || z === "2";
-    if (area === "kl") return z === "zon 3" || z === "3";
-    if (area === "ttdi_damansara") return z === "zon 4" || z === "4";
-    if (area === "bangi_kajang") return z === "zon 5" || z === "5";
+    if (area === "ttdi_damansara") return z === "zon 3" || z === "3"; // ✅ Zon 3 = TTDI
+    if (area === "bangi_kajang") return z === "zon 4" || z === "4";   // ✅ Zon 4 = Bangi
+    if (area === "kl") return z === "zon 5" || z === "5";             // ✅ Zon 5 = KL
     
-    // Sekat dan padam terus Subang yang dah diganti
-    if (area === "subang") return false;
-
     return true;
 }
 
@@ -460,9 +457,9 @@ function spinWheel() {
     if (isSpinning) return;
 
     if (filteredRestaurants.length === 0) {
-        alert("Alamak! Tiada kedai yang padan dengan gabungan pilihan ini. Sila ubah kawasan atau selera ya!");
-        return;
-    }
+    showCustomAlert("Tiada Kedai Ditemui 🔍", "Alamak! Tiada kedai yang padan dengan gabungan pilihan ini.<br><br>Sila ubah kawasan atau selera mengidam anda ya!", "🍲");
+    return;
+}
 
     isSpinning = true;
     if (resultCard) {
@@ -535,9 +532,9 @@ function determineWinner(winningCategory, excludeShopId = null) {
     }
 
     if (matchingShops.length === 0) {
-        alert(`Tiada kedai sepadan untuk ${winningCategory.label}. Sila cuba putar lagi!`);
-        return;
-    }
+    showCustomAlert("Sila Putar Semula 🔄", `Tiada kedai sepadan untuk kategori <b>${winningCategory.label}</b>. Sila cuba putar lagi ya!`, "🎲");
+    return;
+}
 
     const selectedShop = matchingShops[Math.floor(Math.random() * matchingShops.length)];
     currentSelectedShop = selectedShop;
@@ -1000,7 +997,7 @@ if (reportForm) {
             submitBtn.disabled = false;
         }
 
-        alert(`Terima kasih! Laporan mengenai '${shopName}' berjaya direkodkan terus ke sistem semakan admin. 🛡️`);
+        showCustomAlert("Laporan Diterima 🛡️", `Terima kasih! Laporan mengenai <b>${shopName}</b> telah direkodkan terus ke sistem semakan admin kami.`, "🚨");
         reportForm.reset();
         reportModal.classList.add("hidden");
     });
@@ -1042,7 +1039,7 @@ if (contactForm) {
             submitBtn.disabled = false;
         }
 
-        alert(`Terima kasih ${name}! Mesej anda dah selamat sampai ke peti masuk admin. Kami akan balas secepat mungkin! ✉️❤️`);
+        showCustomAlert("Mesej Dihantar ✉️", `Terima kasih <b>${name}</b>! Mesej anda telah selamat sampai ke peti masuk admin. Kami akan balas secepat mungkin! ❤️`, "💬");
         contactForm.reset();
         contactModal.classList.add("hidden");
     });
@@ -1072,6 +1069,28 @@ if (disclaimerModal) {
     });
 }
 
+// FUNGSI NOTIS UNIVERSAL KELAS PERTAMA (SIFAR "axworld.my says")
+function showCustomAlert(title, message, icon = "✨") {
+  const existing = document.getElementById('universal-app-modal');
+  if (existing) existing.remove();
+
+  const modalHtml = `
+    <div id="universal-app-modal" class="modal-overlay" style="z-index: 99999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.75); position: fixed; inset: 0; padding: 20px;">
+      <div class="modal-card" style="max-width: 360px; width: 100%; background: #18181B; border: 1px solid #27272A; border-radius: 20px; padding: 22px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+        <div style="font-size: 32px; margin-bottom: 10px;">${icon}</div>
+        <h3 style="margin: 0 0 10px 0; font-size: 16px; font-weight: 800; color: #F4F4F5;">${title}</h3>
+        <p style="font-size: 13px; color: #A1A1AA; line-height: 1.5; margin-bottom: 20px;">${message}</p>
+        <button type="button" onclick="document.getElementById('universal-app-modal').remove()" 
+                style="width: 100%; background: #10B981; color: #FFFFFF; font-weight: 800; padding: 12px; border-radius: 12px; border: none; font-size: 13px; cursor: pointer;">
+          Faham & Selesai 👌
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+
 // Mulakan butang putar & muat turun data (Sekali sahaja!)
 if (spinBtn) spinBtn.addEventListener("click", spinWheel);
 fetchRestaurants();
+window.showCustomAlert = showCustomAlert;

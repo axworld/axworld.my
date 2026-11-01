@@ -4,7 +4,7 @@
  * Domain: axworld.my/makan-apa/
  */
 
-const CACHE_NAME = 'makan-apa-v14-fullscreen';
+const CACHE_NAME = 'makan-apa-v15-master-fix';
 
 // Senarai aset wajib simpan dalam memori telefon
 const ASSETS_TO_CACHE = [

@@ -32,14 +32,6 @@ body.dark-mode {
     -webkit-tap-highlight-color: transparent;
 }
 
-body {
-    background-color: var(--bg-page);
-    display: flex;
-    justify-content: center;
-    min-height: 100vh;
-    transition: background-color 0.3s ease;
-}
-
 /* --- GAYA TULEN HTML, BODY & BEKAS UTAMA APP --- */
 html, body {
     margin: 0;
@@ -178,6 +170,7 @@ html, body {
     white-space: nowrap;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0; /* 👈 Tambah ni supaya semua butang (termasuk Putrajaya) kekal saiz asal & tak terhimpit */
 }
 
 /* Penapis Makanan Aktif (Oren Selera) */
