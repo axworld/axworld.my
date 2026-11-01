@@ -770,14 +770,14 @@ body.dark-mode .taste-chip {
 }
 
 /* ========================================================
-   Bilik 6: OPTIMASI SKRIN FOLDABLE & TABLET (KOKPIT 2-KOLUM)
+   Bilik 6: OPTIMASI SKRIN FOLDABLE (GALAXY Z FOLD / TABLET)
    ======================================================== */
 
-/* 1. Mod Skrin Luar Foldable (Cover Screen Sangat Sempit < 380px) */
+/* 1. Mod Skrin Luar Foldable (Cover Screen yang runcing & sempit < 380px) */
 @media screen and (max-width: 380px) {
   #wheel-canvas {
-    max-width: 260px !important;
-    max-height: 260px !important;
+    max-width: 270px !important;
+    max-height: 270px !important;
     height: auto !important;
   }
   .pin-pointer {
@@ -785,59 +785,43 @@ body.dark-mode .taste-chip {
   }
 }
 
-/* 2. Mod Skrin Terbentang / Tablet / Landscape (Lebar >= 600px) */
-@media screen and (min-width: 600px) {
-
+/* 2. Mod Skrin Terbentang / Unfolded (Galaxy Z Fold / Skrin Petak 600px - 1000px) */
+@media screen and (min-width: 600px) and (min-aspect-ratio: 4/5) and (max-aspect-ratio: 5/4) {
+  
+  /* Lebarkan sedikit container utama tapi kekalkan susunan kemas */
   .app-container {
-    max-width: 920px !important; /* Melebar anggun memenuhi skrin tablet/fold */
+    max-width: 720px !important;
     margin: 0 auto;
-    padding: 20px 24px 30px;
-    display: grid !important;
-    grid-template-columns: 1fr 1fr; /* Terbelah dua: Kiri & Kanan */
-    column-gap: 36px; /* Ruang selamat supaya garisan lipatan tak kena roda! */
-    row-gap: 10px;
-    align-items: start;
+    padding: 20px;
   }
 
-  /* Header merentas penuh di atas */
-  .app-header {
-    grid-column: 1 / -1;
-    margin-bottom: 8px;
-  }
-
-  /* PANEL KIRI: Roda Putaran & Butang Spin */
+  /* Bahagian Roda & Keputusan diletakkan bersebelahan secara elegan */
   #wheel-view {
-    grid-column: 1;
-    grid-row: 2 / span 7; /* Kunci kedudukan roda di sebelah kiri */
-    display: flex !important;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  #wheel-canvas {
-    max-width: 330px !important;
-    height: auto !important;
-  }
-
-  /* PANEL KANAN: Semua Kawalan, Mood, Penapis & Footer */
-  .mood-section,
-  #area-filters-section,
-  #normal-filters-section,
-  #craving-filters-section,
-  .view-toggle,
-  .app-footer {
-    grid-column: 2; /* Tolak semua ke lajur kanan */
-  }
-
-  /* Jika pengguna buka tab "Senarai Kedai" */
-  #list-view {
-    grid-column: 1 / -1; /* Senarai kedai guna ruang penuh 2 kolum */
-  }
-
-  #restaurants-list {
-    display: grid;
+    display: grid !important;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    column-gap: 24px;
+    align-items: center;
+    width: 100%;
+  }
+
+  #wheel-filter-status {
+    grid-column: span 2;
+  }
+
+  .wheel-wrapper {
+    grid-column: 1;
+    margin: 10px 0;
+  }
+
+  .action-section {
+    grid-column: 1;
+    margin-bottom: 0;
+  }
+
+  /* Kad keputusan muncul kemas di lajur kanan */
+  #result-card {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+    margin-top: 0;
   }
 }
