@@ -768,3 +768,60 @@ body.dark-mode .taste-chip {
     max-height: none !important;
     overflow-y: visible !important;
 }
+
+/* ========================================================
+   Bilik 6: OPTIMASI SKRIN FOLDABLE (GALAXY Z FOLD / TABLET)
+   ======================================================== */
+
+/* 1. Mod Skrin Luar Foldable (Cover Screen yang runcing & sempit < 380px) */
+@media screen and (max-width: 380px) {
+  #wheel-canvas {
+    max-width: 270px !important;
+    max-height: 270px !important;
+    height: auto !important;
+  }
+  .pin-pointer {
+    top: -14px !important;
+  }
+}
+
+/* 2. Mod Skrin Terbentang / Unfolded (Galaxy Z Fold / Skrin Petak 600px - 1000px) */
+@media screen and (min-width: 600px) and (min-aspect-ratio: 4/5) and (max-aspect-ratio: 5/4) {
+  
+  /* Lebarkan sedikit container utama tapi kekalkan susunan kemas */
+  .app-container {
+    max-width: 720px !important;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* Bahagian Roda & Keputusan diletakkan bersebelahan secara elegan */
+  #wheel-view {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 24px;
+    align-items: center;
+    width: 100%;
+  }
+
+  #wheel-filter-status {
+    grid-column: span 2;
+  }
+
+  .wheel-wrapper {
+    grid-column: 1;
+    margin: 10px 0;
+  }
+
+  .action-section {
+    grid-column: 1;
+    margin-bottom: 0;
+  }
+
+  /* Kad keputusan muncul kemas di lajur kanan */
+  #result-card {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+    margin-top: 0;
+  }
+}
