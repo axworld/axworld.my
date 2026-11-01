@@ -68,7 +68,7 @@ html, body {
     background-color: var(--bg-page);
 }
 
-@media (min-width: 600px) {
+@media (min-width: 768px) {
     .app-container {
         max-width: 480px;
         margin: 0 auto;
