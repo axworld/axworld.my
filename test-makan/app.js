@@ -278,7 +278,7 @@ function isShopMatchCategory(shop, categoryLabel) {
         return fullText.includes("tomyam") || fullText.includes("thai") || fullText.includes("seafood") || fullText.includes("ikan bakar");
     }
     if (categoryLabel === "Kopitiam") {
-        return cat.includes("kopi") || cat.includes("kopitiam") || name.includes("kopi") || carb.includes("roti");
+        return (cat.includes("kopi") || cat.includes("kopitiam") || name.includes("kopi")) && !name.includes("sate");
     }
     if (categoryLabel === "Mamak") {
         return cat.includes("mamak") || name.includes("mamak") || name.includes("kandar") || fullText.includes("roti canai") || name.includes("mamu") || fullText.includes("tandoor");
@@ -366,7 +366,6 @@ function matchShopArea(shop, area) {
     return true;
 }
 
-// Auto-sorok butang Subang
 document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".area-chip").forEach(chip => {
         if (chip.textContent.toLowerCase().includes("subang")) {
@@ -576,7 +575,7 @@ function displayWinnerCard(shop, category) {
         resultGmapsBtn.href = buildSafeGoogleMapsUrl(shop);
     }
 
-    // 2. BUTANG REVIEW GOOGLE (TERUS BUKA PROFIL KEDAI, BINTANG & GAMBAR MENU)
+    // 2. BUTANG REVIEW GOOGLE MAPS (BUKA PROFIL KEDAI, BINTANG & GAMBAR MENU)
     const reviewBtn = document.getElementById('result-reviews-btn');
     if (reviewBtn) {
         const placeQuery = encodeURIComponent(`${shop.name}, ${shop.address}`);
