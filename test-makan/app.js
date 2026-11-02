@@ -579,27 +579,39 @@ function displayWinnerCard(shop, category) {
     if (altContainer) {
         altContainer.innerHTML = ''; 
         
-        // Penterjemah Nama Zon Pintar (Berdasarkan Alamat Sebenar - 100% Tepat!)
+        // Penterjemah Nama Zon Pintar (Kenal SS2 & Kelana Jaya 100% Tepat!)
         function getReadableZoneName(s) {
-            const text = `${s.name} ${s.address || ''} ${s.zon || ''}`.toLowerCase();
+            const text = `${s.name} ${s.address || ''}`.toLowerCase();
             
-            if (text.includes('kebun') || text.includes('panglima garang') || text.includes('tpg') || text.includes('jenjarom') || text.includes('sijangkang') || text.includes('tropicana aman')) {
-                return 'Jln Kebun / TPG';
-            }
-            if (text.includes('shah alam') || text.includes('seksyen') || text.includes('setia alam') || text.includes('bukit jelutong') || text.includes('i-city')) {
-                return 'Shah Alam';
-            }
-            if (text.includes('damansara') || text.includes('ttdi') || text.includes('petaling jaya') || text.includes('pj') || text.includes('subang') || text.includes('sunway') || text.includes('kelana jaya') || text.includes('utama')) {
+            // 1. Geng Damansara & PJ (Termasuk SS2 & Kelana Jaya!)
+            if (text.includes('damansara') || text.includes('ttdi') || text.includes('ss2') || text.includes('kelana jaya') || text.includes('petaling jaya') || text.includes('pj') || text.includes('subang') || text.includes('sunway') || text.includes('utama')) {
                 return 'TTDI / Damansara';
             }
+            // 2. Geng Bangi & Kajang
             if (text.includes('bangi') || text.includes('kajang') || text.includes('semenyih') || text.includes('serdang') || text.includes('sungai ramal') || text.includes('ramal')) {
                 return 'Bangi / Kajang';
             }
+            // 3. Geng Shah Alam
+            if (text.includes('shah alam') || text.includes('seksyen') || text.includes('setia alam') || text.includes('bukit jelutong') || text.includes('i-city')) {
+                return 'Shah Alam';
+            }
+            // 4. Geng Jln Kebun & TPG
+            if (text.includes('kebun') || text.includes('panglima garang') || text.includes('tpg') || text.includes('jenjarom') || text.includes('sijangkang') || text.includes('tropicana aman')) {
+                return 'Jln Kebun / TPG';
+            }
+            // 5. Geng KL & Kg Baru
             if (text.includes('kampung baru') || text.includes('kg baru') || text.includes('kuala lumpur') || text.includes('kl') || text.includes('ampang') || text.includes('cheras') || text.includes('setapak') || text.includes('wangsa') || text.includes('klcc')) {
                 return 'KL / Kg Baru';
             }
             
-            return s.area || 'Lembah Klang';
+            // Sandaran ikut zon rasmi 1-5
+            const z = String(s.zon || '').toLowerCase();
+            if (z.includes('1')) return 'Jln Kebun / TPG';
+            if (z.includes('2')) return 'Shah Alam';
+            if (z.includes('3')) return 'TTDI / Damansara';
+            if (z.includes('4')) return 'Bangi / Kajang';
+            if (z.includes('5')) return 'KL / Kg Baru';
+            return 'Lembah Klang';
         }
 
         const poolSource = (typeof filteredRestaurants !== 'undefined' && filteredRestaurants.length > 0) 
@@ -628,7 +640,6 @@ function displayWinnerCard(shop, category) {
             
             const altMapsLink = buildSafeGoogleMapsUrl(alt);
             const zoneLabel = getReadableZoneName(alt);
-            // Bersihkan simbol < supaya tak terpotong!
             const cleanBudget = (alt.budget_tier || 'Marhaen').replace(/</g, '&lt;');
             
             altCard.innerHTML = `
