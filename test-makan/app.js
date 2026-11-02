@@ -4,8 +4,11 @@
  * Domain: axworld.my/makan-apa/
  */
 
-// --- KONFIGURASI 100% STATIK & LIVE SYNC ---
-const API_URL = "restaurants.json";
+/const possibleUrls = [
+        "/makan-apa/restaurants.json",  // 👈 🌟 TAMBAH BARIS NI KAT ATAS SEKALI BABY!
+        "restaurants.json",
+        "./restaurants.json"
+    ];
 
 // 8 Kategori Makanan Ikonik (Simetri Sempurna 45° - Reka Bentuk Asal Kemas)
 const FOOD_CATEGORIES = [
@@ -278,7 +281,7 @@ function isShopMatchCategory(shop, categoryLabel) {
         return fullText.includes("tomyam") || fullText.includes("thai") || fullText.includes("seafood") || fullText.includes("ikan bakar");
     }
     if (categoryLabel === "Kopitiam") {
-        return cat.includes("kopi") || cat.includes("kopitiam") || name.includes("kopi") || carb.includes("roti");
+        return (cat.includes("kopi") || cat.includes("kopitiam") || name.includes("kopi")) && !name.includes("sate");
     }
     if (categoryLabel === "Mamak") {
         return cat.includes("mamak") || name.includes("mamak") || name.includes("kandar") || fullText.includes("roti canai") || name.includes("mamu") || fullText.includes("tandoor");
@@ -366,7 +369,6 @@ function matchShopArea(shop, area) {
     return true;
 }
 
-// Auto-sorok butang Subang
 document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".area-chip").forEach(chip => {
         if (chip.textContent.toLowerCase().includes("subang")) {
@@ -546,7 +548,7 @@ function buildSafeGoogleMapsUrl(shop) {
     return `https://www.google.com/maps/dir/?api=1&destination=${query}`;
 }
 
-// BINA PAPARAN KEPUTUSAN JUARA BESERTA REVIEW & TOP 3 ALTERNATIF
+// BINA PAPARAN KEPUTUSAN JUARA BESERTA REVIEW & TOP 3 ALTERNATIF (VERSI ULTRA PADU)
 function displayWinnerCard(shop, category) {
     if (!shop) return;
 
@@ -571,31 +573,52 @@ function displayWinnerCard(shop, category) {
 
     if (resultAddress) resultAddress.innerText = `📍 ${shop.address}`;
     
-    // 1. Pautan Navigasi Google Maps Pintar
+    // 1. PANDU TERUS (NAVIGASI GPS)
     if (resultGmapsBtn) {
         resultGmapsBtn.href = buildSafeGoogleMapsUrl(shop);
     }
 
-    // 2. SET LINK BUTANG REVIEW GOOGLE (ATAS GMAPS)
+    // 2. BUTANG REVIEW GOOGLE MAPS (BUKA PROFIL KEDAI, BINTANG & GAMBAR MENU)
     const reviewBtn = document.getElementById('result-reviews-btn');
     if (reviewBtn) {
-        const searchQuery = encodeURIComponent(`${shop.name} ${shop.area} review menu`);
-        reviewBtn.href = `https://www.google.com/search?q=${searchQuery}`;
+        const placeQuery = encodeURIComponent(`${shop.name}, ${shop.address}`);
+        reviewBtn.href = `https://www.google.com/maps/search/?api=1&query=${placeQuery}`;
     }
 
-    // 3. JANA 2 PORT ALTERNATIF (TOTAL TOP 3)
+    // 3. JANA 2 PORT ALTERNATIF (TOP 3 SIMETRI KATEGORI SAMA + BEBAS UNDEFINED)
     const altContainer = document.getElementById('alternatives-list');
     if (altContainer) {
-        altContainer.innerHTML = ''; // Kosongkan kad lama
+        altContainer.innerHTML = ''; 
         
-        // Ambil daripada senarai restoran yang aktif
-        const poolSource = (typeof filteredRestaurants !== 'undefined' && filteredRestaurants.length > 2) 
+        // Penterjemah Nama Zon (Basmi "undefined" 100%!)
+        function getReadableZoneName(s) {
+            const z = String(s.zon || '').toLowerCase();
+            if (z.includes('1')) return 'Jln Kebun / TPG';
+            if (z.includes('2')) return 'Shah Alam';
+            if (z.includes('3')) return 'TTDI / Damansara';
+            if (z.includes('4')) return 'Bangi / Kajang';
+            if (z.includes('5')) return 'KL / Kg Baru';
+            return s.area || s.zon || 'Lembah Klang';
+        }
+
+        const poolSource = (typeof filteredRestaurants !== 'undefined' && filteredRestaurants.length > 0) 
             ? filteredRestaurants 
             : (typeof allRestaurants !== 'undefined' ? allRestaurants : []);
             
-        let altPool = poolSource.filter(item => item.name !== shop.name);
+        // WAJIB: Tapis kedai yang sama KATEGORI dengan pemenang roda!
+        let altPool = poolSource.filter(item => 
+            item.name !== shop.name && 
+            isShopMatchCategory(item, category.label)
+        );
         
-        // Rawakkan dan pilih 2 alternatif
+        // Sandaran jika kedai kategori sama kurang daripada 2
+        if (altPool.length < 2) {
+            altPool = poolSource.filter(item => item.name !== shop.name && item.zon === shop.zon);
+        }
+        if (altPool.length < 2) {
+            altPool = poolSource.filter(item => item.name !== shop.name);
+        }
+        
         const topAlternatives = altPool.sort(() => 0.5 - Math.random()).slice(0, 2);
         
         topAlternatives.forEach(alt => {
@@ -603,11 +626,16 @@ function displayWinnerCard(shop, category) {
             altCard.style.cssText = "background:var(--bg-subtle, #F9FAFB); border:1px solid var(--border-color); border-radius:12px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;";
             
             const altMapsLink = buildSafeGoogleMapsUrl(alt);
+            const zoneLabel = getReadableZoneName(alt);
+            // Bersihkan simbol < supaya tak terpotong!
+            const cleanBudget = (alt.budget_tier || 'Marhaen').replace(/</g, '&lt;');
             
             altCard.innerHTML = `
                 <div style="flex:1; padding-right:8px;">
                     <div style="font-size:13px; font-weight:800; color:var(--text-main);">${alt.name}</div>
-                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">📍 ${alt.area} • <span style="color:#059669; font-weight:700;">${alt.budget_tier || 'Marhaen'}</span></div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
+                        📍 ${zoneLabel} • <span style="color:#059669; font-weight:700;">${cleanBudget}</span> • <span style="color:#EA580C; font-weight:700;">${category.label}</span>
+                    </div>
                 </div>
                 <a href="${altMapsLink}" target="_blank" style="background:#1F2937; color:#FFF; text-decoration:none; font-size:11px; font-weight:700; padding:7px 12px; border-radius:8px; white-space:nowrap;">
                     🗺️ Maps
