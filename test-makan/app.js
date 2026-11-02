@@ -4,10 +4,8 @@
  * Domain: axworld.my/makan-apa/
  */
 
-const possibleUrls = [
-        "/test-makan/restaurants.json",     // 👈 Terus sedut 100 kedai legenda rasmi!
-        "../makan-apa/restaurants.json"
-    ];
+// --- KONFIGURASI 100% STATIK & LIVE SYNC ---
+const API_URL = "restaurants.json";
 
 // 8 Kategori Makanan Ikonik (Simetri Sempurna 45° - Reka Bentuk Asal Kemas)
 const FOOD_CATEGORIES = [
@@ -581,15 +579,27 @@ function displayWinnerCard(shop, category) {
     if (altContainer) {
         altContainer.innerHTML = ''; 
         
-        // Penterjemah Nama Zon (Basmi "undefined" 100%!)
+        // Penterjemah Nama Zon Pintar (Berdasarkan Alamat Sebenar - 100% Tepat!)
         function getReadableZoneName(s) {
-            const z = String(s.zon || '').toLowerCase();
-            if (z.includes('1')) return 'Jln Kebun / TPG';
-            if (z.includes('2')) return 'Shah Alam';
-            if (z.includes('3')) return 'TTDI / Damansara';
-            if (z.includes('4')) return 'Bangi / Kajang';
-            if (z.includes('5')) return 'KL / Kg Baru';
-            return s.area || s.zon || 'Lembah Klang';
+            const text = `${s.name} ${s.address || ''} ${s.zon || ''}`.toLowerCase();
+            
+            if (text.includes('kebun') || text.includes('panglima garang') || text.includes('tpg') || text.includes('jenjarom') || text.includes('sijangkang') || text.includes('tropicana aman')) {
+                return 'Jln Kebun / TPG';
+            }
+            if (text.includes('shah alam') || text.includes('seksyen') || text.includes('setia alam') || text.includes('bukit jelutong') || text.includes('i-city')) {
+                return 'Shah Alam';
+            }
+            if (text.includes('damansara') || text.includes('ttdi') || text.includes('petaling jaya') || text.includes('pj') || text.includes('subang') || text.includes('sunway') || text.includes('kelana jaya') || text.includes('utama')) {
+                return 'TTDI / Damansara';
+            }
+            if (text.includes('bangi') || text.includes('kajang') || text.includes('semenyih') || text.includes('serdang') || text.includes('sungai ramal') || text.includes('ramal')) {
+                return 'Bangi / Kajang';
+            }
+            if (text.includes('kampung baru') || text.includes('kg baru') || text.includes('kuala lumpur') || text.includes('kl') || text.includes('ampang') || text.includes('cheras') || text.includes('setapak') || text.includes('wangsa') || text.includes('klcc')) {
+                return 'KL / Kg Baru';
+            }
+            
+            return s.area || 'Lembah Klang';
         }
 
         const poolSource = (typeof filteredRestaurants !== 'undefined' && filteredRestaurants.length > 0) 
