@@ -4,8 +4,10 @@
  * Domain: axworld.my/makan-apa/
  */
 
-// --- KONFIGURASI 100% STATIK & LIVE SYNC ---
-const API_URL = "restaurants.json";
+const possibleUrls = [
+        "/test-makan/restaurants.json",     // 👈 Terus sedut 100 kedai legenda rasmi!
+        "../makan-apa/restaurants.json"
+    ];
 
 // 8 Kategori Makanan Ikonik (Simetri Sempurna 45° - Reka Bentuk Asal Kemas)
 const FOOD_CATEGORIES = [
