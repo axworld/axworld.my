@@ -1,11 +1,8 @@
-/**
- * MAKAN APA? - Official WebApp Engine (Master Batch-Resolved Edition)
- * Co-Architects: Khairul Azzumie & Mia
- * Domain: axworld.my/makan-apa/
- */
+async function fetchRestaurants() {
+    drawWheel();
 
-/const possibleUrls = [
-        "/makan-apa/restaurants.json",  // 👈 🌟 TAMBAH BARIS NI KAT ATAS SEKALI BABY!
+    const possibleUrls = [
+        "/makan-apa/restaurants.json", // 👈 ADA TANDA PETIK "..." & KOMA KAT HUJUNG
         "restaurants.json",
         "./restaurants.json"
     ];
