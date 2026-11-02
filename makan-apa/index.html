@@ -152,13 +152,35 @@
                 <p id="result-address" class="result-address" style="margin-bottom:12px;">Alamat Kedai</p>
                 
                 <!-- SATU BUTANG NAVIGASI TUNGGAL (GOOGLE MAPS SAHAJA!) -->
+                <!-- TINDAKAN: REVIEW ATAS, GMAPS BAWAH -->
                 <div class="result-actions" style="display:flex; flex-direction:column; gap:8px;">
-                    <a id="result-gmaps-btn" href="#" target="_blank" class="btn-action" style="background:#16A34A; color:#FFF; font-weight:800; padding:13px 20px; font-size:15px; border-radius:14px; box-shadow:0 4px 12px rgba(22, 163, 74, 0.3);">
+                    <!-- 1. BUTANG REVIEW GOOGLE (DI ATAS GMAPS) -->
+                    <a id="result-reviews-btn" href="#" target="_blank" class="btn-action" 
+                       style="background:#FFFBEB; color:#B45309; border:2px solid #FCD34D; font-weight:800; padding:12px 18px; font-size:14px; border-radius:14px; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 8px rgba(245, 158, 11, 0.15);">
+                        ⭐ Tengok Review & Gambar Menu (Google)
+                    </a>
+
+                    <!-- 2. BUTANG NAVIGASI GOOGLE MAPS -->
+                    <a id="result-gmaps-btn" href="#" target="_blank" class="btn-action" 
+                       style="background:#16A34A; color:#FFF; font-weight:800; padding:13px 20px; font-size:15px; border-radius:14px; box-shadow:0 4px 12px rgba(22, 163, 74, 0.3); text-decoration:none;">
                         🗺️ Pandu Terus ke Kedai (Google Maps)
                     </a>
+
+                    <!-- 3. BUTANG REROLL RAWAK -->
                     <button id="btn-reroll-result" type="button" class="btn-suggest" style="margin:0; font-size:13px; padding:11px; border-color:#F59E0B; color:#B45309; background:#FFFBEB;">
                         🔄 Tak Berkenan Kedai Ni? Putar Kedai Lain!
                     </button>
+                </div>
+
+                <!-- 🌟 2 PILIHAN ALTERNATIF SANDARAN (TOTAL TOP 3) -->
+                <div id="alternatives-section" style="margin-top:16px; padding-top:14px; border-top:1.5px dashed var(--border-color); text-align:left;">
+                    <div style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                        <span>💡 Port Alternatif Terdekat:</span>
+                        <span style="font-size:10px; color:#EA580C; background:#FFEDD5; padding:2px 8px; border-radius:99px;">Top 3 Tekak</span>
+                    </div>
+                    <div id="alternatives-list" style="display:flex; flex-direction:column; gap:8px;">
+                        <!-- 2 Kad Alternatif Akan Dijana oleh JavaScript kat sini -->
+                    </div>
                 </div>
                 
                 <!-- Amaran Penafian Mesra -->

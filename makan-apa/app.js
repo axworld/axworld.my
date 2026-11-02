@@ -138,7 +138,7 @@ if (themeToggleBtn) {
 
 initTheme();
 
-// --- 2. MUAT TURUN DATA (DENGAN CACHE 30 MINIT) ---
+// --- 2. MUAT TURUN DATA ---
 async function fetchRestaurants() {
     drawWheel();
 
@@ -185,7 +185,7 @@ async function fetchRestaurants() {
     console.warn("⚠️ Fail restaurants.json tidak ditemui.");
 }
 
-// --- 3. LUKIS RODA ASAL (HIRISAN SIMETRI 45° DUA TINGKAT) ---
+// --- 3. LUKIS RODA ASAL ---
 function drawWheel() {
     if (!canvas || !ctx) return;
     const numSegments = FOOD_CATEGORIES.length;
@@ -234,7 +234,7 @@ function drawWheel() {
         ctx.restore();
     }
 
-    // Pusat Tanda Soal "?" Emas Asal
+    // Pusat Tanda Soal "?" Emas
     ctx.beginPath();
     ctx.arc(centerX, centerY, 32, 0, 2 * Math.PI);
     ctx.fillStyle = "#1F2937";
@@ -250,7 +250,7 @@ function drawWheel() {
     ctx.fillText("?", centerX, centerY + 2);
 }
 
-// --- FUNGSI SEMAKAN KATEGORI TEPAT (BURGER BAKAR TIADA LAGI DALAM TOMYAM!) ---
+// --- FUNGSI SEMAKAN KATEGORI TEPAT ---
 function isShopMatchCategory(shop, categoryLabel) {
     const cat = (shop.category || "").toLowerCase();
     const carb = (shop.carb_type || "").toLowerCase();
@@ -272,7 +272,6 @@ function isShopMatchCategory(shop, categoryLabel) {
         return fullText.includes("ayam") || fullText.includes("gepuk") || fullText.includes("crispy");
     }
     if (categoryLabel === "Tomyam") {
-        // Sekat Western / Burger daripada masuk Tomyam
         if (fullText.includes("burger") || cat.includes("western") || fullText.includes("grill") || fullText.includes("pasta")) {
             return false;
         }
@@ -301,7 +300,7 @@ function isShopMatchTaste(shop, taste) {
         return text.includes("gepuk") || text.includes("cili") || text.includes("pedas") || text.includes("belacan") || text.includes("padang") || text.includes("sambal") || text.includes("berapi") || text.includes("tandoor");
     }
     if (taste === "manis") {
-    return text.includes("manis") || text.includes("sejuk") || text.includes("dessert") || text.includes("bingsu") || text.includes("croffle") || text.includes("cendol") || text.includes("waffle") || text.includes("kek") || text.includes("pancake") || text.includes("kuih") || text.includes("bakery") || text.includes("sweet") || text.includes("cafe") || text.includes("kopi");
+        return text.includes("manis") || text.includes("sejuk") || text.includes("dessert") || text.includes("bingsu") || text.includes("croffle") || text.includes("cendol") || text.includes("waffle") || text.includes("kek") || text.includes("pancake") || text.includes("kuih") || text.includes("bakery") || text.includes("sweet") || text.includes("cafe") || text.includes("kopi");
     }
     if (taste === "sup") {
         return text.includes("sup") || text.includes("soup") || text.includes("bakso") || text.includes("tarik") || text.includes("soto") || text.includes("shabu") || text.includes("steamboat");
@@ -353,21 +352,21 @@ function getSignatureDish(shop) {
     return "Hidangan Istimewa Pilihan Ramai (Paling Disyorkan!) ✨";
 }
 
-// --- PENAPIS KAWASAN ASLI 100% TEPAT (ZON 1 HINGGA ZON 5) ---
+// --- PENAPIS KAWASAN ASLI (ZON 1 HINGGA ZON 5) ---
 function matchShopArea(shop, area) {
     if (!area || area === "all") return true;
     const z = String(shop.zon || "").toLowerCase().trim();
 
     if (area === "kebun_tpg") return z === "zon 1" || z === "1";
     if (area === "shah_alam") return z === "zon 2" || z === "2";
-    if (area === "ttdi_damansara") return z === "zon 3" || z === "3"; // ✅ Zon 3 = TTDI
-    if (area === "bangi_kajang") return z === "zon 4" || z === "4";   // ✅ Zon 4 = Bangi
-    if (area === "kl") return z === "zon 5" || z === "5";             // ✅ Zon 5 = KL
+    if (area === "ttdi_damansara") return z === "zon 3" || z === "3";
+    if (area === "bangi_kajang") return z === "zon 4" || z === "4";
+    if (area === "kl") return z === "zon 5" || z === "5";
     
     return true;
 }
 
-// Auto-sorok butang pill Subang lama dari paparan skrin
+// Auto-sorok butang Subang
 document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".area-chip").forEach(chip => {
         if (chip.textContent.toLowerCase().includes("subang")) {
@@ -452,14 +451,14 @@ function applySearchToList() {
     renderListView();
 }
 
-// --- 5. LOGIK PUTARAN RODA PINTAR & TEPAT MENGIKUT POINTER JAM 12 ---
+// --- 5. LOGIK PUTARAN RODA PINTAR ---
 function spinWheel() {
     if (isSpinning) return;
 
     if (filteredRestaurants.length === 0) {
-    showCustomAlert("Tiada Kedai Ditemui 🔍", "Alamak! Tiada kedai yang padan dengan gabungan pilihan ini.<br><br>Sila ubah kawasan atau selera mengidam anda ya!", "🍲");
-    return;
-}
+        showCustomAlert("Tiada Kedai Ditemui 🔍", "Alamak! Tiada kedai yang padan dengan gabungan pilihan ini.<br><br>Sila ubah kawasan atau selera mengidam anda ya!", "🍲");
+        return;
+    }
 
     isSpinning = true;
     if (resultCard) {
@@ -532,9 +531,9 @@ function determineWinner(winningCategory, excludeShopId = null) {
     }
 
     if (matchingShops.length === 0) {
-    showCustomAlert("Sila Putar Semula 🔄", `Tiada kedai sepadan untuk kategori <b>${winningCategory.label}</b>. Sila cuba putar lagi ya!`, "🎲");
-    return;
-}
+        showCustomAlert("Sila Putar Semula 🔄", `Tiada kedai sepadan untuk kategori <b>${winningCategory.label}</b>. Sila cuba putar lagi ya!`, "🎲");
+        return;
+    }
 
     const selectedShop = matchingShops[Math.floor(Math.random() * matchingShops.length)];
     currentSelectedShop = selectedShop;
@@ -542,20 +541,102 @@ function determineWinner(winningCategory, excludeShopId = null) {
     displayWinnerCard(selectedShop, winningCategory);
 }
 
-// BINA PAUTAN GOOGLE MAPS KALIS AIR (TIADA LAGI TERJUN TASIK/SUNGAI)
-// Pengendali Klik Butang Google Maps Pintar & Kalis Luar Talian
-// Pengendali Klik Butang Google Maps Pintar (Versi Modal Khas Kalis "axworld.my says")
+function buildSafeGoogleMapsUrl(shop) {
+    const query = encodeURIComponent(`${shop.name}, ${shop.address}`);
+    return `https://www.google.com/maps/dir/?api=1&destination=${query}`;
+}
+
+// BINA PAPARAN KEPUTUSAN JUARA BESERTA REVIEW & TOP 3 ALTERNATIF
+function displayWinnerCard(shop, category) {
+    if (!shop) return;
+
+    const cravingTitle = isCravingModeActive 
+        ? `🤰 REZEKI MAK BUYUNG: ${activeTasteFilter.toUpperCase()}!` 
+        : `${category.icon} HARI INI TEKAK NAK: ${category.label.toUpperCase()}!`;
+
+    if (resultCraving) resultCraving.innerText = cravingTitle;
+    if (resultName) resultName.innerText = shop.name;
+    if (resultCategory) resultCategory.innerText = shop.category;
+    if (resultBudget) resultBudget.innerText = shop.budget_tier;
+    
+    const hours = shop.operating_hours || "10:00 AM - 10:00 PM";
+    const closed = shop.closed_days || "Tiada Cuti";
+    if (resultHours) {
+        resultHours.innerHTML = `⏰ Buka: <b>${hours}</b> • <span style="color:#DC2626;">🚫 Cuti: ${closed}</span>`;
+    }
+
+    if (resultTastesBox) {
+        resultTastesBox.innerHTML = renderTasteBadges(shop.taste_tags);
+    }
+
+    if (resultAddress) resultAddress.innerText = `📍 ${shop.address}`;
+    
+    // 1. Pautan Navigasi Google Maps Pintar
+    if (resultGmapsBtn) {
+        resultGmapsBtn.href = buildSafeGoogleMapsUrl(shop);
+    }
+
+    // 2. SET LINK BUTANG REVIEW GOOGLE (ATAS GMAPS)
+    const reviewBtn = document.getElementById('result-reviews-btn');
+    if (reviewBtn) {
+        const searchQuery = encodeURIComponent(`${shop.name} ${shop.area} review menu`);
+        reviewBtn.href = `https://www.google.com/search?q=${searchQuery}`;
+    }
+
+    // 3. JANA 2 PORT ALTERNATIF (TOTAL TOP 3)
+    const altContainer = document.getElementById('alternatives-list');
+    if (altContainer) {
+        altContainer.innerHTML = ''; // Kosongkan kad lama
+        
+        // Ambil daripada senarai restoran yang aktif
+        const poolSource = (typeof filteredRestaurants !== 'undefined' && filteredRestaurants.length > 2) 
+            ? filteredRestaurants 
+            : (typeof allRestaurants !== 'undefined' ? allRestaurants : []);
+            
+        let altPool = poolSource.filter(item => item.name !== shop.name);
+        
+        // Rawakkan dan pilih 2 alternatif
+        const topAlternatives = altPool.sort(() => 0.5 - Math.random()).slice(0, 2);
+        
+        topAlternatives.forEach(alt => {
+            const altCard = document.createElement('div');
+            altCard.style.cssText = "background:var(--bg-subtle, #F9FAFB); border:1px solid var(--border-color); border-radius:12px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;";
+            
+            const altMapsLink = buildSafeGoogleMapsUrl(alt);
+            
+            altCard.innerHTML = `
+                <div style="flex:1; padding-right:8px;">
+                    <div style="font-size:13px; font-weight:800; color:var(--text-main);">${alt.name}</div>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">📍 ${alt.area} • <span style="color:#059669; font-weight:700;">${alt.budget_tier || 'Marhaen'}</span></div>
+                </div>
+                <a href="${altMapsLink}" target="_blank" style="background:#1F2937; color:#FFF; text-decoration:none; font-size:11px; font-weight:700; padding:7px 12px; border-radius:8px; white-space:nowrap;">
+                    🗺️ Maps
+                </a>
+            `;
+            altContainer.appendChild(altCard);
+        });
+    }
+
+    if (btnRerollResult) btnRerollResult.style.display = "block";
+    
+    if (resultCard) {
+        resultCard.classList.remove("hidden");
+        resultCard.style.display = "block";
+        resultCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+}
+
+// Navigasi Luar Talian
 function setupSafeNavigationListener(buttonElement, shopGetter) {
   if (!buttonElement) return;
 
   buttonElement.addEventListener('click', (e) => {
     if (!navigator.onLine) {
-      e.preventDefault(); // Sekat pautan
+      e.preventDefault();
       const shop = shopGetter();
       const shopName = shop ? shop.name : "Kedai Pilihan";
       const shopAddress = shop ? shop.address : "Alamat yang tertera pada kad";
 
-      // Cipta Modal Khas Elegan (Tanpa tulisan "says" pelayar!)
       const existingOfflineModal = document.getElementById('custom-offline-modal');
       if (existingOfflineModal) existingOfflineModal.remove();
 
@@ -593,53 +674,10 @@ function setupSafeNavigationListener(buttonElement, shopGetter) {
   });
 }
 
-// Pasangkan perlindungan ini kepada butang peta Kad Keputusan & Kad Profil
 setupSafeNavigationListener(resultGmapsBtn, () => currentSelectedShop);
 setupSafeNavigationListener(profileGmapsBtn, () => currentSelectedShop);
-function buildSafeGoogleMapsUrl(shop) {
-    const query = encodeURIComponent(`${shop.name}, ${shop.address}`);
-    return `https://www.google.com/maps/dir/?api=1&destination=${query}`;
-}
 
-function displayWinnerCard(shop, category) {
-    if (!shop) return;
-
-    const cravingTitle = isCravingModeActive 
-        ? `🤰 REZEKI MAK BUYUNG: ${activeTasteFilter.toUpperCase()}!` 
-        : `${category.icon} HARI INI TEKAK NAK: ${category.label.toUpperCase()}!`;
-
-    if (resultCraving) resultCraving.innerText = cravingTitle;
-    if (resultName) resultName.innerText = shop.name;
-    if (resultCategory) resultCategory.innerText = shop.category;
-    if (resultBudget) resultBudget.innerText = shop.budget_tier;
-    
-    const hours = shop.operating_hours || "10:00 AM - 10:00 PM";
-    const closed = shop.closed_days || "Tiada Cuti";
-    if (resultHours) {
-        resultHours.innerHTML = `⏰ Buka: <b>${hours}</b> • <span style="color:#DC2626;">🚫 Cuti: ${closed}</span>`;
-    }
-
-    if (resultTastesBox) {
-        resultTastesBox.innerHTML = renderTasteBadges(shop.taste_tags);
-    }
-
-    if (resultAddress) resultAddress.innerText = `📍 ${shop.address}`;
-    
-    // Pautan Google Maps Pintar Kalis Air
-    if (resultGmapsBtn) {
-        resultGmapsBtn.href = buildSafeGoogleMapsUrl(shop);
-    }
-
-    if (btnRerollResult) btnRerollResult.style.display = "block";
-    
-    if (resultCard) {
-        resultCard.classList.remove("hidden");
-        resultCard.style.display = "block";
-        resultCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
-    }
-}
-
-// --- 6. RENDER SENARAI KEDAI DENGAN NAVIGASI 10 KEDAI ---
+// --- 6. RENDER SENARAI KEDAI ---
 function renderListView() {
     if (!restaurantsList) return;
     restaurantsList.innerHTML = "";
@@ -731,7 +769,7 @@ function renderListView() {
     }
 }
 
-// Buka Modal Profil Kedai (Google Maps Tunggal Kalis Air)
+// Buka Modal Profil Kedai
 function openStoreProfile(shop) {
     if (!shop) return;
     currentSelectedShop = shop;
@@ -809,7 +847,6 @@ if (toggleCravingModeBtn) {
     });
 }
 
-// Listener Cip Deria Rasa Mengidam
 tasteChips.forEach(chip => {
     chip.addEventListener("click", () => {
         tasteChips.forEach(c => c.classList.remove("active"));
@@ -822,7 +859,6 @@ tasteChips.forEach(chip => {
     });
 });
 
-// Listener Penapis Normal
 foodChips.forEach(chip => {
     chip.addEventListener("click", () => {
         foodChips.forEach(c => c.classList.remove("active"));
@@ -848,14 +884,12 @@ if (listSearchInput) {
     });
 }
 
-// Butang Reroll
 if (btnRerollResult) {
     btnRerollResult.addEventListener("click", () => {
         spinWheel();
     });
 }
 
-// Penapis Kawasan Senarai & Roda (Aktif Global)
 window.setAreaFilter = function(area, btn) {
     document.querySelectorAll(".area-chip").forEach(c => c.classList.remove("active"));
     btn.classList.add("active");
@@ -870,10 +904,9 @@ window.pilihTierDerma = function(tierName, amount) {
     }
 };
 
-// --- 9. MODAL SOKONGAN & INTEGRASI GOOGLE APPS SCRIPT (LIVE SYNC) ---
+// --- 9. MODAL SOKONGAN & GOOGLE APPS SCRIPT ---
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBEzpI3MMWW9vZhsMG8-ikFZLqzqJuFZW14QG34D-Y3iI_lI8RP6unVOjBqbLweN0L/exec";
 
-// Enjin Penghantaran Kalis CORS
 async function sendToGoogleAppsScript(payload) {
     try {
         await fetch(GOOGLE_SCRIPT_URL, {
@@ -892,7 +925,7 @@ async function sendToGoogleAppsScript(payload) {
     }
 }
 
-// A. BORANG 1: CADANGKAN KEDAI (Tab: Cadangan_Kedai)
+// Borang Cadang
 if (openSuggestBtn) {
     openSuggestBtn.addEventListener("click", () => {
         suggestFormView.classList.remove("hidden");
@@ -923,7 +956,6 @@ if (suggestForm) {
         const budget = document.getElementById("suggest-budget").value;
         const link = document.getElementById("suggest-link").value || "";
 
-        // Tembak Data Sepadan Tepat dengan Code.gs
         await sendToGoogleAppsScript({
             form_type: "suggest",
             shop_name: name,
@@ -953,7 +985,7 @@ if (btnSuggestAnother) {
     });
 }
 
-// B. BORANG 2: LAPOR ISU KEDAI (Tab: Laporan_Masalah)
+// Borang Lapor
 function triggerReportModal() {
     const targetName = currentSelectedShop ? currentSelectedShop.name : (resultName ? resultName.innerText : "Kedai");
     reportShopName.innerText = `Kedai: ${targetName}`;
@@ -984,7 +1016,6 @@ if (reportForm) {
         const issueType = document.getElementById("report-issue-type").value;
         const notes = document.getElementById("report-notes").value || "";
 
-        // Tembak Data Sepadan Tepat dengan Code.gs
         await sendToGoogleAppsScript({
             form_type: "report",
             shop_name: shopName,
@@ -1003,7 +1034,7 @@ if (reportForm) {
     });
 }
 
-// C. BORANG 3: HUBUNGI ADMIN (Tab: Mesej_Admin)
+// Borang Hubungi
 if (openContactBtn) openContactBtn.addEventListener("click", () => contactModal.classList.remove("hidden"));
 if (closeContactBtn) closeContactBtn.addEventListener("click", () => contactModal.classList.add("hidden"));
 if (contactModal) {
@@ -1026,7 +1057,6 @@ if (contactForm) {
         const reach = document.getElementById("contact-reach").value;
         const message = document.getElementById("contact-message").value;
 
-        // Tembak Data Sepadan Tepat dengan Code.gs (sender_name & contact_info)
         await sendToGoogleAppsScript({
             form_type: "contact",
             sender_name: name,
@@ -1045,7 +1075,7 @@ if (contactForm) {
     });
 }
 
-// MODAL TIP / DERMA KOPI
+// Modal Kopi
 if (openTipBtn) openTipBtn.addEventListener("click", () => tipModal.classList.remove("hidden"));
 if (closeTipBtn) closeTipBtn.addEventListener("click", () => tipModal.classList.add("hidden"));
 if (tipModal) {
@@ -1054,7 +1084,7 @@ if (tipModal) {
     });
 }
 
-// MODAL PENAFIAN (DISCLAIMER)
+// Modal Penafian
 const disclaimerModal = document.getElementById("disclaimer-modal");
 const openDisclaimerBtn = document.getElementById("open-disclaimer-btn");
 const closeDisclaimerBtn = document.getElementById("close-disclaimer-btn");
@@ -1069,7 +1099,7 @@ if (disclaimerModal) {
     });
 }
 
-// FUNGSI NOTIS UNIVERSAL KELAS PERTAMA (SIFAR "axworld.my says")
+// Fungsi Custom Alert
 function showCustomAlert(title, message, icon = "✨") {
   const existing = document.getElementById('universal-app-modal');
   if (existing) existing.remove();
@@ -1090,7 +1120,7 @@ function showCustomAlert(title, message, icon = "✨") {
   document.body.insertAdjacentHTML('beforeend', modalHtml);
 }
 
-// Mulakan butang putar & muat turun data (Sekali sahaja!)
+// Mulakan sistem
 if (spinBtn) spinBtn.addEventListener("click", spinWheel);
 fetchRestaurants();
 window.showCustomAlert = showCustomAlert;
