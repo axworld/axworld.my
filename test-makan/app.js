@@ -4,10 +4,9 @@
  * Domain: axworld.my/makan-apa/
  */
 
-/const possibleUrls = [
-        "/test-makan/restaurants.json",  // 👈 🌟 TAMBAH BARIS NI KAT ATAS SEKALI BABY!
-        "restaurants.json",
-        "./restaurants.json"
+const possibleUrls = [
+        "/makan-apa/restaurants.json",     // 👈 Terus sedut 100 kedai legenda rasmi!
+        "../makan-apa/restaurants.json"
     ];
 
 // 8 Kategori Makanan Ikonik (Simetri Sempurna 45° - Reka Bentuk Asal Kemas)
