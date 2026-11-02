@@ -5,7 +5,7 @@
  */
 
 /const possibleUrls = [
-        "/makan-apa/restaurants.json",  // 👈 🌟 TAMBAH BARIS NI KAT ATAS SEKALI BABY!
+        "/test-makan/restaurants.json",  // 👈 🌟 TAMBAH BARIS NI KAT ATAS SEKALI BABY!
         "restaurants.json",
         "./restaurants.json"
     ];
