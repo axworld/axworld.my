@@ -4,10 +4,8 @@
  * Domain: axworld.my/makan-apa/
  */
 
-const possibleUrls = [
-        "/makan-apa/restaurants.json",     // 👈 Terus sedut 100 kedai legenda rasmi!
-        "../makan-apa/restaurants.json"
-    ];
+// --- KONFIGURASI 100% STATIK & LIVE SYNC ---
+const API_URL = "restaurants.json";
 
 // 8 Kategori Makanan Ikonik (Simetri Sempurna 45° - Reka Bentuk Asal Kemas)
 const FOOD_CATEGORIES = [
@@ -140,7 +138,7 @@ if (themeToggleBtn) {
 
 initTheme();
 
-// --- 2. MUAT TURUN DATA ---
+// --- 2. MUAT TURUN DATA (100 KEDAI LEGENDA RASMI) ---
 async function fetchRestaurants() {
     drawWheel();
 
@@ -252,7 +250,7 @@ function drawWheel() {
     ctx.fillText("?", centerX, centerY + 2);
 }
 
-// --- FUNGSI SEMAKAN KATEGORI TEPAT ---
+// --- FUNGSI SEMAKAN KATEGORI TEPAT (DISIPLIN KATEGORI) ---
 function isShopMatchCategory(shop, categoryLabel) {
     const cat = (shop.category || "").toLowerCase();
     const carb = (shop.carb_type || "").toLowerCase();
@@ -367,14 +365,6 @@ function matchShopArea(shop, area) {
     
     return true;
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll(".area-chip").forEach(chip => {
-        if (chip.textContent.toLowerCase().includes("subang")) {
-            chip.style.display = "none";
-        }
-    });
-});
 
 // --- 4. LOGIK PENAPIS UTAMA ---
 function applyFilters() {
@@ -547,7 +537,7 @@ function buildSafeGoogleMapsUrl(shop) {
     return `https://www.google.com/maps/dir/?api=1&destination=${query}`;
 }
 
-// BINA PAPARAN KEPUTUSAN JUARA BESERTA REVIEW & TOP 3 ALTERNATIF (VERSI ULTRA PADU)
+// BINA PAPARAN KEPUTUSAN JUARA BESERTA REVIEW & TOP 3 ALTERNATIF (UBAT SEMUA ISU)
 function displayWinnerCard(shop, category) {
     if (!shop) return;
 
