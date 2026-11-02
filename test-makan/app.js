@@ -546,8 +546,7 @@ function buildSafeGoogleMapsUrl(shop) {
     return `https://www.google.com/maps/dir/?api=1&destination=${query}`;
 }
 
-// BINA PAPARAN KEPUTUSAN JUARA BESERTA REVIEW & TOP 3 ALTERNATIF
-// BINA PAPARAN KEPUTUSAN JUARA BESERTA REVIEW & TOP 3 ALTERNATIF (VERSI SEMPURNA)
+// BINA PAPARAN KEPUTUSAN JUARA BESERTA REVIEW & TOP 3 ALTERNATIF (VERSI ULTRA PADU)
 function displayWinnerCard(shop, category) {
     if (!shop) return;
 
@@ -572,7 +571,7 @@ function displayWinnerCard(shop, category) {
 
     if (resultAddress) resultAddress.innerText = `📍 ${shop.address}`;
     
-    // 1. PANDU TERUS (NAVIGASI GPS LANGSUNG)
+    // 1. PANDU TERUS (NAVIGASI GPS)
     if (resultGmapsBtn) {
         resultGmapsBtn.href = buildSafeGoogleMapsUrl(shop);
     }
@@ -587,7 +586,7 @@ function displayWinnerCard(shop, category) {
     // 3. JANA 2 PORT ALTERNATIF (TOP 3 SIMETRI KATEGORI SAMA + BEBAS UNDEFINED)
     const altContainer = document.getElementById('alternatives-list');
     if (altContainer) {
-        altContainer.innerHTML = ''; // Kosongkan kad lama
+        altContainer.innerHTML = ''; 
         
         // Penterjemah Nama Zon (Basmi "undefined" 100%!)
         function getReadableZoneName(s) {
@@ -610,12 +609,10 @@ function displayWinnerCard(shop, category) {
             isShopMatchCategory(item, category.label)
         );
         
-        // Sandaran jika kedai kategori sama kurang daripada 2 (ambil dalam zon sama)
+        // Sandaran jika kedai kategori sama kurang daripada 2
         if (altPool.length < 2) {
             altPool = poolSource.filter(item => item.name !== shop.name && item.zon === shop.zon);
         }
-
-        // Jika masih kurang, ambil mana-mana kedai lain
         if (altPool.length < 2) {
             altPool = poolSource.filter(item => item.name !== shop.name);
         }
@@ -628,12 +625,14 @@ function displayWinnerCard(shop, category) {
             
             const altMapsLink = buildSafeGoogleMapsUrl(alt);
             const zoneLabel = getReadableZoneName(alt);
+            // Bersihkan simbol < supaya tak terpotong!
+            const cleanBudget = (alt.budget_tier || 'Marhaen').replace(/</g, '&lt;');
             
             altCard.innerHTML = `
                 <div style="flex:1; padding-right:8px;">
                     <div style="font-size:13px; font-weight:800; color:var(--text-main);">${alt.name}</div>
                     <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
-                        📍 ${zoneLabel} • <span style="color:#059669; font-weight:700;">${alt.budget_tier || 'Marhaen'}</span> • <span style="color:#EA580C; font-weight:700;">${category.label}</span>
+                        📍 ${zoneLabel} • <span style="color:#059669; font-weight:700;">${cleanBudget}</span> • <span style="color:#EA580C; font-weight:700;">${category.label}</span>
                     </div>
                 </div>
                 <a href="${altMapsLink}" target="_blank" style="background:#1F2937; color:#FFF; text-decoration:none; font-size:11px; font-weight:700; padding:7px 12px; border-radius:8px; white-space:nowrap;">
