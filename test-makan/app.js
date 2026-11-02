@@ -2,10 +2,11 @@ async function fetchRestaurants() {
     drawWheel();
 
     const possibleUrls = [
-        "/makan-apa/restaurants.json", // 👈 ADA TANDA PETIK "..." & KOMA KAT HUJUNG
+        "/test-makan/restaurants.json", // 👈 ADA TANDA PETIK "..." & KOMA KAT HUJUNG
         "restaurants.json",
         "./restaurants.json"
     ];
+    ...
 
 // 8 Kategori Makanan Ikonik (Simetri Sempurna 45° - Reka Bentuk Asal Kemas)
 const FOOD_CATEGORIES = [
