@@ -619,9 +619,16 @@ function displayWinnerCard(shop, category) {
             isShopMatchCategory(item, category.label)
         );
         
-        // Sandaran jika kedai kategori sama kurang daripada 2, ambil kedai lain DALAM ZON SAMA:
+        // Sandaran jika kedai kategori sama kurang daripada 2:
         if (altPool.length < 2) {
             altPool = poolSource.filter(item => item.name !== shop.name);
+        }
+        // 🌟 JIKA MASIH TAK CUKUP (Cth: Cuma ada 1 kedai lepas tapisan), AMBIL DARI ZON SAMA DALAM DATABASE:
+        if (altPool.length < 2) {
+            altPool = allRestaurants.filter(item => 
+                item.name !== shop.name && 
+                matchShopArea(item, activeAreaFilter)
+            );
         }
         
         const topAlternatives = altPool.sort(() => 0.5 - Math.random()).slice(0, 2);
@@ -860,6 +867,19 @@ if (toggleWheelBtn && toggleListBtn) {
 if (toggleCravingModeBtn) {
     toggleCravingModeBtn.addEventListener("click", () => {
         isCravingModeActive = !isCravingModeActive;
+if (toggleCravingModeBtn) {
+    toggleCravingModeBtn.addEventListener("click", () => {
+        isCravingModeActive = !isCravingModeActive;
+
+        // 🌟 RESET PENAPIS LAMA SUPAYA TAK JADI PENAPIS HANTU:
+        activeFoodFilter = "all";
+        activeBudgetFilter = "all";
+        foodChips.forEach(c => c.classList.remove("active"));
+        budgetChips.forEach(c => c.classList.remove("active"));
+        const defaultFood = document.querySelector('.food-chip[data-filter="all"]');
+        const defaultBudget = document.querySelector('.budget-chip[data-budget="all"]');
+        if (defaultFood) defaultFood.classList.add("active");
+        if (defaultBudget) defaultBudget.classList.add("active");
 
         if (isCravingModeActive) {
             toggleCravingModeBtn.style.background = "#E11D48";
