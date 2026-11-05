@@ -610,69 +610,6 @@ function displayWinnerCard(shop, category) {
         reviewBtn.href = `https://www.google.com/maps/search/?api=1&query=${placeQuery}`;
     }
 
-    // 3. JANA 2 PORT ALTERNATIF (TOP 3 SIMETRI KATEGORI SAMA + BEBAS UNDEFINED)
-    const altContainer = document.getElementById('alternatives-list');
-    if (altContainer) {
-        altContainer.innerHTML = ''; 
-        
-        // Penterjemah Nama Zon Sebenar
-        function getReadableZoneName(s) {
-            const z = String(s.zon || '').toLowerCase();
-            if (z.includes('1')) return 'Jln Kebun / TPG';
-            if (z.includes('2')) return 'Shah Alam';
-            if (z.includes('3')) return 'KL / Kg Baru';
-            if (z.includes('4')) return 'TTDI / Damansara';
-            if (z.includes('5')) return 'Bangi / Kajang';
-            return 'Lembah Klang';
-        }
-
-        const poolSource = (typeof filteredRestaurants !== 'undefined' && filteredRestaurants.length > 0) 
-            ? filteredRestaurants 
-            : allRestaurants;
-            
-        // WAJIB: Tapis kedai yang sama KATEGORI dengan pemenang roda dalam ZON yang sama!
-        let altPool = poolSource.filter(item => 
-            item.name !== shop.name && 
-            isShopMatchCategory(item, category.label)
-        );
-        
-        // Sandaran jika kedai kategori sama kurang daripada 2:
-        if (altPool.length < 2) {
-            altPool = poolSource.filter(item => item.name !== shop.name);
-        }
-        // 🌟 JIKA MASIH TAK CUKUP (Cth: Cuma ada 1 kedai lepas tapisan), AMBIL DARI ZON SAMA DALAM DATABASE:
-        if (altPool.length < 2) {
-            altPool = allRestaurants.filter(item => 
-                item.name !== shop.name && 
-                matchShopArea(item, activeAreaFilter)
-            );
-        }
-        
-        const topAlternatives = altPool.sort(() => 0.5 - Math.random()).slice(0, 2);
-        
-        topAlternatives.forEach(alt => {
-            const altCard = document.createElement('div');
-            altCard.style.cssText = "background:var(--bg-subtle, #F9FAFB); border:1px solid var(--border-color); border-radius:12px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;";
-            
-            const altMapsLink = buildSafeGoogleMapsUrl(alt);
-            const zoneLabel = getReadableZoneName(alt);
-            const cleanBudget = (alt.budget_tier || 'Marhaen').replace(/</g, '&lt;');
-            
-            altCard.innerHTML = `
-                <div style="flex:1; padding-right:8px;">
-                    <div style="font-size:13px; font-weight:800; color:var(--text-main);">${alt.name}</div>
-                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
-                        📍 ${zoneLabel} • <span style="color:#059669; font-weight:700;">${cleanBudget}</span> • <span style="color:#EA580C; font-weight:700;">${alt.category || category.label}</span>
-                    </div>
-                </div>
-                <a href="${altMapsLink}" target="_blank" style="background:#1F2937; color:#FFF; text-decoration:none; font-size:11px; font-weight:700; padding:7px 12px; border-radius:8px; white-space:nowrap;">
-                    🗺️ Maps
-                </a>
-            `;
-            altContainer.appendChild(altCard);
-        });
-    }
-
     if (btnRerollResult) btnRerollResult.style.display = "block";
     
     if (resultCard) {
