@@ -467,9 +467,26 @@ function spinWheel() {
     const arcSize = (2 * Math.PI) / numSegments;
 
     // 🌟 RODA PINTAR: HANYA BERHENTI PADA KATEGORI YANG BENAR-BENAR WUJUD DALAM ZON INI!
-    const validCategories = FOOD_CATEGORIES.filter(cat => 
+    let validCategories = FOOD_CATEGORIES.filter(cat => 
         filteredRestaurants.some(r => isShopMatchCategory(r, cat.label))
     );
+
+    // 🛡️ PERISAI MAK BUYUNG: HARAMKAN KATEGORI YANG TAK MASUK AKAL DENGAN SELERA!
+    const CRAVING_LOGIC_MAP = {
+        "banjir": ["Nasi", "Mamak", "Mi & Sup"],
+        "sup": ["Mi & Sup", "Tomyam", "Nasi"],
+        "manis": ["Kafe & Manis", "Kopitiam"],
+        "masam": ["Tomyam", "Nasi", "Mi & Sup"],
+        "pedas": ["Nasi", "Ayam Goreng", "Mamak", "Tomyam", "Burger"]
+    };
+
+    if (isCravingModeActive && CRAVING_LOGIC_MAP[activeTasteFilter]) {
+        const allowedCats = CRAVING_LOGIC_MAP[activeTasteFilter];
+        const strictCats = validCategories.filter(cat => allowedCats.includes(cat.label));
+        if (strictCats.length > 0) {
+            validCategories = strictCats;
+        }
+    }
 
     let winningCat;
     let targetSegmentIndex;
