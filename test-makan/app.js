@@ -867,9 +867,6 @@ if (toggleWheelBtn && toggleListBtn) {
 if (toggleCravingModeBtn) {
     toggleCravingModeBtn.addEventListener("click", () => {
         isCravingModeActive = !isCravingModeActive;
-if (toggleCravingModeBtn) {
-    toggleCravingModeBtn.addEventListener("click", () => {
-        isCravingModeActive = !isCravingModeActive;
 
         // 🌟 RESET PENAPIS LAMA SUPAYA TAK JADI PENAPIS HANTU:
         activeFoodFilter = "all";
