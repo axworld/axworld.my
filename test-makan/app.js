@@ -7,7 +7,7 @@
 // --- KONFIGURASI 100% STATIK & LIVE SYNC ---
 const API_URL = "restaurants.json";
 
-// 8 Kategori Makanan Ikonik (Simetri Sempurna 45° - Reka Bentuk Asal Kemas)
+// 8 Kategori Makanan Ikonik (Simetri Sempurna 45°)
 const FOOD_CATEGORIES = [
     { label: "Nasi", icon: "🍚", color: "#10B981" },
     { label: "Burger", icon: "🍔", color: "#EF4444" },
@@ -250,63 +250,68 @@ function drawWheel() {
     ctx.fillText("?", centerX, centerY + 2);
 }
 
-// --- FUNGSI SEMAKAN KATEGORI TEPAT (DISIPLIN KATEGORI) ---
+// --- FUNGSI SEMAKAN KATEGORI TEPAT (DISIPLIN KATEGORI JITU) ---
 function isShopMatchCategory(shop, categoryLabel) {
     const cat = (shop.category || "").toLowerCase();
     const carb = (shop.carb_type || "").toLowerCase();
     const name = (shop.name || "").toLowerCase();
-    const fullText = `${name} ${cat} ${carb}`;
+    const menu = (shop.specialty_menu || "").toLowerCase();
+    const fullText = `${name} ${cat} ${carb} ${menu}`;
 
     if (categoryLabel === "Nasi") {
-        return (carb.includes("nasi") || cat.includes("melayu") || cat.includes("padang")) && 
-               !cat.includes("kopi") && !cat.includes("cafe") && !cat.includes("tandoor");
+        return (carb.includes("nasi") || name.includes("nasi") || menu.includes("nasi") || cat.includes("nasi kandar") || cat.includes("nasi lemak")) &&
+               !name.includes("sate") && !cat.includes("sate");
     }
     if (categoryLabel === "Burger") {
-        return fullText.includes("burger") || fullText.includes("western") || fullText.includes("pasta") || fullText.includes("steak") || fullText.includes("grill");
+        return fullText.includes("burger") || fullText.includes("western") || fullText.includes("steak") || fullText.includes("grill") || fullText.includes("pasta") || fullText.includes("bbq") || fullText.includes("chop");
     }
     if (categoryLabel === "Mi & Sup") {
-        const isMi = /\b(mi|mee|bihun|kuey teow|laksa|sup|soup|ramen)\b/.test(fullText);
-        return isMi && !cat.includes("kopitiam") && !cat.includes("kopi");
+        const isMiOrSup = /\b(mi|mee|bihun|kuey teow|laksa|sup|soup|ramen|soto|bakso)\b/.test(fullText);
+        return isMiOrSup && !cat.includes("kopitiam") && !name.includes("kopitiam");
     }
     if (categoryLabel === "Ayam Goreng") {
-        return fullText.includes("ayam") || fullText.includes("gepuk") || fullText.includes("crispy");
+        return fullText.includes("ayam goreng") || fullText.includes("gepuk") || fullText.includes("crispy") || fullText.includes("chicken rice") || name.includes("chicken");
     }
     if (categoryLabel === "Tomyam") {
-        if (fullText.includes("burger") || cat.includes("western") || fullText.includes("grill") || fullText.includes("pasta")) {
+        if (fullText.includes("burger") || cat.includes("western") || fullText.includes("grill") || fullText.includes("steak")) {
             return false;
         }
         return fullText.includes("tomyam") || fullText.includes("thai") || fullText.includes("seafood") || fullText.includes("ikan bakar");
     }
     if (categoryLabel === "Kopitiam") {
-        return (cat.includes("kopi") || cat.includes("kopitiam") || name.includes("kopi")) && !name.includes("sate");
+        return (cat.includes("kopitiam") || name.includes("kopitiam") || name.includes("kopi") || cat.includes("kopi")) && !name.includes("sate");
     }
     if (categoryLabel === "Mamak") {
-        return cat.includes("mamak") || name.includes("mamak") || name.includes("kandar") || fullText.includes("roti canai") || name.includes("mamu") || fullText.includes("tandoor");
+        return cat.includes("mamak") || name.includes("mamak") || fullText.includes("roti canai") || fullText.includes("naan") || fullText.includes("tandoor") || name.includes("kudu") || name.includes("pelita") || name.includes("hakim") || name.includes("mahbub");
     }
     if (categoryLabel === "Kafe & Manis") {
-        return cat.includes("cafe") || cat.includes("kafe") || fullText.includes("dessert") || fullText.includes("bakery") || fullText.includes("santai");
+        return cat.includes("cafe") || cat.includes("kafe") || fullText.includes("dessert") || fullText.includes("bakery") || fullText.includes("croffle") || fullText.includes("pastry");
     }
     return false;
 }
 
+// --- FUNGSI DERIA RASA (HANYA BACA TASTE_TAGS & MENU, BUKAN ALAMAT!) ---
 function isShopMatchTaste(shop, taste) {
     if (!taste || taste === "all") return true;
-    const text = `${shop.name} ${shop.category} ${shop.carb_type} ${shop.address} ${shop.taste_tags || ''}`.toLowerCase();
+    const t = taste.toLowerCase();
+    const tags = (shop.taste_tags || "").toLowerCase();
+    const menu = (shop.specialty_menu || "").toLowerCase();
+    const combined = `${tags} ${menu}`;
 
-    if (taste === "masam") {
-        return text.includes("tomyam") || text.includes("thai") || text.includes("asam") || text.includes("kerabu") || text.includes("somtam") || text.includes("mangga");
+    if (t === "masam") {
+        return tags.includes("masam") || combined.includes("tomyam") || combined.includes("thai") || combined.includes("asam") || combined.includes("tempoyak") || combined.includes("kerabu");
     }
-    if (taste === "pedas") {
-        return text.includes("gepuk") || text.includes("cili") || text.includes("pedas") || text.includes("belacan") || text.includes("padang") || text.includes("sambal") || text.includes("berapi") || text.includes("tandoor");
+    if (t === "pedas") {
+        return tags.includes("pedas") || combined.includes("berapi") || combined.includes("cili") || combined.includes("sambal") || combined.includes("gepuk") || combined.includes("lada");
     }
-    if (taste === "manis") {
-        return text.includes("manis") || text.includes("sejuk") || text.includes("dessert") || text.includes("bingsu") || text.includes("croffle") || text.includes("cendol") || text.includes("waffle") || text.includes("kek") || text.includes("pancake") || text.includes("kuih") || text.includes("bakery") || text.includes("sweet") || text.includes("cafe") || text.includes("kopi");
+    if (t === "manis") {
+        return tags.includes("manis") || combined.includes("sejuk") || combined.includes("dessert") || combined.includes("cendol") || combined.includes("croffle") || combined.includes("waffle") || combined.includes("kek") || combined.includes("pastry") || combined.includes("bingsu");
     }
-    if (taste === "sup") {
-        return text.includes("sup") || text.includes("soup") || text.includes("bakso") || text.includes("tarik") || text.includes("soto") || text.includes("shabu") || text.includes("steamboat");
+    if (t === "sup") {
+        return tags.includes("sup") || combined.includes("sup") || combined.includes("soup") || combined.includes("bakso") || combined.includes("soto") || combined.includes("gearbox") || combined.includes("ramen");
     }
-    if (taste === "banjir") {
-        return text.includes("kandar") || text.includes("banjir") || text.includes("gulai") || text.includes("kari") || text.includes("canai") || text.includes("lauk");
+    if (t === "banjir") {
+        return tags.includes("banjir") || combined.includes("banjir") || combined.includes("kandar") || combined.includes("gulai") || combined.includes("kari") || combined.includes("kuah");
     }
     return true;
 }
@@ -326,11 +331,11 @@ function renderTasteBadges(tagsString) {
     const tags = tagsString.split(',').map(t => t.trim().toLowerCase());
     let html = '';
     tags.forEach(t => {
-        if (t === 'masam') html += `<span class="tag" style="background:#FEF9C3; color:#854D0E;">🍋 Masam-Masam</span>`;
-        if (t === 'pedas') html += `<span class="tag" style="background:#FEE2E2; color:#991B1B;">🌶️ Pedas Berapi</span>`;
-        if (t === 'manis') html += `<span class="tag" style="background:#FCE7F3; color:#9D174D;">🍧 Manis & Sejuk</span>`;
-        if (t === 'sup') html += `<span class="tag" style="background:#E0F2FE; color:#075985;">🍲 Sup Panas</span>`;
-        if (t === 'banjir') html += `<span class="tag" style="background:#FFEDD5; color:#9A3412;">🍛 Kuah Banjir</span>`;
+        if (t.includes('masam')) html += `<span class="tag" style="background:#FEF9C3; color:#854D0E;">🍋 Masam-Masam</span>`;
+        if (t.includes('pedas')) html += `<span class="tag" style="background:#FEE2E2; color:#991B1B;">🌶️ Pedas Berapi</span>`;
+        if (t.includes('manis')) html += `<span class="tag" style="background:#FCE7F3; color:#9D174D;">🍧 Manis & Sejuk</span>`;
+        if (t.includes('sup')) html += `<span class="tag" style="background:#E0F2FE; color:#075985;">🍲 Sup Panas</span>`;
+        if (t.includes('banjir')) html += `<span class="tag" style="background:#FFEDD5; color:#9A3412;">🍛 Kuah Banjir</span>`;
     });
     return html;
 }
@@ -352,16 +357,17 @@ function getSignatureDish(shop) {
     return "Hidangan Istimewa Pilihan Ramai (Paling Disyorkan!) ✨";
 }
 
-// --- PENAPIS KAWASAN ASLI (ZON 1 HINGGA ZON 5) ---
+// --- PENAPIS KAWASAN SEBENAR (PADANAN TEPAT DENGAN RESTAURANTS.JSON) ---
 function matchShopArea(shop, area) {
     if (!area || area === "all") return true;
     const z = String(shop.zon || "").toLowerCase().trim();
 
-    if (area === "kebun_tpg") return z === "zon 1" || z === "1";
-    if (area === "shah_alam") return z === "zon 2" || z === "2";
-    if (area === "ttdi_damansara") return z === "zon 3" || z === "3";
-    if (area === "bangi_kajang") return z === "zon 4" || z === "4";
-    if (area === "kl") return z === "zon 5" || z === "5";
+    // 🌟 PEMETAAN JITU IKUT DATABASE RESTAURANTS.JSON:
+    if (area === "kebun_tpg")       return z === "zon 1" || z === "1";
+    if (area === "shah_alam")       return z === "zon 2" || z === "2";
+    if (area === "kl")              return z === "zon 3" || z === "3"; // ✅ Zon 3 = KL / Kg Baru
+    if (area === "ttdi_damansara")  return z === "zon 4" || z === "4"; // ✅ Zon 4 = TTDI / Damansara
+    if (area === "bangi_kajang")    return z === "zon 5" || z === "5"; // ✅ Zon 5 = Bangi / Kajang
     
     return true;
 }
@@ -396,7 +402,6 @@ function applyFilters() {
         let areaLabel = "Semua Kawasan";
         if (activeAreaFilter === "kebun_tpg") areaLabel = "Jln Kebun/TPG";
         if (activeAreaFilter === "shah_alam") areaLabel = "Shah Alam";
-        if (activeAreaFilter === "subang") areaLabel = "Subang";
         if (activeAreaFilter === "ttdi_damansara") areaLabel = "TTDI/Damansara";
         if (activeAreaFilter === "bangi_kajang") areaLabel = "Bangi/Kajang";
         if (activeAreaFilter === "kl") areaLabel = "KL/Kg Baru";
@@ -442,7 +447,7 @@ function applySearchToList() {
     renderListView();
 }
 
-// --- 5. LOGIK PUTARAN RODA PINTAR ---
+// --- 5. LOGIK PUTARAN RODA PINTAR (GEOFENCE KEBAL MUTLAK) ---
 function spinWheel() {
     if (isSpinning) return;
 
@@ -461,15 +466,32 @@ function spinWheel() {
     const numSegments = FOOD_CATEGORIES.length;
     const arcSize = (2 * Math.PI) / numSegments;
 
-    let targetSegmentIndex = Math.floor(Math.random() * numSegments);
+    // 🌟 RODA PINTAR: HANYA BERHENTI PADA KATEGORI YANG BENAR-BENAR WUJUD DALAM ZON INI!
+    const validCategories = FOOD_CATEGORIES.filter(cat => 
+        filteredRestaurants.some(r => isShopMatchCategory(r, cat.label))
+    );
+
+    let winningCat;
+    let targetSegmentIndex;
 
     const mappedCat = mapFilterToCategory(activeFoodFilter);
     if (mappedCat && !isCravingModeActive) {
         const foundIdx = FOOD_CATEGORIES.findIndex(c => c.label === mappedCat);
-        if (foundIdx !== -1) targetSegmentIndex = foundIdx;
+        if (foundIdx !== -1) {
+            targetSegmentIndex = foundIdx;
+            winningCat = FOOD_CATEGORIES[foundIdx];
+        }
     }
 
-    const winningCat = FOOD_CATEGORIES[targetSegmentIndex];
+    if (!winningCat) {
+        if (validCategories.length > 0) {
+            winningCat = validCategories[Math.floor(Math.random() * validCategories.length)];
+            targetSegmentIndex = FOOD_CATEGORIES.findIndex(c => c.label === winningCat.label);
+        } else {
+            targetSegmentIndex = Math.floor(Math.random() * numSegments);
+            winningCat = FOOD_CATEGORIES[targetSegmentIndex];
+        }
+    }
 
     const segmentCenterAngle = (targetSegmentIndex * arcSize) + (arcSize / 2);
     const pointerAngle = 1.5 * Math.PI;
@@ -511,19 +533,16 @@ function spinWheel() {
 }
 
 function determineWinner(winningCategory, excludeShopId = null) {
+    // 🌟 KUNCI KAWASAN: HANYA AMBIL DARI KAWASAN YANG SEDANG AKTIF!
     let matchingShops = filteredRestaurants.filter(r => isShopMatchCategory(r, winningCategory.label));
 
+    // Jika tiada dalam kategori itu, kekal dalam zon yang sama (DILARANG LOMPAT KAWASAN!)
     if (matchingShops.length === 0) {
-        matchingShops = allRestaurants.filter(r => isShopMatchCategory(r, winningCategory.label));
+        matchingShops = filteredRestaurants;
     }
 
     if (excludeShopId && matchingShops.length > 1) {
         matchingShops = matchingShops.filter(r => r.id !== excludeShopId);
-    }
-
-    if (matchingShops.length === 0) {
-        showCustomAlert("Sila Putar Semula 🔄", `Tiada kedai sepadan untuk kategori <b>${winningCategory.label}</b>. Sila cuba putar lagi ya!`, "🎲");
-        return;
     }
 
     const selectedShop = matchingShops[Math.floor(Math.random() * matchingShops.length)];
@@ -537,7 +556,7 @@ function buildSafeGoogleMapsUrl(shop) {
     return `https://www.google.com/maps/dir/?api=1&destination=${query}`;
 }
 
-// BINA PAPARAN KEPUTUSAN JUARA BESERTA REVIEW & TOP 3 ALTERNATIF (UBAT SEMUA ISU)
+// BINA PAPARAN KEPUTUSAN JUARA BESERTA REVIEW & TOP 3 ALTERNATIF (GEOFENCE KEBAL)
 function displayWinnerCard(shop, category) {
     if (!shop) return;
 
@@ -579,55 +598,28 @@ function displayWinnerCard(shop, category) {
     if (altContainer) {
         altContainer.innerHTML = ''; 
         
-        // Penterjemah Nama Zon Pintar (Kenal SS2 & Kelana Jaya 100% Tepat!)
+        // Penterjemah Nama Zon Sebenar
         function getReadableZoneName(s) {
-            const text = `${s.name} ${s.address || ''}`.toLowerCase();
-            
-            // 1. Geng Damansara & PJ (Termasuk SS2 & Kelana Jaya!)
-            if (text.includes('damansara') || text.includes('ttdi') || text.includes('ss2') || text.includes('kelana jaya') || text.includes('petaling jaya') || text.includes('pj') || text.includes('subang') || text.includes('sunway') || text.includes('utama')) {
-                return 'TTDI / Damansara';
-            }
-            // 2. Geng Bangi & Kajang
-            if (text.includes('bangi') || text.includes('kajang') || text.includes('semenyih') || text.includes('serdang') || text.includes('sungai ramal') || text.includes('ramal')) {
-                return 'Bangi / Kajang';
-            }
-            // 3. Geng Shah Alam
-            if (text.includes('shah alam') || text.includes('seksyen') || text.includes('setia alam') || text.includes('bukit jelutong') || text.includes('i-city')) {
-                return 'Shah Alam';
-            }
-            // 4. Geng Jln Kebun & TPG
-            if (text.includes('kebun') || text.includes('panglima garang') || text.includes('tpg') || text.includes('jenjarom') || text.includes('sijangkang') || text.includes('tropicana aman')) {
-                return 'Jln Kebun / TPG';
-            }
-            // 5. Geng KL & Kg Baru
-            if (text.includes('kampung baru') || text.includes('kg baru') || text.includes('kuala lumpur') || text.includes('kl') || text.includes('ampang') || text.includes('cheras') || text.includes('setapak') || text.includes('wangsa') || text.includes('klcc')) {
-                return 'KL / Kg Baru';
-            }
-            
-            // Sandaran ikut zon rasmi 1-5
             const z = String(s.zon || '').toLowerCase();
             if (z.includes('1')) return 'Jln Kebun / TPG';
             if (z.includes('2')) return 'Shah Alam';
-            if (z.includes('3')) return 'TTDI / Damansara';
-            if (z.includes('4')) return 'Bangi / Kajang';
-            if (z.includes('5')) return 'KL / Kg Baru';
+            if (z.includes('3')) return 'KL / Kg Baru';
+            if (z.includes('4')) return 'TTDI / Damansara';
+            if (z.includes('5')) return 'Bangi / Kajang';
             return 'Lembah Klang';
         }
 
         const poolSource = (typeof filteredRestaurants !== 'undefined' && filteredRestaurants.length > 0) 
             ? filteredRestaurants 
-            : (typeof allRestaurants !== 'undefined' ? allRestaurants : []);
+            : allRestaurants;
             
-        // WAJIB: Tapis kedai yang sama KATEGORI dengan pemenang roda!
+        // WAJIB: Tapis kedai yang sama KATEGORI dengan pemenang roda dalam ZON yang sama!
         let altPool = poolSource.filter(item => 
             item.name !== shop.name && 
             isShopMatchCategory(item, category.label)
         );
         
-        // Sandaran jika kedai kategori sama kurang daripada 2
-        if (altPool.length < 2) {
-            altPool = poolSource.filter(item => item.name !== shop.name && item.zon === shop.zon);
-        }
+        // Sandaran jika kedai kategori sama kurang daripada 2, ambil kedai lain DALAM ZON SAMA:
         if (altPool.length < 2) {
             altPool = poolSource.filter(item => item.name !== shop.name);
         }
