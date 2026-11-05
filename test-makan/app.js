@@ -638,7 +638,7 @@ function displayWinnerCard(shop, category) {
                 <div style="flex:1; padding-right:8px;">
                     <div style="font-size:13px; font-weight:800; color:var(--text-main);">${alt.name}</div>
                     <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
-                        📍 ${zoneLabel} • <span style="color:#059669; font-weight:700;">${cleanBudget}</span> • <span style="color:#EA580C; font-weight:700;">${category.label}</span>
+                        📍 ${zoneLabel} • <span style="color:#059669; font-weight:700;">${cleanBudget}</span> • <span style="color:#EA580C; font-weight:700;">${alt.category || category.label}</span>
                     </div>
                 </div>
                 <a href="${altMapsLink}" target="_blank" style="background:#1F2937; color:#FFF; text-decoration:none; font-size:11px; font-weight:700; padding:7px 12px; border-radius:8px; white-space:nowrap;">
