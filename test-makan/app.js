@@ -573,7 +573,7 @@ function buildSafeGoogleMapsUrl(shop) {
     return `https://www.google.com/maps/dir/?api=1&destination=${query}`;
 }
 
-// BINA PAPARAN KEPUTUSAN JUARA BESERTA REVIEW & TOP 3 ALTERNATIF (GEOFENCE KEBAL)
+// BINA PAPARAN KEPUTUSAN JUARA BESERTA REVIEW (GEOFENCE KEBAL MUTLAK)
 function displayWinnerCard(shop, category) {
     if (!shop) return;
 
@@ -786,6 +786,13 @@ function openStoreProfile(shop) {
 
     if (profileGmapsBtn) {
         profileGmapsBtn.href = buildSafeGoogleMapsUrl(shop);
+    }
+
+    // 🌟 BUTANG EMAS ULASAN PROFIL KEDAI (DALAM FUNGSI):
+    const profileReviewsBtn = document.getElementById('profile-reviews-btn');
+    if (profileReviewsBtn) {
+        const placeQuery = encodeURIComponent(`${shop.name}, ${shop.address}`);
+        profileReviewsBtn.href = `https://www.google.com/maps/search/?api=1&query=${placeQuery}`;
     }
 
     if (profileModal) profileModal.classList.remove("hidden");
