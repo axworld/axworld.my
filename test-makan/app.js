@@ -143,9 +143,9 @@ async function fetchRestaurants() {
     drawWheel();
 
     const possibleUrls = [
-        "restaurants.json",
-        "./restaurants.json",
-        "/makan-apa/restaurants.json"
+        "restaurants.json?v=v16_clean_data",
+        "./restaurants.json?v=v16_clean_data",
+        "/makan-apa/restaurants.json?v=v16_clean_data"
     ];
 
     for (const url of possibleUrls) {
@@ -290,28 +290,26 @@ function isShopMatchCategory(shop, categoryLabel) {
     return false;
 }
 
-// --- FUNGSI DERIA RASA (HANYA BACA TASTE_TAGS & MENU, BUKAN ALAMAT!) ---
+// --- FUNGSI DERIA RASA (HANYA BACA TASTE_TAGS RASMI, SIFAR KELIRU!) ---
 function isShopMatchTaste(shop, taste) {
     if (!taste || taste === "all") return true;
     const t = taste.toLowerCase();
     const tags = (shop.taste_tags || "").toLowerCase();
-    const menu = (shop.specialty_menu || "").toLowerCase();
-    const combined = `${tags} ${menu}`;
 
     if (t === "masam") {
-        return tags.includes("masam") || combined.includes("tomyam") || combined.includes("thai") || combined.includes("asam") || combined.includes("tempoyak") || combined.includes("kerabu");
+        return tags.includes("masam");
     }
     if (t === "pedas") {
-        return tags.includes("pedas") || combined.includes("berapi") || combined.includes("cili") || combined.includes("sambal") || combined.includes("gepuk") || combined.includes("lada");
+        return tags.includes("pedas");
     }
     if (t === "manis") {
-        return tags.includes("manis") || combined.includes("sejuk") || combined.includes("dessert") || combined.includes("cendol") || combined.includes("croffle") || combined.includes("waffle") || combined.includes("kek") || combined.includes("pastry") || combined.includes("bingsu");
+        return tags.includes("manis");
     }
     if (t === "sup") {
-        return tags.includes("sup") || combined.includes("sup") || combined.includes("soup") || combined.includes("bakso") || combined.includes("soto") || combined.includes("gearbox") || combined.includes("ramen");
+        return tags.includes("sup");
     }
     if (t === "banjir") {
-        return tags.includes("banjir") || combined.includes("banjir") || combined.includes("kandar") || combined.includes("gulai") || combined.includes("kari") || combined.includes("kuah");
+        return tags.includes("banjir");
     }
     return true;
 }

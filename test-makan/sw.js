@@ -3,7 +3,7 @@
  * Co-Architects: Khairul Azzumie & Mia
  */
 
-const CACHE_NAME = 'makan-apa-v16-top3-ready';
+const CACHE_NAME = 'makan-apa-v16-prod-stable';
 
 const ASSETS_TO_CACHE = [
   './',
