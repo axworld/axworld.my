@@ -151,7 +151,7 @@
     "operating_hours": "04:30 PM - 11:00 PM",
     "closed_days": "Isnin",
     "specialty_menu": "Chicken Katsu Curry Rice, Takoyaki Panas & Western Platter",
-    "taste_tags": "banjir, manis"
+    "taste_tags": "pedas, manis"
   },
   {
     "id": 415,
@@ -305,7 +305,7 @@
     "operating_hours": "05:30 PM - 11:30 PM",
     "closed_days": "Isnin",
     "specialty_menu": "Chicken Parmigiana & Aglio Olio Seafood Meriah",
-    "taste_tags": "Kuah Campur Banjir"
+    "taste_tags": "pedas"
   },
   {
     "id": 461,
@@ -833,7 +833,7 @@
     "operating_hours": "12:00 PM - 11:00 PM",
     "closed_days": "Isnin",
     "specialty_menu": "Mac and Cheese Banjir & Grilled Lamb Shank",
-    "taste_tags": "Kuah Campur Banjir"
+    "taste_tags": "pedas, manis"
   },
   {
     "id": 471,
@@ -1163,7 +1163,7 @@
     "operating_hours": "02:00 PM - 12:00 AM",
     "closed_days": "Tiada Cuti",
     "specialty_menu": "Sate Daging Lembut Kuah Kacang Pekat & Mee Rebus Tulang",
-    "taste_tags": "Kuah Campur Banjir"
+    "taste_tags": "sup, manis"
   },
   {
     "id": 497,
@@ -1207,7 +1207,7 @@
     "operating_hours": "24 Jam",
     "closed_days": "Tiada Cuti",
     "specialty_menu": "Roti Naan Garlic Cheese & Ayam Tandoori Berempah",
-    "taste_tags": "Kuah Campur Banjir"
+    "taste_tags": "pedas"
   },
   {
     "id": 503,
@@ -1427,7 +1427,7 @@
     "operating_hours": "05:00 PM - 02:00 AM",
     "closed_days": "Isnin",
     "specialty_menu": "Mee Raja Meletup Seafood & Roti Hawaii Daging Cheese",
-    "taste_tags": "Kuah Campur Banjir"
+    "taste_tags": "pedas"
   },
   {
     "id": 517,
@@ -1515,7 +1515,7 @@
     "operating_hours": "11:30 AM - 09:30 PM",
     "closed_days": "Isnin",
     "specialty_menu": "A Beautiful Mess Burger & Charcoal Buns Smashed Beef",
-    "taste_tags": "Manis & Sejuk"
+    "taste_tags": "pedas"
   },
   {
     "id": 525,
@@ -1537,7 +1537,7 @@
     "operating_hours": "04:00 PM - 12:00 AM",
     "closed_days": "Isnin",
     "specialty_menu": "Master Burger Special Sos Lada Hitam Meleleh & Cheese",
-    "taste_tags": "Kuah Campur Banjir"
+    "taste_tags": "pedas"
   },
   {
     "id": 527,
@@ -1999,7 +1999,7 @@
     "operating_hours": "11:00 AM - 11:30 PM",
     "closed_days": "Tiada Cuti",
     "specialty_menu": "Nasi Mandi Lamb Shank Lembut Carik & Sup Rempah Arab",
-    "taste_tags": "Kuah Campur Banjir"
+    "taste_tags": "pedas, sup"
   },
   {
     "id": 569,
