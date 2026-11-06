@@ -767,7 +767,7 @@
     "operating_hours": "05:00 PM - 02:00 AM",
     "closed_days": "Tiada Cuti",
     "specialty_menu": "Nasi Lemak Kukus Ayam Goreng Berempah & Sambal Kerang Meletup",
-    "taste_tags": "pedas, banjir"
+    "taste_tags": "pedas, manis"
   },
   {
     "id": 392,
@@ -965,7 +965,7 @@
     "operating_hours": "06:00 AM - 12:00 AM",
     "closed_days": "Tiada Cuti",
     "specialty_menu": "Nasi Lemak Kukus Sambal Manis Pedas & Paru Goreng",
-    "taste_tags": "Kuah Campur Banjir"
+    "taste_tags": "pedas, manis"
   },
   {
     "id": 475,
@@ -1075,7 +1075,7 @@
     "operating_hours": "07:00 AM - 01:00 PM",
     "closed_days": "Tiada Cuti",
     "specialty_menu": "Nasi Lemak Sambal Sotong Kering & Rendang Limpa",
-    "taste_tags": "Kuah Campur Banjir"
+    "taste_tags": "pedas, manis"
   },
   {
     "id": 489,
@@ -1383,7 +1383,7 @@
     "operating_hours": "06:30 AM - 05:30 PM",
     "closed_days": "Tiada Cuti",
     "specialty_menu": "Nasi Lemak Ayam Goreng Berempah Rangup & Sambal Manis Pedas",
-    "taste_tags": "Kuah Campur Banjir"
+    "taste_tags": "pedas, manis"
   },
   {
     "id": 513,
