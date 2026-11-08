@@ -3,7 +3,7 @@
  * Co-Architects: Khairul Azzumie & Mia
  */
 
-const CACHE_NAME = 'makan-apa-v17-banjir-purge';
+const CACHE_NAME = 'makan-apa-v17-prod-stable';
 
 const ASSETS_TO_CACHE = [
   './',
