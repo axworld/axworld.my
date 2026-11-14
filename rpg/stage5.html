@@ -10,10 +10,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700;900&family=EB+Garamond:ital,wght@0,500;0,700;1,500&family=Press+Start+2P&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="stage5_style.css?v=4" />
 </head>
-<body class="w-full h-full min-h-screen flex flex-col items-center justify-center bg-[#02040a] overflow-hidden p-1 sm:p-2">
+<body class="w-full h-[100dvh] max-h-[100dvh] flex flex-col items-center justify-center bg-[#02040a] overflow-hidden p-1 sm:p-2">
 
   <!-- BINGKAI KANVAS UTAMA -->
-  <div id="canvasFrame" class="relative w-full max-w-[1280px] max-h-[92vh] aspect-video flex items-center justify-center overflow-hidden border-2 border-amber-500/50 rounded-xl bg-slate-950 shadow-2xl">
+  <div id="canvasFrame" class="relative w-full max-w-[1280px] max-h-[100dvh] sm:max-h-[92dvh] aspect-video flex items-center justify-center overflow-hidden border-2 border-amber-500/50 rounded-xl bg-slate-950 shadow-2xl">
     <canvas id="gameCanvas" width="960" height="540" class="w-full h-full block"></canvas>
 
     <!-- 1. TOP HUD -->
@@ -55,6 +55,10 @@
         </button>
         <button id="btnPauseGame" class="text-amber-300 hover:text-white text-[10px] transition px-1" title="Pause Game [P]">
           ⏸️
+        </button>
+
+        <button id="btnFullscreenHud" class="text-amber-300 hover:text-white text-[10px] transition px-1" title="Fullscreen">
+          ⛶
         </button>
 
         <div class="flex items-center gap-1.5" id="orbIconsContainer">
@@ -205,6 +209,27 @@
     </div>
   </div>
 
+  <script>
+    (function() {
+      function tryFullscreen() {
+        try {
+          if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            const p = document.documentElement.requestFullscreen?.() || document.documentElement.webkitRequestFullscreen?.();
+            if (p && typeof p.catch === 'function') p.catch(() => {});
+          }
+        } catch {}
+      }
+      const btnFs = document.getElementById('btnFullscreenHud');
+      if (btnFs) btnFs.addEventListener('click', tryFullscreen);
+      if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+        document.querySelectorAll('.touch-btn, #gameCanvas').forEach(el => {
+          el.addEventListener('touchstart', tryFullscreen, { once: true, passive: true });
+          el.addEventListener('click', tryFullscreen, { once: true });
+        });
+      }
+      window.addEventListener('orientationchange', () => setTimeout(() => window.scrollTo(0, 0), 150));
+    })();
+  </script>
   <script src="stage5_engine.js"></script>
 </body>
 </html>
