@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AXWORLD — THE CAREER RPG | Stage 2: The Energy Nexus</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700;900&family=EB+Garamond:ital,wght@0,500;0,700;1,500&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+    body {
+      margin: 0; padding: 0; width: 100vw; height: 100vh;
+      background-color: #030712; color: #f8fafc; font-family: 'Press Start 2P', monospace; overflow: hidden;
+    }
+    .font-cinzel { font-family: 'Cinzel', serif; }
+    .font-scroll-title { font-family: 'Cinzel Decorative', 'Cinzel', serif; }
+    .font-scroll-body { font-family: 'EB Garamond', serif; }
+    #gameCanvas {
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-crisp-edges;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+    .hud-glass {
+      background: rgba(10, 16, 31, 0.90);
+      border: 1.5px solid rgba(245, 158, 11, 0.5);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+    }
+    .touch-btn {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1.5px solid rgba(245, 158, 11, 0.5);
+      touch-action: none;
+    }
+    .touch-btn:active { transform: scale(0.92); background: rgba(14, 165, 233, 0.5); }
+    .hud-crystal-canvas {
+      width: 20px;
+      height: 26px;
+      image-rendering: pixelated;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: crisp-edges;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+    }
+    kbd {
+      font-family: inherit;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+    }
+    .scroll-frame-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 820px;
+      aspect-ratio: 880 / 495;
+      background-image: url('scroll.png');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      background-position: center;
+      filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 40px rgba(245, 158, 11, 0.3));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .scroll-inner-content {
+      position: absolute;
+      inset: 17% 16% 10% 16%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #381a05;
+      text-shadow: 0 1px 1px rgba(254, 243, 199, 0.8);
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .scroll-inner-content::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="w-full h-full flex flex-col items-center justify-center bg-[#030712]">
+
+  <div id="canvasFrame" class="relative w-full max-w-[1280px] aspect-video flex items-center justify-center overflow-hidden border-2 border-amber-500/40 rounded-xl bg-slate-950 shadow-2xl">
+    <canvas id="gameCanvas" width="960" height="540" class="w-full h-full block"></canvas>
+
+    <!-- 1. TOP HUD -->
+    <header class="pointer-events-none absolute top-0 inset-x-0 p-3 flex justify-between items-start z-20">
+      
+      <!-- HERO STATUS -->
+      <div class="pointer-events-auto flex items-center gap-2 hud-glass rounded-lg px-2.5 py-1.5 max-w-[240px] w-full">
+        <div class="w-8 h-8 rounded bg-slate-900 border border-amber-400/80 overflow-hidden flex items-center justify-center shrink-0">
+          <canvas id="portraitCanvas" width="32" height="32" class="w-full h-full"></canvas>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex justify-between items-center">
+            <span class="font-cinzel font-black text-[9px] text-amber-300 truncate leading-none">KHAIRUL AZZUMIE</span>
+            <span id="heroHpText" class="text-[7px] text-slate-300 leading-none">100/100</span>
+          </div>
+          <div class="w-full h-2 bg-slate-900 border border-slate-700/80 rounded-sm overflow-hidden mt-1">
+            <div id="heroHpFill" class="h-full bg-gradient-to-r from-rose-600 to-amber-400 transition-all duration-100" style="width: 100%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOSS HP BAR -->
+      <div id="bossHud" class="hidden pointer-events-none hud-glass rounded-xl p-2 max-w-[340px] w-full border-rose-500/60">
+        <div class="flex justify-between items-center text-[9px] mb-1">
+          <span class="font-cinzel font-extrabold text-rose-300 flex items-center gap-1">
+            <span class="text-amber-400">🔥</span> MAGMA WARDEN
+          </span>
+          <span id="bossHpText" class="text-[7px] text-amber-300">450 / 450</span>
+        </div>
+        <div class="w-full h-2.5 bg-slate-900 border border-rose-500/60 rounded overflow-hidden">
+          <div id="bossHpFill" class="h-full bg-gradient-to-r from-rose-700 to-amber-500 transition-all duration-75" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <!-- 5 POWER ORBS TRACKER & UTILITIES -->
+      <div class="pointer-events-auto flex items-center gap-2 hud-glass rounded-lg px-2.5 py-1">
+        <button id="btnAudioToggle" class="text-amber-300 hover:text-white text-[11px] transition px-1" title="Mute/Unmute Audio">
+          🎵
+        </button>
+        <button id="btnPauseGame" class="text-amber-300 hover:text-white text-[10px] transition px-1" title="Pause Game [P]">
+          ⏸️
+        </button>
+
+        <div class="flex items-center gap-1.5" id="orbIconsContainer">
+          <canvas id="hudOrb0" width="24" height="30" class="hud-crystal-canvas" title="Crimson Orb"></canvas>
+          <canvas id="hudOrb1" width="24" height="30" class="hud-crystal-canvas" title="Azure Orb"></canvas>
+          <canvas id="hudOrb2" width="24" height="30" class="hud-crystal-canvas" title="Emerald Orb"></canvas>
+          <canvas id="hudOrb3" width="24" height="30" class="hud-crystal-canvas" title="Violet Orb"></canvas>
+          <canvas id="hudOrb4" width="24" height="30" class="hud-crystal-canvas" title="Golden Orb"></canvas>
+        </div>
+
+        <div class="border-l border-slate-700/80 pl-2">
+          <div class="text-[5px] text-amber-200/80 tracking-tighter">POWER ORBS</div>
+          <div id="orbCountText" class="text-[9px] text-amber-300 font-bold leading-tight">0 / 5</div>
+        </div>
+
+        <button id="btnQuitGame" class="ml-1 bg-red-950/80 hover:bg-red-800 text-rose-300 hover:text-white text-[7px] border border-red-500/50 px-2 py-1 rounded transition" title="Quit to Main Menu">
+          QUIT
+        </button>
+      </div>
+    </header>
+
+    <!-- IN-GAME INTERACT PROMPT -->
+    <div id="interactPrompt" class="hidden pointer-events-none absolute bottom-14 left-1/2 -translate-x-1/2 z-20 hud-glass px-4 py-2 rounded-xl text-center">
+      <div class="text-[9px] text-amber-300 animate-pulse">📜 PRESS [E] TO UNSEAL CHAPTER</div>
+    </div>
+
+    <!-- CLIMB NOTICE PROMPT -->
+    <div id="climbPrompt" class="hidden pointer-events-none absolute bottom-20 left-1/2 -translate-x-1/2 z-20 hud-glass px-3 py-1 rounded-lg text-center border-cyan-500/50">
+      <div class="text-[7px] text-cyan-300">🪜 USE [W / UP] TO CLIMB LADDER</div>
+    </div>
+
+    <!-- 2. DESKTOP CONTROLS OVERLAY -->
+    <div class="hidden md:flex pointer-events-none absolute bottom-2.5 inset-x-0 justify-center items-center gap-3 z-20">
+      <div class="hud-glass rounded-lg px-3 py-1 flex items-center gap-3 text-[7px] text-amber-300 font-bold border border-amber-500/40">
+        <span class="flex items-center gap-1"><kbd class="bg-slate-800 text-cyan-300 px-1 rounded border border-slate-700">A</kbd><kbd class="bg-slate-800 text-cyan-300 px-1 rounded border border-slate-700">D</kbd> MOVE</span>
+        <span class="text-slate-600">|</span>
+        <span class="flex items-center gap-1"><kbd class="bg-slate-800 text-cyan-300 px-1 rounded border border-slate-700">W</kbd><kbd class="bg-slate-800 text-cyan-300 px-1 rounded border border-slate-700">S</kbd> CLIMB</span>
+        <span class="text-slate-600">|</span>
+        <span class="flex items-center gap-1"><kbd class="bg-slate-800 text-amber-300 px-1.5 rounded border border-slate-700">SPACE</kbd> JUMP</span>
+        <span class="text-slate-600">|</span>
+        <span class="flex items-center gap-1"><kbd class="bg-slate-800 text-rose-300 px-1 rounded border border-slate-700">J</kbd> SLASH</span>
+        <span class="text-slate-600">|</span>
+        <span class="flex items-center gap-1"><kbd class="bg-slate-800 text-emerald-300 px-1 rounded border border-slate-700">E</kbd> TAKE</span>
+        <span class="text-slate-600">|</span>
+        <span class="flex items-center gap-1"><kbd class="bg-slate-800 text-amber-400 px-1 rounded border border-slate-700">G</kbd> DEBUG</span>
+      </div>
+    </div>
+
+    <!-- 3. MOBILE TOUCH CONTROLS -->
+    <div class="pointer-events-none absolute inset-x-0 bottom-2 px-3 flex justify-between items-end z-20 md:hidden">
+      <div class="pointer-events-auto flex flex-col gap-1.5">
+        <div class="flex justify-center">
+          <button id="btnUp" class="touch-btn w-11 h-10 rounded-xl text-white text-xs flex flex-col items-center justify-center font-bold">
+            <span>▲</span>
+            <span class="text-[5px] text-slate-400">UP</span>
+          </button>
+        </div>
+        <div class="flex gap-2">
+          <button id="btnLeft" class="touch-btn w-12 h-12 rounded-xl text-white text-sm flex flex-col items-center justify-center font-bold">
+            <span>◀</span>
+            <span class="text-[6px] text-slate-400">LEFT</span>
+          </button>
+          <button id="btnRight" class="touch-btn w-12 h-12 rounded-xl text-white text-sm flex flex-col items-center justify-center font-bold">
+            <span>▶</span>
+            <span class="text-[6px] text-slate-400">RIGHT</span>
+          </button>
+        </div>
+        <div class="flex justify-center">
+          <button id="btnDown" class="touch-btn w-11 h-10 rounded-xl text-white text-xs flex flex-col items-center justify-center font-bold">
+            <span>▼</span>
+            <span class="text-[5px] text-slate-400">DOWN</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="pointer-events-auto flex items-end gap-2">
+        <button id="btnInteract" class="touch-btn w-11 h-11 rounded-full border-emerald-400 text-emerald-300 text-[7px] flex flex-col items-center justify-center shadow-lg">
+          <span class="text-xs">📜</span>
+          <span>TAKE</span>
+        </button>
+        <button id="btnAttack" class="touch-btn w-12 h-12 rounded-full border-cyan-400 text-cyan-200 text-[7px] flex flex-col items-center justify-center shadow-lg">
+          <span class="text-sm">⚔️</span>
+          <span>SLASH</span>
+        </button>
+        <button id="btnJump" class="touch-btn w-12 h-12 rounded-full border-amber-400 text-amber-200 text-[7px] flex flex-col items-center justify-center shadow-lg">
+          <span class="text-sm">▲</span>
+          <span>JUMP</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. PAUSE OVERLAY MODAL -->
+    <div id="pauseModal" class="hidden absolute inset-0 z-40 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-4">
+      <div class="hud-glass rounded-2xl p-6 sm:p-8 max-w-sm w-full text-center border-amber-500/60 shadow-2xl">
+        <div class="text-2xl mb-2">⏸️</div>
+        <h2 class="font-cinzel text-xl font-bold text-amber-300 mb-1">GAME PAUSED</h2>
+        <p class="text-[8px] text-slate-400 mb-6">Stage 2: The Energy Nexus</p>
+        
+        <div class="flex flex-col gap-2.5">
+          <button id="btnResumeGame" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[8px] rounded-lg transition shadow-lg">
+            RESUME ADVENTURE
+          </button>
+          <button id="btnRestartStage" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-amber-200 text-[8px] rounded-lg transition border border-amber-500/30">
+            RESTART STAGE
+          </button>
+          <button id="btnPauseQuit" class="w-full py-2 bg-red-950/80 hover:bg-red-800 text-rose-300 text-[8px] rounded-lg transition border border-red-500/40">
+            QUIT TO MAIN MENU
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. CAREER SCROLL MODAL (CHAPTER II: PETRONAS) -->
+    <div id="scrollModal" class="hidden absolute inset-0 z-40 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+      <div class="scroll-frame-wrapper">
+        <div class="scroll-inner-content px-2 sm:px-4 py-1 text-center">
+          
+          <div class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#451a03]/85 text-amber-300 text-[7px] border border-amber-600/60 shadow mb-1">
+            <span>📜</span>
+            <span class="tracking-widest">CHAPTER II UNSEALED</span>
+          </div>
+
+          <div class="text-[9px] sm:text-[11px] text-[#78350f] font-bold tracking-widest uppercase mt-1 font-scroll-title">
+            ✦ You've Mastered Industrial Energy Operations ✦
+          </div>
+
+          <h1 class="font-scroll-title text-lg sm:text-2xl font-black text-[#381a05] tracking-wider mt-0.5 leading-tight">
+            PETRONAS (PETROLIAM NASIONAL BERHAD)
+          </h1>
+          
+          <div class="font-scroll-body italic font-bold text-xs sm:text-sm text-[#78350f] -mt-0.5">
+            Operations &amp; Digital Solutions Lead • [Career Phase II]
+          </div>
+          
+          <div class="w-full text-left mt-2 px-3 py-2 rounded-lg bg-[#451a03]/5 border border-[#78350f]/20 font-scroll-body">
+            <div class="text-[9px] sm:text-[10px] font-bold text-[#451a03] uppercase tracking-wider mb-1 flex items-center gap-1 font-scroll-title">
+              <span>⚔️</span> Key Contributions:
+            </div>
+            <ul class="space-y-1 list-disc list-inside text-[11px] sm:text-[13px] leading-snug font-semibold text-[#291304]">
+              <li>Spearheaded digital workflow integration across nationwide downstream and energy distribution hubs.</li>
+              <li>Coordinated technical audits, multi-stakeholder governance, and mission-critical operational data pipelines.</li>
+              <li>Automated compliance monitoring frameworks ensuring zero operational downtime and stringent safety benchmarks.</li>
+              <li>Fostered cross-functional synergy between ground operations, IT engineering, and corporate management.</li>
+            </ul>
+          </div>
+
+          <div class="mt-3 flex flex-wrap items-center justify-center gap-2">
+            <button id="btnNextStage" class="px-5 py-2 rounded-lg bg-emerald-950 hover:bg-emerald-900 text-emerald-200 hover:text-white text-[8px] tracking-wider transition shadow-lg border border-emerald-500/60 font-pixel">
+              PROCEED TO STAGE 3 ➔
+            </button>
+            <button id="btnCloseScroll" class="px-4 py-2 rounded-lg bg-[#451a03] hover:bg-[#6b2905] text-amber-200 hover:text-white text-[8px] tracking-wider transition shadow-lg border border-amber-500/60 font-pixel">
+              REPLAY STAGE
+            </button>
+            <button id="btnSkipToEnd" class="px-4 py-2 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-amber-300 text-[8px] tracking-wider transition shadow-lg border border-slate-600/60 font-pixel">
+              SKIP TO END ⏭️
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // ===================================================================
+      // 1. SMART ASSETS LOADER (STAGE 2 SPRITES & BACKGROUNDS)
+      // ===================================================================
+      const CANDIDATES = {
+        hero: ["hero_azzumie_spritesheet.png", "hero_azzumie_spritesheet_3.jpg"],
+        goblin: ["goblin_spritesheet.png", "goblin_spritesheet_2.jpg"],
+        boss2: ["boss2_spritesheet.jpg", "boss2_spritesheet.png"],
+        fireball: ["fireball_sprite.png", "fireball_sprite.jpg"],
+        pillar: ["larva_pillar_sprite.jpg", "larva_pillar_sprite.png"],
+        orbs: ["power_orbs_spritesheet.png", "power_orbs_spritesheet_2.jpg"],
+        scroll: ["career_scroll_spritesheet.png", "career_scroll_spritesheet.jpg"],
+        page1: ["stage2_bg_page1.jpg", "stage2_bg_page1_2.jpg"],
+        page2: ["stage2_bg_page2_2.jpg", "stage2_bg_page2.jpg"]
+      };
+
+      const Loaded = {
+        images: {},
+        init(onComplete) {
+          const keys = Object.keys(CANDIDATES);
+          let count = 0;
+          let completed = false;
+
+          const doneCheck = () => {
+            if (!completed) {
+              completed = true;
+              onComplete();
+            }
+          };
+
+          setTimeout(doneCheck, 1800);
+
+          keys.forEach((k) => {
+            const list = CANDIDATES[k];
+            let idx = 0;
+            const tryNext = () => {
+              if (idx >= list.length) {
+                count++;
+                if (count === keys.length) doneCheck();
+                return;
+              }
+              const src = list[idx++];
+              const img = new Image();
+              img.onload = () => {
+                Loaded.images[k] = img;
+                count++;
+                if (count === keys.length) doneCheck();
+              };
+              img.onerror = () => tryNext();
+              img.src = src;
+            };
+            tryNext();
+          });
+        },
+        get(k) {
+          const img = this.images[k];
+          return (img && img.complete && img.naturalWidth > 0) ? img : null;
+        }
+      };
+
+      // ===================================================================
+      // 2. RETRO AUDIO ENGINE
+      // ===================================================================
+      const AudioEngine = {
+        ctx: null,
+        muted: false,
+        mode: 'stage',
+        tracks: {
+          stage: null,
+          boss: null
+        },
+
+        setupTracks() {
+          if (!this.tracks.stage) {
+            this.tracks.stage = new Audio('stage2_bgm.mp3');
+            this.tracks.stage.loop = true;
+            this.tracks.stage.volume = 0.55;
+            this.tracks.stage.preload = 'auto';
+          }
+          if (!this.tracks.boss) {
+            this.tracks.boss = new Audio('boss_bgm.mp3');
+            this.tracks.boss.loop = true;
+            this.tracks.boss.volume = 0.65;
+            this.tracks.boss.preload = 'auto';
+          }
+        },
+
+        init() {
+          this.setupTracks();
+          if (!this.ctx) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (AC) this.ctx = new AC();
+          }
+          if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume().catch(() => {});
+          }
+          if (!this.muted) {
+            this.playBgm(this.mode || 'stage');
+          }
+        },
+
+        playBgm(targetMode) {
+          this.setupTracks();
+          this.mode = targetMode;
+          if (this.muted) return;
+
+          const targetTrack = this.tracks[this.mode];
+          const otherMode = this.mode === 'stage' ? 'boss' : 'stage';
+          const otherTrack = this.tracks[otherMode];
+
+          if (otherTrack) {
+            otherTrack.pause();
+            otherTrack.currentTime = 0;
+          }
+
+          if (targetTrack && targetTrack.paused) {
+            const p = targetTrack.play();
+            if (p && typeof p.catch === 'function') {
+              p.catch(() => {});
+            }
+          }
+        },
+
+        pauseBgm() {
+          try {
+            if (this.tracks.stage) this.tracks.stage.pause();
+            if (this.tracks.boss) this.tracks.boss.pause();
+          } catch (e) {}
+        },
+
+        resumeBgm() {
+          if (!this.muted) {
+            this.playBgm(this.mode || 'stage');
+          }
+        },
+
+        playTone(freq, duration, type = 'sine', slideTo = null, vol = 0.18) {
+          if (!this.ctx || this.muted) return;
+          try {
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, now);
+            if (slideTo) osc.frequency.exponentialRampToValueAtTime(Math.max(1, slideTo), now + duration);
+            gain.gain.setValueAtTime(vol, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + duration + 0.02);
+          } catch(e){}
+        },
+
+        jump() { this.playTone(200, 0.12, 'square', 480, 0.1); },
+        slash() { this.playTone(600, 0.09, 'sawtooth', 120, 0.14); },
+        hit() { this.playTone(140, 0.14, 'square', 45, 0.22); },
+        goblinDie() { this.playTone(160, 0.25, 'sawtooth', 30, 0.16); },
+        orb() {
+          [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((f, i) => {
+            setTimeout(() => this.playTone(f, 0.22, 'triangle', null, 0.14), i * 50);
+          });
+        },
+        fireShoot() {
+          this.playTone(450, 0.24, 'sawtooth', 80, 0.26);
+        },
+        eruption() {
+          this.playTone(110, 0.65, 'sawtooth', 25, 0.35);
+          this.playTone(65, 0.70, 'square', 18, 0.30);
+        },
+        sealCrack() { this.playTone(340, 0.18, 'square', 70, 0.22); },
+        victory() {
+          [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98].forEach((f, i) => {
+            setTimeout(() => this.playTone(f, 0.45, 'triangle', null, 0.18), i * 85);
+          });
+        },
+
+        toggle() {
+          this.muted = !this.muted;
+          const btn = document.getElementById('btnAudioToggle');
+          if (btn) btn.textContent = this.muted ? '🔇' : '🎵';
+          if (this.muted) {
+            this.pauseBgm();
+          } else {
+            this.init();
+            this.resumeBgm();
+          }
+        }
+      };
+
+      document.getElementById('btnAudioToggle').addEventListener('click', () => AudioEngine.toggle());
+
+      // ===================================================================
+      // 3. CANVAS, CAMERA, PLATFORMS & LADDERS
+      // ===================================================================
+      const canvas = document.getElementById('gameCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+
+      const VIEW_W = 960;
+      const VIEW_H = 540;
+      const WORLD_W = 1920;
+      const GRAVITY = 0.52;
+
+      const camera = { x: 0, targetX: 0, shakeFrames: 0, shakeMag: 0 };
+      let showDebugRoute = false; // Tekan 'G' untuk aktifkan debug
+      let isGamePaused = false;
+
+      const platforms = [
+        // PAGE 1: Gua Bawah Tanah
+        { id: 'p1_ground', type: 'flat', x: 0, y: 470, w: 900, h: 90 },
+        { id: 'p1_plank_left', type: 'flat', x: 90, y: 310, w: 170, h: 18 },
+        { id: 'p1_cross_beam', type: 'flat', x: 400, y: 240, w: 100, h: 16 },
+        { id: 'p1_stone_ledge', type: 'flat', x: 500, y: 210, w: 80, h: 20 },
+        { id: 'p2_stone_ledge', type: 'flat', x: 580, y: 180, w: 130, h: 20 },
+        { id: 'p1_exit_plank', type: 'flat', x: 710, y: 300, w: 115, h: 16 },
+
+        // PAGE 2: Teras Lahar Lava
+        { id: 'p2_connect_ramp', type: 'ramp', x1: 900, y1: 470, x2: 1040, y2: 430 },
+        { id: 'p2_lava_bridge', type: 'flat', x: 1040, y: 430, w: 590, h: 130 },
+        { id: 'p2_stepping_a', type: 'flat', x: 1170, y: 280, w: 100, h: 18 },
+        { id: 'p2_stepping_b', type: 'flat', x: 1300, y: 270, w: 70, h: 18 },
+        { id: 'p2_stepping_c', type: 'flat', x: 1380, y: 240, w: 70, h: 18 },
+        { id: 'p2_stepping_top', type: 'flat', x: 1530, y: 170, w: 120, h: 20 },
+        { id: 'p2_throne_ramp', type: 'ramp', x1: 1630, y1: 430, x2: 1800, y2: 250 },
+        { id: 'p2_altar_throne', type: 'flat', x: 1800, y: 250, w: 130, h: 290 }
+      ];
+
+      const ladders = [
+        { id: 'ladder_1', x: 100, w: 34, topY: 310, bottomY: 470 },
+        { id: 'ladder_2', x: 675, w: 38, topY: 180, bottomY: 470 }
+      ];
+
+      // ===================================================================
+      // 4. KONFIGURASI HERO & BOS 2 (MAGMA WARDEN)
+      // ===================================================================
+      const HERO_CONFIG = {
+        rows: 5,
+        renderSize: 120,
+        offsetX: -60,
+        offsetY: -100,
+        actions: {
+          idle:    { row: 0, cols: 10, startCol: 0, count: 5, fps: 6,  loop: true },
+          run:     { row: 1, cols: 8,  startCol: 0, count: 6, fps: 14, loop: true },
+          jump:    { row: 2, cols: 10, startCol: 2, count: 1, fps: 1,  loop: false },
+          fall:    { row: 2, cols: 10, startCol: 3, count: 1, fps: 1,  loop: false },
+          climb:   { row: 0, cols: 10,  startCol: 7, count: 3, fps: 7,  loop: true },
+          slash:   { row: 3, cols: 9,  startCol: 0, count: 6, fps: 17, loop: false },
+          victory: { row: 4, cols: 8,  startCol: 0, count: 2, fps: 6,  loop: true },
+          hurt:    { row: 4, cols: 9,  startCol: 5, count: 4, fps: 8,  loop: false }
+        }
+      };
+
+      const GOBLIN_CONFIG = {
+        rows: 4,
+        cols: 6,
+        renderSize: 92,
+        offsetX: -46,
+        offsetY: -90,
+        actions: {
+          idle:   { row: 0, startCol: 0, count: 4, fps: 6,  loop: true },
+          walk:   { row: 1, startCol: 0, count: 6, fps: 10, loop: true },
+          attack: { row: 2, startCol: 0, count: 4, fps: 10, loop: false },
+          death:  { row: 3, startCol: 0, count: 6, fps: 8,  loop: false }
+        }
+      };
+
+      // Konfigurasi Spritesheet Magma Warden (boss2_spritesheet.jpg)
+      const BOSS2_CONFIG = {
+        rows: 4,
+        cols: 6,
+        renderSize: 180,
+        offsetX: -90,
+        offsetY: -160,
+        actions: {
+          idle:     { row: 0, startCol: 0, count: 4, fps: 5, loop: true },
+          breathe:  { row: 1, startCol: 0, count: 4, fps: 6, loop: false },
+          summon:   { row: 2, startCol: 0, count: 4, fps: 6, loop: false },
+          defeat:   { row: 3, startCol: 0, count: 6, fps: 5, loop: false }
+        }
+      };
+
+      const SCROLL_CONFIG = {
+        cols: 8,
+        rows: 1,
+        renderH: 110,
+        actions: {
+          floating:  { frames: [0, 1], fps: 3, loop: true },
+          unsealing: { frames: [2, 3, 4, 5], fps: 6, loop: false },
+          opened:    { frames: [4, 5], fps: 4, loop: true }
+        }
+      };
+
+      // ===================================================================
+      // 5. STATUS ENTITAS GAMEPLAY & SERANGAN MAGMA
+      // ===================================================================
+      const hero = {
+        x: 60,
+        y: 370,
+        w: 48,
+        h: 76,
+        vx: 0,
+        vy: 0,
+        speed: 4.5,
+        facing: 1,
+        hp: 100,
+        grounded: false,
+        climbing: false,
+        activeLadder: null,
+        state: 'idle',
+        animFrame: 0,
+        animTimer: 0,
+        actionLock: false,
+        invulnFrames: 0,
+        coyoteTimer: 0,
+        jumpBuffer: 0,
+        autoVictoryTimer: 0
+      };
+
+      const goblins = [
+        { id: 1, x: 300,  y: 410, vx: 1.1, w: 42, h: 58, facing: 1,  minX: 200,  maxX: 420,  hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true },
+        { id: 2, x: 500,  y: 150, vx: 1.0, w: 42, h: 58, facing: 1,  minX: 500,  maxX: 580,  hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true },
+        { id: 3, x: 800,  y: 240, vx: 1.0, w: 42, h: 58, facing: 1,  minX: 720,  maxX: 840,  hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true },
+        { id: 4, x: 1220, y: 370, vx: 1.2, w: 42, h: 58, facing: -1, minX: 1100, maxX: 1400, hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true }
+      ];
+
+      const orbs = [
+        { id: 0, name: 'CRIMSON ORB', subtitle: 'Refinery Ops',  x: 160,  y: 240, row: 0, color: '#ef4444', collected: false },
+        { id: 1, name: 'AZURE ORB',   subtitle: 'Pipeline Data', x: 460,  y: 180, row: 1, color: '#0ea5e9', collected: false },
+        { id: 2, name: 'EMERALD ORB', subtitle: 'Governance',    x: 600,  y: 110, row: 2, color: '#10b981', collected: false },
+        { id: 3, name: 'VIOLET ORB',  subtitle: 'Megaprojects',  x: 1240, y: 200, row: 3, color: '#8b5cf6', collected: false },
+        { id: 4, name: 'GOLDEN ORB',  subtitle: 'Sovereign Core',x: 1400, y: 340, row: 4, color: '#f59e0b', collected: false }
+      ];
+
+      const boss = {
+        spawned: false,
+        alive: true,
+        x: 1540,
+        y: 430,
+        w: 100,
+        h: 150,
+        facing: -1,
+        hp: 450,
+        maxHp: 450,
+        state: 'idle',
+        stateTimer: 80,
+        animFrame: 0,
+        animTimer: 0,
+        actionLock: false
+      };
+
+      const careerScroll = {
+        unlocked: false,
+        x: 1810,
+        y: 190,
+        state: 'floating',
+        frameIdx: 0,
+        animTimer: 0,
+        opened: false
+      };
+
+      // Array Peluru Bola Api & Tiang Lahar
+      let fireballs = [];
+      let lavaPillars = [];
+      const floatingPopups = [];
+
+      function addFloatingPopup(text, x, y, color = '#f59e0b') {
+        floatingPopups.push({ text, x, y, color, life: 60, maxLife: 60 });
+      }
+
+      // ===================================================================
+      // 6. INPUT CONTROLLER
+      // ===================================================================
+      const input = {
+        left: false, right: false, up: false, down: false,
+        jumpPressed: false, jumpHeld: false, attackPressed: false, interactPressed: false
+      };
+
+      function triggerJump() {
+        AudioEngine.init();
+        input.jumpPressed = true;
+        input.jumpHeld = true;
+        hero.jumpBuffer = 8;
+        if (hero.climbing) {
+          hero.climbing = false;
+          hero.vy = -10.5;
+        }
+      }
+
+      function triggerAttack() {
+        AudioEngine.init();
+        input.attackPressed = true;
+      }
+
+      function triggerInteract() {
+        AudioEngine.init();
+        input.interactPressed = true;
+      }
+
+      function setPause(state) {
+        isGamePaused = state;
+        const modal = document.getElementById('pauseModal');
+        const btn = document.getElementById('btnPauseGame');
+        if (isGamePaused) {
+          modal.classList.remove('hidden');
+          if (btn) btn.textContent = '▶️';
+          AudioEngine.pauseBgm();
+        } else {
+          modal.classList.add('hidden');
+          if (btn) btn.textContent = '⏸️';
+          AudioEngine.resumeBgm();
+        }
+      }
+
+      window.addEventListener('keydown', (e) => {
+        if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault();
+        AudioEngine.init();
+
+        if (e.code === 'KeyP' || e.code === 'Escape') {
+          setPause(!isGamePaused);
+          return;
+        }
+
+        if (isGamePaused || hero.autoVictoryTimer > 0) return;
+        if (e.code === 'KeyG') showDebugRoute = !showDebugRoute;
+        if (e.code === 'KeyA' || e.code === 'ArrowLeft') input.left = true;
+        if (e.code === 'KeyD' || e.code === 'ArrowRight') input.right = true;
+        
+        if (e.code === 'KeyW' || e.code === 'ArrowUp') {
+          input.up = true;
+          if (!hero.climbing) triggerJump();
+        }
+        if (e.code === 'KeyS' || e.code === 'ArrowDown') input.down = true;
+
+        if (e.code === 'Space') {
+          if (!input.jumpHeld) triggerJump();
+        }
+
+        if (e.code === 'KeyJ' || e.code === 'KeyK' || e.code === 'KeyZ') triggerAttack();
+        if (e.code === 'KeyE') triggerInteract();
+      });
+
+      window.addEventListener('keyup', (e) => {
+        if (e.code === 'KeyA' || e.code === 'ArrowLeft') input.left = false;
+        if (e.code === 'KeyD' || e.code === 'ArrowRight') input.right = false;
+        if (e.code === 'KeyW' || e.code === 'ArrowUp') input.up = false;
+        if (e.code === 'KeyS' || e.code === 'ArrowDown') input.down = false;
+        if (e.code === 'Space') input.jumpHeld = false;
+      });
+
+      function bindTouch(id, onDown, onUp) {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        const downHandler = (e) => {
+          e.preventDefault();
+          AudioEngine.init();
+          onDown();
+        };
+        const upHandler = (e) => {
+          e.preventDefault();
+          if (onUp) onUp();
+        };
+
+        btn.addEventListener('pointerdown', downHandler);
+        btn.addEventListener('pointerup', upHandler);
+        btn.addEventListener('touchstart', downHandler, { passive: false });
+        btn.addEventListener('touchend', upHandler, { passive: false });
+      }
+
+      bindTouch('btnLeft', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0) input.left = true; }, () => input.left = false);
+      bindTouch('btnRight', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0) input.right = true; }, () => input.right = false);
+      bindTouch('btnUp', () => { 
+        if (!isGamePaused && hero.autoVictoryTimer <= 0) {
+          input.up = true;
+          if (!hero.climbing) triggerJump();
+        }
+      }, () => input.up = false);
+      bindTouch('btnDown', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0) input.down = true; }, () => input.down = false);
+      bindTouch('btnJump', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0) triggerJump(); }, () => input.jumpHeld = false);
+      bindTouch('btnAttack', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0) triggerAttack(); });
+      bindTouch('btnInteract', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0) triggerInteract(); });
+
+      function executeQuit() {
+        if (confirm("Are you sure you want to return to the Main Menu?")) {
+          window.location.href = 'index.html';
+        }
+      }
+      document.getElementById('btnQuitGame').addEventListener('click', executeQuit);
+      document.getElementById('btnPauseQuit').addEventListener('click', executeQuit);
+
+      document.getElementById('btnPauseGame').addEventListener('click', () => setPause(!isGamePaused));
+      document.getElementById('btnResumeGame').addEventListener('click', () => setPause(false));
+      document.getElementById('btnRestartStage').addEventListener('click', () => {
+        window.location.reload();
+      });
+
+      document.getElementById('btnNextStage').addEventListener('click', () => {
+        window.location.href = 'stage3.html';
+      });
+
+      document.getElementById('btnCloseScroll').addEventListener('click', () => {
+        window.location.reload();
+      });
+
+      document.getElementById('btnSkipToEnd').addEventListener('click', () => {
+        if (confirm("Skip directly to the Career Epilogue & Credits?")) {
+          window.location.href = 'credits.html';
+        }
+      });
+
+      // ===================================================================
+      // 7. DAMAGE & LOGIK FIZIK + SERANGAN MAGMA
+      // ===================================================================
+      function inflictDamage(amount, dir) {
+        if (hero.invulnFrames > 0 || hero.autoVictoryTimer > 0) return;
+        hero.hp = Math.max(0, hero.hp - amount);
+        hero.invulnFrames = 42;
+        hero.vx = dir * 4.2;
+        hero.vy = -3.8;
+        hero.climbing = false;
+        hero.state = 'hurt';
+        hero.animFrame = 0;
+        hero.animTimer = 0;
+        hero.actionLock = true;
+        AudioEngine.hit();
+        camera.shakeFrames = 10;
+        camera.shakeMag = 5;
+        addFloatingPopup(`-${amount} HP`, hero.x + 20, hero.y - 10, '#ef4444');
+        updateHud();
+      }
+
+      function updateGame(dt) {
+        if (isGamePaused) return;
+
+        if (camera.shakeFrames > 0) camera.shakeFrames--;
+        if (hero.invulnFrames > 0) hero.invulnFrames--;
+
+        for (let i = floatingPopups.length - 1; i >= 0; i--) {
+          const pop = floatingPopups[i];
+          pop.y -= 0.6;
+          pop.life--;
+          if (pop.life <= 0) floatingPopups.splice(i, 1);
+        }
+
+        // A. Kemas kini Peluru Bola Api (Fireballs)
+        for (let i = fireballs.length - 1; i >= 0; i--) {
+          const fb = fireballs[i];
+          fb.x += fb.vx;
+          fb.animTimer += dt;
+          if (fb.animTimer >= 0.08) {
+            fb.animTimer = 0;
+            fb.frame = (fb.frame + 1) % 5;
+          }
+
+          // Perlanggaran dengan Hero
+          if (hero.invulnFrames <= 0 && Math.abs((hero.x + hero.w*0.5) - fb.x) < 32 && Math.abs((hero.y + hero.h*0.5) - fb.y) < 34) {
+            inflictDamage(24, Math.sign(fb.vx));
+            fireballs.splice(i, 1);
+            continue;
+          }
+
+          if (fb.x < -100 || fb.x > WORLD_W + 100) {
+            fireballs.splice(i, 1);
+          }
+        }
+
+        // B. Kemas kini Tiang Lahar (Lava Pillars)
+        for (let i = lavaPillars.length - 1; i >= 0; i--) {
+          const lp = lavaPillars[i];
+          lp.animTimer += dt;
+
+          if (lp.stage === 'warning') {
+            lp.warningTimer -= dt;
+            if (lp.warningTimer <= 0) {
+              lp.stage = 'erupt';
+              lp.frame = 1;
+              AudioEngine.eruption();
+              camera.shakeFrames = 15;
+              camera.shakeMag = 6;
+            }
+          } else if (lp.stage === 'erupt') {
+            if (lp.animTimer >= 0.08) {
+              lp.animTimer = 0;
+              lp.frame++;
+              if (lp.frame >= 7) {
+                lavaPillars.splice(i, 1);
+                continue;
+              }
+            }
+
+            // Kerosakan Tiang Lahar (Frames 2-5 adalah puncak letusan)
+            if (lp.frame >= 2 && lp.frame <= 5 && hero.invulnFrames <= 0) {
+              const hMidX = hero.x + hero.w * 0.5;
+              const hFoot = hero.y + hero.h;
+              if (Math.abs(hMidX - lp.x) < 38 && hFoot >= lp.y - 180 && hero.y <= lp.y) {
+                inflictDamage(28, hero.x < lp.x ? -1 : 1);
+              }
+            }
+          }
+        }
+
+        if (hero.autoVictoryTimer > 0) {
+          hero.autoVictoryTimer -= dt;
+          hero.vx = 0;
+          hero.state = 'victory';
+          if (hero.autoVictoryTimer <= 0) {
+            hero.autoVictoryTimer = 0;
+            hero.actionLock = false;
+            hero.state = 'idle';
+            hero.animFrame = 0;
+          }
+        }
+
+        // --- SISTEM TANGGA LOMBONG ---
+        const hMidX = hero.x + hero.w * 0.5;
+        const hFootY = hero.y + hero.h;
+        let nearLadder = null;
+
+        for (const l of ladders) {
+          if (hMidX >= l.x - 12 && hMidX <= l.x + l.w + 12 && hFootY >= l.topY - 14 && hero.y <= l.bottomY + 14) {
+            nearLadder = l;
+            break;
+          }
+        }
+
+        const climbPrompt = document.getElementById('climbPrompt');
+        if (nearLadder && !hero.climbing) {
+          climbPrompt.classList.remove('hidden');
+        } else {
+          climbPrompt.classList.add('hidden');
+        }
+
+        if (nearLadder && (input.up || input.down) && !hero.actionLock) {
+          hero.climbing = true;
+          hero.activeLadder = nearLadder;
+          hero.vx = 0;
+          hero.x = nearLadder.x + (nearLadder.w - hero.w) * 0.5;
+        }
+
+        if (hero.climbing) {
+          hero.grounded = true;
+          hero.vy = 0;
+
+          if (input.up) hero.y -= 3.2;
+          else if (input.down) hero.y += 3.2;
+
+          if (hero.y + hero.h < hero.activeLadder.topY - 4) {
+            hero.y = hero.activeLadder.topY - hero.h;
+            hero.climbing = false;
+          } else if (hero.y + hero.h > hero.activeLadder.bottomY) {
+            hero.y = hero.activeLadder.bottomY - hero.h;
+            hero.climbing = false;
+          }
+
+          if (input.left || input.right) {
+            hero.climbing = false;
+          }
+        } else {
+          if (!hero.actionLock && hero.autoVictoryTimer <= 0) {
+            if (input.left) {
+              hero.vx = -hero.speed;
+              hero.facing = -1;
+            } else if (input.right) {
+              hero.vx = hero.speed;
+              hero.facing = 1;
+            } else {
+              hero.vx *= 0.78;
+              if (Math.abs(hero.vx) < 0.1) hero.vx = 0;
+            }
+
+            if (hero.grounded) hero.coyoteTimer = 7;
+            else if (hero.coyoteTimer > 0) hero.coyoteTimer--;
+
+            if (hero.jumpBuffer > 0) hero.jumpBuffer--;
+
+            if (hero.jumpBuffer > 0 && hero.coyoteTimer > 0) {
+              hero.vy = -12.4;
+              hero.grounded = false;
+              hero.coyoteTimer = 0;
+              hero.jumpBuffer = 0;
+              AudioEngine.jump();
+            }
+          } else {
+            hero.vx *= 0.82;
+          }
+
+          hero.vy += GRAVITY;
+          if (hero.vy > 12) hero.vy = 12;
+          input.jumpPressed = false;
+
+          const prevFoot = hero.y + hero.h;
+          hero.x += hero.vx;
+          hero.y += hero.vy;
+
+          if (hero.x < 20) hero.x = 20;
+          if (hero.x > WORLD_W - hero.w - 20) hero.x = WORLD_W - hero.w - 20;
+
+          hero.grounded = false;
+
+          for (const p of platforms) {
+            if (p.type === 'flat') {
+              if (hero.x + hero.w > p.x && hero.x < p.x + p.w && hero.vy >= 0) {
+                if (prevFoot <= p.y + 14 && hero.y + hero.h >= p.y) {
+                  hero.y = p.y - hero.h;
+                  hero.vy = 0;
+                  hero.grounded = true;
+                  break;
+                }
+              }
+            } else if (p.type === 'ramp') {
+              const minX = Math.min(p.x1, p.x2);
+              const maxX = Math.max(p.x1, p.x2);
+              if (hMidX >= minX && hMidX <= maxX) {
+                const progress = (hMidX - p.x1) / (p.x2 - p.x1);
+                const targetY = p.y1 + progress * (p.y2 - p.y1);
+                if (prevFoot <= targetY + 16 && hero.y + hero.h >= targetY - 4) {
+                  hero.y = targetY - hero.h;
+                  hero.vy = 0;
+                  hero.grounded = true;
+                  break;
+                }
+              }
+            }
+          }
+        }
+
+        // Terjatuh ke Dalam Magma
+        if (hero.y > VIEW_H + 40) {
+          hero.x = 1000;
+          hero.y = 280;
+          hero.vy = 0;
+          hero.climbing = false;
+          inflictDamage(20, 1);
+          addFloatingPopup('BURNING MAGMA HAZARD!', hero.x, hero.y - 30, '#ef4444');
+        }
+
+        // Logik Animasi Hero
+        if (!hero.actionLock && hero.autoVictoryTimer <= 0) {
+          if (hero.climbing) {
+            hero.state = 'climb';
+            if (!input.up && !input.down) {
+              hero.animTimer = 0;
+            }
+          } else if (!hero.grounded) {
+            const airState = hero.vy < 0 ? 'jump' : 'fall';
+            if (hero.state !== airState) {
+              hero.state = airState;
+              hero.animFrame = 0;
+              hero.animTimer = 0;
+            }
+          } else if (Math.abs(hero.vx) > 0.2) {
+            if (hero.state !== 'run') {
+              hero.state = 'run';
+              hero.animFrame = 0;
+              hero.animTimer = 0;
+            }
+          } else {
+            if (hero.state !== 'idle') {
+              hero.state = 'idle';
+              hero.animFrame = 0;
+              hero.animTimer = 0;
+            }
+          }
+        }
+
+        const hAct = HERO_CONFIG.actions[hero.state] || HERO_CONFIG.actions.idle;
+        hero.animTimer += dt;
+        if (hero.animTimer >= 1 / hAct.fps) {
+          hero.animTimer = 0;
+          hero.animFrame++;
+          if (hero.animFrame >= hAct.count) {
+            if (hAct.loop) {
+              hero.animFrame = 0;
+            } else {
+              hero.animFrame = hAct.count - 1;
+              if (hero.actionLock && hero.autoVictoryTimer <= 0) {
+                hero.actionLock = false;
+                hero.state = hero.grounded ? 'idle' : 'fall';
+                hero.animFrame = 0;
+              }
+            }
+          }
+        }
+        if (hero.animFrame >= hAct.count) hero.animFrame = hAct.count - 1;
+
+        // Serangan Pedang Hero
+        if (input.attackPressed && !hero.actionLock && hero.autoVictoryTimer <= 0) {
+          input.attackPressed = false;
+          hero.actionLock = true;
+          hero.state = 'slash';
+          hero.animFrame = 0;
+          hero.animTimer = 0;
+          AudioEngine.slash();
+
+          const slashBox = {
+            x: hero.facing === 1 ? hero.x : hero.x - 70,
+            y: hero.y - 10,
+            w: hero.w + 70,
+            h: hero.h + 20
+          };
+
+          for (const g of goblins) {
+            if (g.alive && slashBox.x + slashBox.w > g.x && slashBox.x < g.x + g.w &&
+                slashBox.y + slashBox.h > g.y && slashBox.y < g.y + g.h) {
+              g.hp -= 40;
+              g.hurtTimer = 12;
+              g.vx = hero.facing * 3.5;
+              AudioEngine.hit();
+              camera.shakeFrames = 6;
+              camera.shakeMag = 3;
+              addFloatingPopup('-40', g.x + 20, g.y, '#f59e0b');
+
+              if (g.hp <= 0) {
+                g.alive = false;
+                g.state = 'death';
+                g.animFrame = 0;
+                g.animTimer = 0;
+                AudioEngine.goblinDie();
+              }
+            }
+          }
+
+          if (boss.spawned && boss.alive) {
+            if (slashBox.x + slashBox.w > boss.x - 60 && slashBox.x < boss.x + 80 &&
+                slashBox.y + slashBox.h > boss.y - 120 && slashBox.y < boss.y + 20) {
+              boss.hp = Math.max(0, boss.hp - 35);
+              AudioEngine.hit();
+              camera.shakeFrames = 8;
+              camera.shakeMag = 4;
+              addFloatingPopup('-35', boss.x, boss.y - 80, '#fde047');
+              updateHud();
+
+              if (boss.hp <= 0) {
+                boss.alive = false;
+                boss.state = 'defeat';
+                boss.animFrame = 0;
+                boss.animTimer = 0;
+                AudioEngine.playBgm('stage');
+                AudioEngine.victory();
+                updateHud();
+
+                hero.autoVictoryTimer = 2.5;
+                hero.actionLock = true;
+                hero.state = 'victory';
+                hero.animFrame = 0;
+
+                careerScroll.unlocked = true;
+                addFloatingPopup('CHAPTER II UNSEALED!', boss.x - 20, boss.y - 80, '#38bdf8');
+              }
+            }
+          }
+        }
+        input.attackPressed = false;
+
+        // Kutip Power Orbs
+        for (const orb of orbs) {
+          if (!orb.collected) {
+            const hx = hero.x + hero.w * 0.5;
+            const hy = hero.y + hero.h * 0.5;
+            if (Math.abs(hx - orb.x) < 45 && (hy - orb.y > -50 && hy - orb.y < 95)) {
+              orb.collected = true;
+              AudioEngine.orb();
+              addFloatingPopup(`+${orb.name}`, orb.x - 10, orb.y - 30, orb.color);
+              updateHud();
+            }
+          }
+        }
+
+        // AI Goblins
+        for (const g of goblins) {
+          if (!g.alive) {
+            if (g.state === 'death') {
+              const gAct = GOBLIN_CONFIG.actions.death;
+              g.animTimer += dt;
+              if (g.animTimer >= 1 / gAct.fps) {
+                g.animTimer = 0;
+                g.animFrame++;
+                if (g.animFrame >= gAct.count) {
+                  g.state = 'dead_poof';
+                }
+              }
+            }
+            continue;
+          }
+
+          g.animTimer += dt;
+          const gAct = GOBLIN_CONFIG.actions[g.state] || GOBLIN_CONFIG.actions.idle;
+          if (g.animTimer >= 1 / gAct.fps) {
+            g.animTimer = 0;
+            g.animFrame = (g.animFrame + 1) % gAct.count;
+          }
+
+          if (g.x <= g.minX) { g.vx = Math.abs(g.vx); g.facing = 1; }
+          if (g.x + g.w >= g.maxX) { g.vx = -Math.abs(g.vx); g.facing = -1; }
+
+          const distToHero = Math.hypot((hero.x + hero.w*0.5) - (g.x + g.w*0.5), hero.y - g.y);
+          if (distToHero < 80) {
+            g.state = 'attack';
+            g.facing = hero.x < g.x ? -1 : 1;
+            g.attackTimer += dt;
+            if (hero.invulnFrames <= 0 && distToHero < 46) {
+              inflictDamage(10, g.facing);
+            }
+          } else {
+            g.state = 'walk';
+            g.x += g.vx;
+            g.attackTimer = 0;
+          }
+        }
+
+        // Kebangkitan Magma Warden (5 Orb & Masuk Zon Lahar)
+        const orbsCount = orbs.filter(o => o.collected).length;
+        if (orbsCount >= 5 && hero.x >= 1450 && !boss.spawned) {
+          boss.spawned = true;
+          boss.alive = true;
+          boss.state = 'idle';
+          boss.stateTimer = 60;
+          AudioEngine.playBgm('boss');
+          addFloatingPopup('⚠️ MAGMA WARDEN AWAKENS!', boss.x - 70, boss.y - 80, '#ef4444');
+          updateHud();
+        }
+
+        // ===================================================================
+        // AI MAGMA WARDEN: BOLA API & SERUAN TIANG LAHAR
+        // ===================================================================
+        if (boss.spawned && boss.alive) {
+          boss.facing = (hero.x < boss.x) ? -1 : 1;
+          const bAct = BOSS2_CONFIG.actions[boss.state] || BOSS2_CONFIG.actions.idle;
+          boss.animTimer += dt;
+
+          if (boss.animTimer >= 1 / bAct.fps) {
+            boss.animTimer = 0;
+            boss.animFrame++;
+
+            // Cetusan Tembakan Bola Api Pada Frame Ke-3 Animasi Breathe
+            if (boss.state === 'breathe' && boss.animFrame === 2) {
+              AudioEngine.fireShoot();
+              fireballs.push({
+                x: boss.x + (boss.facing === -1 ? -45 : 45),
+                y: boss.y - 80,
+                vx: boss.facing * 5.8,
+                frame: 0,
+                animTimer: 0
+              });
+            }
+
+            // Cetusan Seruan Tiang Lahar Pada Frame Ke-3 Animasi Summon
+            if (boss.state === 'summon' && boss.animFrame === 2) {
+              // Seru 2 hingga 3 Tiang Lahar Rawak di Atas Jambatan Lava
+              const pCount = Math.random() > 0.4 ? 3 : 2;
+              for (let k = 0; k < pCount; k++) {
+                const randomOffset = (k === 0) ? (hero.x + (Math.random() * 60 - 30)) : (1100 + Math.random() * 450);
+                lavaPillars.push({
+                  x: Math.max(1060, Math.min(1580, randomOffset)),
+                  y: 430,
+                  stage: 'warning',
+                  warningTimer: 0.9,
+                  frame: 0,
+                  animTimer: 0
+                });
+              }
+              addFloatingPopup('MAGMA SURGE!', boss.x - 40, boss.y - 120, '#f97316');
+            }
+
+            if (boss.animFrame >= bAct.count) {
+              if (bAct.loop) {
+                boss.animFrame = 0;
+              } else {
+                boss.state = 'idle';
+                boss.animFrame = 0;
+                boss.stateTimer = 75 + Math.random() * 40;
+              }
+            }
+          }
+
+          // Kitaran Serangan Bos Semasa Idle
+          if (boss.state === 'idle') {
+            boss.stateTimer -= dt * 60;
+            if (boss.stateTimer <= 0) {
+              // Bersilih ganti antara semburan bola api atau seruan tiang lahar
+              const isBreathe = Math.random() > 0.5;
+              boss.state = isBreathe ? 'breathe' : 'summon';
+              boss.animFrame = 0;
+              boss.animTimer = 0;
+            }
+          }
+        } else if (boss.spawned && !boss.alive && boss.state === 'defeat') {
+          const bAct = BOSS2_CONFIG.actions.defeat;
+          boss.animTimer += dt;
+          if (boss.animTimer >= 1 / bAct.fps) {
+            boss.animTimer = 0;
+            boss.animFrame++;
+            if (boss.animFrame >= bAct.count) {
+              boss.animFrame = bAct.count - 1;
+              boss.state = 'gone';
+            }
+          }
+        }
+
+        // Buka Skrol di Altar
+        if (careerScroll.unlocked && !careerScroll.opened && hero.autoVictoryTimer <= 0) {
+          const dist = Math.hypot((hero.x + hero.w*0.5) - careerScroll.x, (hero.y + hero.h*0.5) - careerScroll.y);
+          const prompt = document.getElementById('interactPrompt');
+
+          if (dist < 75) {
+            prompt.classList.remove('hidden');
+            if (input.interactPressed && careerScroll.state === 'floating') {
+              careerScroll.state = 'unsealing';
+              careerScroll.frameIdx = 0;
+              careerScroll.animTimer = 0;
+              AudioEngine.sealCrack();
+            }
+          } else {
+            prompt.classList.add('hidden');
+          }
+
+          if (careerScroll.state === 'unsealing') {
+            const scAct = SCROLL_CONFIG.actions.unsealing;
+            careerScroll.animTimer += dt;
+            if (careerScroll.animTimer >= 1 / scAct.fps) {
+              careerScroll.animTimer = 0;
+              careerScroll.frameIdx++;
+              if (careerScroll.frameIdx >= scAct.frames.length) {
+                careerScroll.opened = true;
+                careerScroll.state = 'opened';
+                careerScroll.frameIdx = 0;
+                document.getElementById('scrollModal').classList.remove('hidden');
+                AudioEngine.victory();
+              }
+            }
+          }
+        }
+        input.interactPressed = false;
+
+        camera.targetX = Math.max(0, Math.min(WORLD_W - VIEW_W, hero.x - VIEW_W * 0.42));
+        camera.x += (camera.targetX - camera.x) * 0.08;
+      }
+
+      // ========================================================
+      // 8. UPDATE HUD
+      // ========================================================
+      function updateHud() {
+        document.getElementById('heroHpFill').style.width = `${Math.max(0, hero.hp)}%`;
+        document.getElementById('heroHpText').textContent = `${Math.ceil(hero.hp)} / 100`;
+
+        const collected = orbs.filter(o => o.collected).length;
+        document.getElementById('orbCountText').textContent = `${collected} / 5`;
+
+        const orbSheet = Loaded.get('orbs');
+        if (orbSheet && orbSheet.naturalWidth > 0) {
+          const frameW = Math.floor(orbSheet.naturalWidth / 7);
+          const frameH = Math.floor(orbSheet.naturalHeight / 5);
+
+          orbs.forEach((o, i) => {
+            const c = document.getElementById(`hudOrb${i}`);
+            if (!c) return;
+            const hctx = c.getContext('2d');
+            hctx.imageSmoothingEnabled = false;
+            hctx.clearRect(0, 0, c.width, c.height);
+
+            const sx = 0;
+            const sy = o.row * frameH;
+
+            hctx.save();
+            if (o.collected) {
+              hctx.drawImage(orbSheet, sx, sy, frameW, frameH, 0, 0, c.width, c.height);
+              c.style.filter = `drop-shadow(0 0 6px ${o.color}) drop-shadow(0 0 12px ${o.color})`;
+              c.style.transform = 'scale(1.15)';
+              c.style.opacity = '1.0';
+            } else {
+              hctx.globalAlpha = 0.35;
+              hctx.drawImage(orbSheet, sx, sy, frameW, frameH, 0, 0, c.width, c.height);
+              hctx.globalCompositeOperation = 'source-atop';
+              hctx.fillStyle = '#0f172a';
+              hctx.fillRect(0, 0, c.width, c.height);
+              c.style.filter = 'drop-shadow(0 1px 2px rgba(0,0,0,0.8))';
+              c.style.transform = 'scale(1.0)';
+              c.style.opacity = '0.5';
+            }
+            hctx.restore();
+          });
+        }
+
+        const bossHud = document.getElementById('bossHud');
+        if (boss.spawned && boss.alive) {
+          bossHud.classList.remove('hidden');
+          document.getElementById('bossHpFill').style.width = `${Math.max(0, (boss.hp / boss.maxHp) * 100)}%`;
+          document.getElementById('bossHpText').textContent = `${Math.ceil(boss.hp)} / 450`;
+        } else {
+          bossHud.classList.add('hidden');
+        }
+      }
+
+      // ========================================================
+      // 9. RENDER LOOP
+      // ========================================================
+      function render() {
+        ctx.clearRect(0, 0, VIEW_W, VIEW_H);
+
+        ctx.save();
+        let sx = 0, sy = 0;
+        if (camera.shakeFrames > 0 && !isGamePaused) {
+          sx = (Math.random() - 0.5) * camera.shakeMag * 2;
+          sy = (Math.random() - 0.5) * camera.shakeMag * 2;
+        }
+
+        ctx.translate(-Math.round(camera.x + sx), sy);
+
+        // A. Background Terhubung
+        const bg1 = Loaded.get('page1');
+        const bg2 = Loaded.get('page2');
+        if (bg1) ctx.drawImage(bg1, 0, 0, 960, VIEW_H);
+        if (bg2) ctx.drawImage(bg2, 960, 0, 960, VIEW_H);
+
+        // B. 5 Power Orbs
+        const orbSheet = Loaded.get('orbs');
+        orbs.forEach((o, idx) => {
+          if (!o.collected) {
+            const bob = Math.sin(performance.now() * 0.005 + idx * 1.5) * 6;
+            const oy = Math.round(o.y + bob);
+
+            ctx.save();
+            ctx.fillStyle = o.color;
+            ctx.globalAlpha = 0.25;
+            ctx.beginPath();
+            ctx.arc(o.x, oy, 26, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1.0;
+
+            if (orbSheet && orbSheet.naturalWidth > 0) {
+              const cW = Math.floor(orbSheet.naturalWidth / 7);
+              const cH = Math.floor(orbSheet.naturalHeight / 5);
+              const f = Math.floor(performance.now() * 0.008 + idx) % 7;
+              ctx.drawImage(orbSheet, f * cW, o.row * cH, cW, cH, o.x - 42, oy - 42, 84, 84);
+            } else {
+              ctx.fillStyle = o.color;
+              ctx.beginPath();
+              ctx.arc(o.x, oy, 18, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.restore();
+          }
+        });
+
+        // C. Goblins
+        const gobSheet = Loaded.get('goblin');
+        goblins.forEach(g => {
+          if (g.state === 'dead_poof') return;
+          if (gobSheet) {
+            const act = GOBLIN_CONFIG.actions[g.state] || GOBLIN_CONFIG.actions.idle;
+            const cellW = gobSheet.naturalWidth / GOBLIN_CONFIG.cols;
+            const cellH = gobSheet.naturalHeight / GOBLIN_CONFIG.rows;
+            const sx = Math.floor((act.startCol + g.animFrame) * cellW);
+            const sy = Math.floor(act.row * cellH);
+
+            ctx.save();
+            ctx.translate(Math.round(g.x + g.w * 0.5), Math.round(g.y + g.h));
+            ctx.scale(g.facing, 1);
+            ctx.drawImage(
+              gobSheet,
+              sx, sy, cellW, cellH,
+              GOBLIN_CONFIG.offsetX, GOBLIN_CONFIG.offsetY, GOBLIN_CONFIG.renderSize, GOBLIN_CONFIG.renderSize
+            );
+            ctx.restore();
+          }
+        });
+
+        // D. Magma Warden (Boss 2)
+        const bossSheet = Loaded.get('boss2');
+        if (boss.spawned && boss.state !== 'gone' && bossSheet) {
+          const act = BOSS2_CONFIG.actions[boss.state] || BOSS2_CONFIG.actions.idle;
+          const cellW = bossSheet.naturalWidth / BOSS2_CONFIG.cols;
+          const cellH = bossSheet.naturalHeight / BOSS2_CONFIG.rows;
+          const sx = Math.floor((act.startCol + boss.animFrame) * cellW);
+          const sy = Math.floor(act.row * cellH);
+
+          ctx.save();
+          ctx.translate(Math.round(boss.x), boss.y);
+          ctx.scale(boss.facing, 1);
+          ctx.drawImage(
+            bossSheet,
+            sx, sy, cellW, cellH,
+            BOSS2_CONFIG.offsetX, BOSS2_CONFIG.offsetY, BOSS2_CONFIG.renderSize, BOSS2_CONFIG.renderSize
+          );
+          ctx.restore();
+        }
+
+        // E. Peluru Bola Api (Fireballs)
+        const fbSheet = Loaded.get('fireball');
+        fireballs.forEach(fb => {
+          ctx.save();
+          ctx.translate(Math.round(fb.x), Math.round(fb.y));
+          if (fb.vx < 0) ctx.scale(-1, 1);
+
+          if (fbSheet && fbSheet.naturalWidth > 0) {
+            const fW = fbSheet.naturalWidth / 5;
+            const fH = fbSheet.naturalHeight;
+            ctx.drawImage(fbSheet, fb.frame * fW, 0, fW, fH, -32, -22, 64, 44);
+          } else {
+            ctx.fillStyle = '#f97316';
+            ctx.beginPath();
+            ctx.arc(0, 0, 18, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        });
+
+        // F. Tiang Lahar (Lava Pillars)
+        const lpSheet = Loaded.get('pillar');
+        lavaPillars.forEach(lp => {
+          ctx.save();
+          if (lp.stage === 'warning') {
+            // Petunjuk Amaran Lantai Berkelip
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.45)';
+            ctx.fillRect(lp.x - 30, lp.y - 6, 60, 6);
+            ctx.fillStyle = '#fef08a';
+            ctx.fillRect(lp.x - 16, lp.y - 8, 32, 3);
+          } else if (lp.stage === 'erupt' && lpSheet && lpSheet.naturalWidth > 0) {
+            const pW = lpSheet.naturalWidth / 7;
+            const pH = lpSheet.naturalHeight;
+            const renderH = 200;
+            const renderW = Math.round(renderH * (pW / pH));
+
+            ctx.drawImage(
+              lpSheet,
+              lp.frame * pW, 0, pW, pH,
+              Math.round(lp.x - renderW * 0.5), lp.y - renderH, renderW, renderH
+            );
+          }
+          ctx.restore();
+        });
+
+        // G. Career Scroll
+        const scrollSheet = Loaded.get('scroll');
+        if (careerScroll.unlocked && scrollSheet) {
+          const sx = careerScroll.x;
+          const bob = (careerScroll.opened) ? 0 : Math.sin(performance.now() * 0.004) * 6;
+          const sy = careerScroll.y + bob;
+
+          const scAct = SCROLL_CONFIG.actions[careerScroll.state];
+          const targetFrame = scAct ? scAct.frames[careerScroll.frameIdx] : 0;
+          const cellW = scrollSheet.naturalWidth / SCROLL_CONFIG.cols;
+          const cellH = scrollSheet.naturalHeight / SCROLL_CONFIG.rows;
+          const aspect = cellW / cellH;
+          const renderH = SCROLL_CONFIG.renderH;
+          const renderW = Math.round(renderH * aspect);
+
+          ctx.drawImage(
+            scrollSheet,
+            targetFrame * cellW, 0, cellW, cellH,
+            Math.round(sx - renderW * 0.5), Math.round(sy - renderH * 0.5), renderW, renderH
+          );
+        }
+
+        // H. Hero Ksatria
+        const heroSheet = Loaded.get('hero');
+        if (heroSheet) {
+          if (!(hero.invulnFrames > 0 && Math.floor(hero.invulnFrames / 4) % 2 === 1)) {
+            const act = HERO_CONFIG.actions[hero.state] || HERO_CONFIG.actions.idle;
+            const colsInRow = act.cols || 10;
+            const cellW = heroSheet.naturalWidth / colsInRow;
+            const cellH = heroSheet.naturalHeight / HERO_CONFIG.rows;
+            const sx = Math.floor((act.startCol + hero.animFrame) * cellW);
+            const sy = Math.floor(act.row * cellH);
+
+            ctx.save();
+            ctx.translate(Math.round(hero.x + hero.w * 0.5), Math.round(hero.y + hero.h));
+            ctx.scale(hero.facing, 1);
+            ctx.drawImage(
+              heroSheet,
+              sx, sy, cellW, cellH,
+              HERO_CONFIG.offsetX, HERO_CONFIG.offsetY, HERO_CONFIG.renderSize, HERO_CONFIG.renderSize
+            );
+            ctx.restore();
+          }
+        }
+
+        // I. Tiang Batu Tengah Lutsinar (Page 1)
+        if (bg1 && bg1.complete && hero.x > 260 && hero.x < 460) {
+          ctx.save();
+          ctx.globalAlpha = 0.88; 
+
+          const scaleX = bg1.naturalWidth / 960;
+          const scaleY = bg1.naturalHeight / 540;
+
+          const colX = 260;   
+          const colY = 160;   
+          const colW = 160;   
+          const colH = 290;   
+
+          ctx.drawImage(
+            bg1,
+            colX * scaleX, colY * scaleY, colW * scaleX, colH * scaleY,
+            colX, colY, colW, colH
+          );
+          ctx.restore();
+        }
+
+        // J. Pop-up Terapung
+        floatingPopups.forEach(pop => {
+          ctx.save();
+          ctx.font = '7px "Press Start 2P"';
+          ctx.fillStyle = pop.color;
+          ctx.globalAlpha = Math.max(0.1, pop.life / pop.maxLife);
+          ctx.fillText(pop.text, pop.x, pop.y);
+          ctx.restore();
+        });
+
+        // K. Debug Overlay
+        if (showDebugRoute) {
+          ctx.save();
+          ctx.lineWidth = 2.5;
+          ctx.font = '7px "Press Start 2P"';
+
+          ladders.forEach((l, idx) => {
+            ctx.strokeStyle = '#06b6d4';
+            ctx.fillStyle = 'rgba(6, 182, 212, 0.25)';
+            ctx.strokeRect(l.x, l.topY, l.w, l.bottomY - l.topY);
+            ctx.fillRect(l.x, l.topY, l.w, l.bottomY - l.topY);
+            ctx.fillStyle = '#22d3ee';
+            ctx.fillText(`Ladder ${idx+1}`, l.x - 10, l.topY - 8);
+          });
+
+          platforms.forEach((p, idx) => {
+            if (p.type === 'flat') {
+              ctx.strokeStyle = '#22c55e';
+              ctx.fillStyle = 'rgba(34, 197, 94, 0.2)';
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(p.x + p.w, p.y);
+              ctx.stroke();
+              ctx.fillRect(p.x, p.y, p.w, p.h);
+              ctx.fillStyle = '#4ade80';
+              ctx.fillText(`[${idx}] ${p.id}`, p.x + 4, p.y - 6);
+            } else if (p.type === 'ramp') {
+              ctx.strokeStyle = '#facc15';
+              ctx.beginPath();
+              ctx.moveTo(p.x1, p.y1);
+              ctx.lineTo(p.x2, p.y2);
+              ctx.stroke();
+              const midX = (p.x1 + p.x2) * 0.5;
+              const midY = (p.y1 + p.y2) * 0.5;
+              ctx.fillStyle = '#fde047';
+              ctx.fillText(`[${idx}] Ramp`, midX - 25, midY - 8);
+            }
+          });
+
+          ctx.restore();
+        }
+
+        ctx.restore();
+      }
+
+      function renderPortrait() {
+        const c = document.getElementById('portraitCanvas');
+        if (!c) return;
+        const pctx = c.getContext('2d');
+        pctx.imageSmoothingEnabled = false;
+        pctx.clearRect(0, 0, c.width, c.height);
+
+        pctx.fillStyle = '#0f172a';
+        pctx.fillRect(0, 0, c.width, c.height);
+
+        const sheet = Loaded.get('hero');
+        if (sheet && sheet.naturalWidth > 0) {
+          const cellW = sheet.naturalWidth / 10;
+          const cellH = sheet.naturalHeight / 5;
+
+          const srcX = cellW * 0.28;
+          const srcY = cellH * 0.04;
+          const srcW = cellW * 0.52;
+          const srcH = cellH * 0.52;
+
+          pctx.drawImage(sheet, srcX, srcY, srcW, srcH, 0, 0, c.width, c.height);
+        }
+      }
+
+      let lastTime = performance.now();
+      function loop(now) {
+        const dt = (now - lastTime) / 1000;
+        lastTime = now;
+        updateGame(dt);
+        render();
+        requestAnimationFrame(loop);
+      }
+
+      function startGame() {
+        Loaded.init(() => {
+          renderPortrait();
+          updateHud();
+          
+          AudioEngine.init();
+
+          const unlockAudio = () => {
+            AudioEngine.init();
+            AudioEngine.playBgm(AudioEngine.mode || 'stage');
+            window.removeEventListener('pointerdown', unlockAudio);
+            window.removeEventListener('keydown', unlockAudio);
+            window.removeEventListener('touchstart', unlockAudio);
+          };
+
+          window.addEventListener('pointerdown', unlockAudio, { once: true });
+          window.addEventListener('keydown', unlockAudio, { once: true });
+          window.addEventListener('touchstart', unlockAudio, { once: true });
+
+          requestAnimationFrame(loop);
+        });
+      }
+
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        startGame();
+      } else {
+        window.addEventListener('DOMContentLoaded', startGame);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AXWORLD — JPG to Transparent PNG Drawbridge Cropper</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background-color: #030712; color: #f8fafc; font-family: monospace; }
+    /* Latar petak-petak papan catur untuk buktikan transparency */
+    .checkerboard {
+      background-image: 
+        linear-gradient(45deg, #1e293b 25%, transparent 25%), 
+        linear-gradient(-45deg, #1e293b 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #1e293b 75%), 
+        linear-gradient(-45deg, transparent 75%, #1e293b 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+      background-color: #0f172a;
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+  <div class="bg-slate-900 border border-amber-500/50 rounded-2xl p-6 max-w-2xl w-full text-center shadow-2xl">
+    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-950/80 text-amber-300 text-xs border border-amber-600/60 mb-3">
+      <span>🪵</span>
+      <span>JPG TO TRANSPARENT SPRITE CONVERTER</span>
+    </div>
+    
+    <h1 class="text-lg font-bold text-amber-400 mb-1">DRAWBRIDGE AUTO-MASKING TOOL</h1>
+    <p class="text-xs text-slate-400 mb-5">Pilih fail JPG abang. Mia akan gunting papan kayu dan buang latar belakang secara automatik!</p>
+
+    <!-- PILIH FAIL JPG -->
+    <div class="mb-5 flex justify-center">
+      <input type="file" id="fileInput" accept="image/jpeg, image/jpg, image/png, image/webp" class="text-xs text-slate-300 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-amber-600 file:text-white file:font-bold hover:file:bg-amber-500 cursor-pointer">
+    </div>
+
+    <!-- PREVIEW SPRITE DENGAN LATAR PETAK (TRANSPARENT CHECKERBOARD) -->
+    <div class="mb-2 text-[10px] text-amber-300/80 tracking-wider">HASIL SPRITE TRANSPARENT PNG:</div>
+    <div class="flex justify-center mb-6">
+      <div class="p-3 checkerboard rounded-xl border border-slate-700 shadow-inner flex items-center justify-center">
+        <canvas id="cropCanvas" width="340" height="90" class="block"></canvas>
+      </div>
+    </div>
+
+    <button id="btnDownload" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center gap-2 mx-auto">
+      <span>💾</span>
+      <span>DOWNLOAD 'drawbridge_plank.png'</span>
+    </button>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const canvas = document.getElementById('cropCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let sourceImg = new Image();
+
+    function processJpgToTransparentPlank(img) {
+      const sw = img.naturalWidth;
+      const sh = img.naturalHeight;
+
+      // 1. Potong pendekkan sikit ke kanan supaya tak terambil pintu istana
+      const sx = sw * 0.675; 
+      const sy = sh * 0.620; 
+      const sWidth = sw * 0.228; // 👈 DULU 0.288, KITA PENDEKKAN KE 0.228 (Pintu istana terpotong keluar!)
+      const sHeight = sh * 0.120;
+
+      canvas.width = Math.round(sWidth);
+      canvas.height = Math.round(sHeight);
+      ctx.imageSmoothingEnabled = false;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+      
+      // 2. Garisan guntingan tepat pada papan kayu sahaja
+      ctx.beginPath();
+      ctx.moveTo(canvas.width * 0.02, canvas.height * 0.18); 
+      ctx.lineTo(canvas.width * 0.98, canvas.height * 0.08); // 👈 Tepat di engsel pintu
+      ctx.lineTo(canvas.width * 0.98, canvas.height * 0.85); 
+      ctx.lineTo(canvas.width * 0.15, canvas.height * 0.92); 
+      ctx.closePath();
+      ctx.clip();
+
+      // 3. Lukis bahagian papan kayu JPG ke dalam topeng guntingan
+      ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        sourceImg.onload = () => processJpgToTransparentPlank(sourceImg);
+        sourceImg.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('btnDownload').addEventListener('click', () => {
+      const link = document.createElement('a');
+      link.download = 'drawbridge_plank.png';
+      link.href = canvas.toDataURL('image/png'); // Simpan sebagai PNG sebenar
+      link.click();
+    });
+  </script>
+</body>
+</html>

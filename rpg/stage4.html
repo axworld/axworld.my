@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AXWORLD — THE CAREER RPG | Stage 4: The Golden Necropolis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700;900&family=EB+Garamond:ital,wght@0,500;0,700;1,500&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="stage4_style.css?v=4" />
+</head>
+<body class="w-full h-full min-h-screen flex flex-col items-center justify-center bg-[#030712] overflow-hidden p-1 sm:p-2">
+
+  <!-- BINGKAI KANVAS UTAMA -->
+  <div id="canvasFrame" class="relative w-full max-w-[1280px] max-h-[92vh] aspect-video flex items-center justify-center overflow-hidden border-2 border-amber-500/40 rounded-xl bg-slate-950 shadow-2xl">
+    <canvas id="gameCanvas" width="960" height="540" class="w-full h-full block"></canvas>
+
+    <!-- 1. TOP HUD (100% TEMPLATE STAGE 3) -->
+    <header class="pointer-events-none absolute top-0 inset-x-0 p-3 flex justify-between items-start z-20">
+      
+      <!-- HERO STATUS -->
+      <div class="pointer-events-auto flex items-center gap-2 hud-glass rounded-lg px-2.5 py-1.5 max-w-[240px] w-full">
+        <div class="w-8 h-8 rounded bg-slate-900 border border-amber-400/80 overflow-hidden flex items-center justify-center shrink-0">
+          <canvas id="portraitCanvas" width="32" height="32" class="w-full h-full"></canvas>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex justify-between items-center">
+            <span class="font-cinzel font-black text-[9px] text-amber-300 truncate leading-none">KHAIRUL AZZUMIE</span>
+            <span id="heroHpText" class="text-[7px] text-slate-300 leading-none">100/100</span>
+          </div>
+          <div class="w-full h-2 bg-slate-900 border border-slate-700/80 rounded-sm overflow-hidden mt-1">
+            <div id="heroHpFill" class="h-full bg-gradient-to-r from-rose-600 to-amber-400 transition-all duration-100" style="width: 100%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOSS HP BAR (ANUBIS) -->
+      <div id="bossHud" class="hidden pointer-events-none hud-glass rounded-xl p-2 max-w-[340px] w-full border-amber-500/60">
+        <div class="flex justify-between items-center text-[9px] mb-1">
+          <span class="font-cinzel font-extrabold text-amber-300 flex items-center gap-1">
+            <span>🐺</span> ANUBIS: GILDED ARBITER
+          </span>
+          <span id="bossHpText" class="text-[7px] text-amber-300">450 / 450</span>
+        </div>
+        <div class="w-full h-2.5 bg-slate-900 border border-amber-500/60 rounded overflow-hidden">
+          <div id="bossHpFill" class="h-full bg-gradient-to-r from-amber-600 via-yellow-500 to-rose-600 transition-all duration-75" style="width: 100%;"></div>
+        </div>
+      </div>
+
+      <!-- 5 POWER ORBS TRACKER, AUDIO, PAUSE & QUIT BUTTONS -->
+      <div class="pointer-events-auto flex items-center gap-2 hud-glass rounded-lg px-2.5 py-1">
+        <button id="btnAudioToggle" class="text-amber-300 hover:text-white text-[11px] transition px-1" title="Mute/Unmute Audio">
+          🎵
+        </button>
+        <button id="btnPauseGame" class="text-amber-300 hover:text-white text-[10px] transition px-1" title="Pause Game [P]">
+          ⏸️
+        </button>
+
+        <div class="flex items-center gap-1.5" id="orbIconsContainer">
+          <canvas id="hudOrb0" width="24" height="30" class="hud-crystal-canvas" title="Crimson Orb"></canvas>
+          <canvas id="hudOrb1" width="24" height="30" class="hud-crystal-canvas" title="Azure Orb"></canvas>
+          <canvas id="hudOrb2" width="24" height="30" class="hud-crystal-canvas" title="Emerald Orb"></canvas>
+          <canvas id="hudOrb3" width="24" height="30" class="hud-crystal-canvas" title="Violet Orb"></canvas>
+          <canvas id="hudOrb4" width="24" height="30" class="hud-crystal-canvas" title="Golden Orb"></canvas>
+        </div>
+
+        <div class="border-l border-slate-700/80 pl-2">
+          <div class="text-[5px] text-amber-200/80 tracking-tighter">POWER ORBS</div>
+          <div id="orbCountText" class="text-[9px] text-amber-300 font-bold leading-tight">0 / 5</div>
+        </div>
+
+        <button id="btnQuitGame" class="ml-1 bg-red-950/80 hover:bg-red-800 text-rose-300 hover:text-white text-[7px] border border-red-500/50 px-2 py-1 rounded transition" title="Quit to Main Menu">
+          QUIT
+        </button>
+      </div>
+    </header>
+
+    <!-- IN-GAME INTERACT PROMPT -->
+    <div id="interactPrompt" class="hidden pointer-events-none absolute bottom-14 left-1/2 -translate-x-1/2 z-20 hud-glass px-4 py-2 rounded-xl text-center">
+      <div id="interactPromptText" class="text-[9px] text-amber-300 animate-pulse">📜 PRESS [E] TO UNSEAL CHAPTER</div>
+    </div>
+
+    <!-- 2. DESKTOP CONTROLS OVERLAY -->
+    <div class="hidden md:flex pointer-events-none absolute bottom-2 inset-x-0 justify-center items-center z-20">
+      <div class="hud-glass rounded-lg px-3 py-1 flex items-center gap-3 text-[7px] text-amber-300 font-bold border border-amber-500/40 shadow-lg">
+        <span class="flex items-center gap-1"><kbd class="bg-slate-800 text-cyan-300 px-1 rounded border border-slate-700">A</kbd><kbd class="bg-slate-800 text-cyan-300 px-1 rounded border border-slate-700">D</kbd> MOVE</span>
+        <span class="text-slate-600">|</span>
+        <span class="flex items-center gap-1"><kbd class="bg-slate-800 text-amber-300 px-1 rounded border border-slate-700">W</kbd><kbd class="bg-slate-800 text-amber-300 px-1.5 rounded border border-slate-700">SPACE</kbd> JUMP</span>
+        <span class="text-slate-600">|</span>
+        <span class="flex items-center gap-1"><kbd class="bg-slate-800 text-rose-300 px-1 rounded border border-slate-700">J</kbd> SLASH</span>
+        <span class="text-slate-600">|</span>
+        <span class="flex items-center gap-1"><kbd class="bg-slate-800 text-emerald-300 px-1 rounded border border-slate-700">E</kbd> INTERACT</span>
+        <span class="text-slate-600">|</span>
+        <span class="flex items-center gap-1"><kbd class="bg-slate-800 text-amber-400 px-1 rounded border border-slate-700">P</kbd> PAUSE</span>
+      </div>
+    </div>
+
+    <!-- 3. MOBILE TOUCH CONTROLS -->
+    <div class="pointer-events-none absolute inset-x-0 bottom-2 px-3 flex justify-between items-end z-20 md:hidden">
+      <div class="pointer-events-auto flex gap-2">
+        <button id="btnLeft" class="touch-btn w-12 h-12 rounded-xl text-white text-sm flex flex-col items-center justify-center font-bold">
+          <span>◀</span>
+          <span class="text-[6px] text-slate-400">LEFT</span>
+        </button>
+        <button id="btnRight" class="touch-btn w-12 h-12 rounded-xl text-white text-sm flex flex-col items-center justify-center font-bold">
+          <span>▶</span>
+          <span class="text-[6px] text-slate-400">RIGHT</span>
+        </button>
+      </div>
+
+      <div class="pointer-events-auto flex items-end gap-2">
+        <button id="btnInteract" class="touch-btn w-11 h-11 rounded-full border-emerald-400 text-emerald-300 text-[7px] flex flex-col items-center justify-center shadow-lg">
+          <span class="text-xs">📜</span>
+          <span>INTERACT</span>
+        </button>
+        <button id="btnAttack" class="touch-btn w-12 h-12 rounded-full border-cyan-400 text-cyan-200 text-[7px] flex flex-col items-center justify-center shadow-lg">
+          <span class="text-sm">⚔️</span>
+          <span>SLASH</span>
+        </button>
+        <button id="btnJump" class="touch-btn w-12 h-12 rounded-full border-amber-400 text-amber-200 text-[7px] flex flex-col items-center justify-center shadow-lg">
+          <span class="text-sm">▲</span>
+          <span>JUMP</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. PAUSE OVERLAY MODAL -->
+    <div id="pauseModal" class="hidden absolute inset-0 z-40 bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-4">
+      <div class="hud-glass rounded-2xl p-6 sm:p-8 max-w-sm w-full text-center border-amber-500/60 shadow-2xl">
+        <div class="text-2xl mb-2">⏸️</div>
+        <h2 class="font-cinzel text-xl font-bold text-amber-300 mb-1">GAME PAUSED</h2>
+        <p class="text-[8px] text-slate-400 mb-6">Stage 4: The Golden Necropolis</p>
+        
+        <div class="flex flex-col gap-2.5">
+          <button id="btnResumeGame" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[8px] rounded-lg transition shadow-lg">
+            RESUME ADVENTURE
+          </button>
+          <button id="btnRestartStage" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-amber-200 text-[8px] rounded-lg transition border border-amber-500/30">
+            RESTART STAGE
+          </button>
+          <button id="btnPauseQuit" class="w-full py-2 bg-red-950/80 hover:bg-red-800 text-rose-300 text-[8px] rounded-lg transition border border-red-500/40">
+            QUIT TO MAIN MENU
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- PENUTUP CANVASFRAME -->
+
+  <!-- ======================================================== -->
+  <!-- 5. CAREER SCROLL MODAL (DOKUMEN RESMI KARIER LZS) -->
+  <!-- ======================================================== -->
+  <div id="scrollModal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+    <div class="scroll-frame-wrapper">
+      <div class="scroll-inner-content px-2 sm:px-4 py-1 text-center">
+        
+        <div class="sc-badge"><span>📜</span><span>CHAPTER IV UNSEALED</span></div>
+          <div class="sc-kicker font-scroll-title">✦ Digital Marketing, Web Apps, Big Data &amp; Events Governance ✦</div>
+          <h1 class="sc-title font-scroll-title">LEMBAGA ZAKAT SELANGOR (LZS)</h1>
+          <div class="sc-role font-scroll-body">Senior Executive Marketing &amp; Events</div>
+          <div class="sc-date font-scroll-body">July 2016 – Present</div>
+          <div class="sc-divider"><span>❖</span></div>
+          <div class="sc-grid font-scroll-body">
+            <section class="sc-panel">
+              <h2 class="sc-panel-title font-scroll-title">⚔️ Core Responsibilities &amp; Capabilities</h2>
+              <ul class="sc-list">
+              <li>Run integrated marketing across traditional and digital channels, with budgets and reports to top management.</li>
+              <li>Create animation and video editing; propose content ideas for new digital platforms.</li>
+              <li>Merge data into one big dataset, then analyse and categorise it to guide marketing decisions.</li>
+              <li>Manage all internal business events and corporate gifts; served as Acting Manager for a year leading a team of 5.</li>
+              <li>Project Coordinator for zakat collection system development initiatives.</li>
+              <li>System Administrator overseeing operations and governance across all collection systems.</li>
+              <li>Master Trainer leading end-user training and onboarding across all collection platforms.</li>
+              </ul>
+            </section>
+            <aside class="sc-panel sc-panel-skills">
+              <h2 class="sc-panel-title font-scroll-title">🏆 Highlights</h2>
+              <div class="sc-stats">
+              <div class="sc-stat"><b>+70%</b><span>Zakat KWSP payments after a 2-month digital campaign</span></div>
+              <div class="sc-stat"><b>&gt;200%</b><span>Zakat Fitrah online (FPX) payments increase</span></div>
+              <div class="sc-stat"><b>★ Gold</b><span>LZS Mini Convention 2017 &amp; RTEx 2018; APIC 2018 4-Star</span></div>
+              </div>
+              <h2 class="sc-panel-title font-scroll-title" style="margin-top:0.8cqw">✨ Skills Unlocked</h2>
+              <div class="sc-chips">
+              <span class="sc-chip">Digital Marketing</span>
+              <span class="sc-chip">Data Analytics</span>
+              <span class="sc-chip">Video &amp; Animation</span>
+              <span class="sc-chip">Team Leadership</span>
+              <span class="sc-chip">System Admin &amp; Training</span>
+              </div>
+            </aside>
+          </div>
+          <div class="mt-2 flex flex-wrap items-center justify-center gap-2">
+          <button id="btnNextStage" class="px-5 py-2 rounded-lg bg-emerald-950 hover:bg-emerald-900 text-emerald-200 hover:text-white text-[8px] tracking-wider transition shadow-lg border border-emerald-500/60 font-pixel">
+            PROCEED TO STAGE 5 ➔
+          </button>
+          <button id="btnCloseScroll" class="px-4 py-2 rounded-lg bg-[#451a03] hover:bg-[#6b2905] text-amber-200 hover:text-white text-[8px] tracking-wider transition shadow-lg border border-amber-500/60 font-pixel">
+            REPLAY STAGE
+          </button>
+          <button id="btnSkipToEnd" class="px-4 py-2 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-amber-300 text-[8px] tracking-wider transition shadow-lg border border-slate-600/60 font-pixel">
+            SKIP TO END ⏭️
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="stage4_engine.js"></script>
+</body>
+</html>

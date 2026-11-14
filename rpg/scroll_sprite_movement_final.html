@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ujian Pinpoint Skrol Kerjaya — AXWORLD</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; user-select: none; }
+    body { margin: 0; background: #05070f; color: #f8fafc; font-family: 'Press Start 2P', monospace; overflow: hidden; }
+    canvas {
+      display: block;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-crisp-edges;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+  </style>
+</head>
+<body class="w-screen h-screen flex flex-col items-center justify-center p-2 bg-[#030712]">
+
+  <!-- KOTAK MAKLUMAT STATUS DI ATAS -->
+  <div class="mb-2 flex flex-wrap gap-4 text-[9px] bg-slate-900 border border-amber-500/50 px-4 py-2 rounded-xl text-amber-300">
+    <div>SKROL STATUS: <span id="txtState" class="text-cyan-300">idle_floating</span></div>
+    <div>FRAME: <span id="txtFrame" class="text-white">0</span></div>
+    <div>ANIMASI: <span id="txtDesc" class="text-emerald-400">Terapung di Altar</span></div>
+  </div>
+
+  <div class="relative w-full max-w-[960px] aspect-video rounded-xl overflow-hidden border-2 border-amber-500/50 shadow-2xl bg-[#0a0f1d]">
+    <canvas id="testCanvas" width="960" height="540" class="w-full h-full block"></canvas>
+  </div>
+
+  <!-- PANDUAN KAWALAN -->
+  <div class="mt-2 text-center text-[8px] text-slate-400 leading-relaxed">
+    [E / Space] Buka Skrol (Unseal) | [1] Frame 0 (Tertutup) | [2] Frame 1 (Aura Emas) | [3] Frame 2 (Pecah Mohor) | [4] Frame 3 (Buka Separuh) | [5] Frame 4 (Buka Penuh) | [6] Frame 5 (Sparkles) | [R] Reset
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const canvas = document.getElementById('testCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+
+      const W = 960;
+      const H = 540;
+
+      // ========================================================
+      // 1. PEMUATAN IMEJ SKROL
+      // ========================================================
+      const scrollImg = new Image();
+      scrollImg.src = 'career_scroll_spritesheet.png';
+      scrollImg.onerror = () => { scrollImg.src = 'career_scroll_spritesheet.jpg'; };
+
+      // ========================================================
+      // 2. PINPOINT PRESI SKROL KERJAYA (GRID 6 KOLUM x 1 BARIS)
+      // ========================================================
+      const SCROLL_CONFIG = {
+        cols: 8,
+        rows: 1,
+        renderH: 84, // Ketinggian visual yang jelas dan tidak terpotong
+        actions: {
+          floating: { frames: [0, 1], fps: 3, loop: true },
+          unsealing: { frames: [2, 3, 4, 5], fps: 6, loop: false },
+          opened: { frames: [4, 5], fps: 4, loop: true }
+        }
+      };
+
+      const scroll = {
+        x: 480,
+        y: 330,
+        state: 'floating',
+        frameIdx: 0,
+        animTimer: 0,
+        manualFrame: null
+      };
+
+      const altarPlatform = { x: 340, y: 395, w: 280, h: 30 };
+
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'KeyE' || e.code === 'Space') {
+          scroll.state = 'unsealing';
+          scroll.frameIdx = 0;
+          scroll.animTimer = 0;
+          scroll.manualFrame = null;
+        }
+        if (e.code === 'Digit1') setManual(0, "Tertutup (Mohor Merah)");
+        if (e.code === 'Digit2') setManual(1, "Aura Keemasan Terapung");
+        if (e.code === 'Digit3') setManual(2, "Mohor Lilin Pecah");
+        if (e.code === 'Digit4') setManual(3, "Skrol Terbuka Separuh");
+        if (e.code === 'Digit5') setManual(4, "Skrol Terbuka Penuh");
+        if (e.code === 'Digit6') setManual(5, "Terbuka & Bersinar (Sparkles)");
+
+        if (e.code === 'KeyR') {
+          scroll.state = 'floating';
+          scroll.frameIdx = 0;
+          scroll.animTimer = 0;
+          scroll.manualFrame = null;
+        }
+      });
+
+      function setManual(frameNum, desc) {
+        scroll.manualFrame = frameNum;
+        document.getElementById('txtState').textContent = "manual_preview";
+        document.getElementById('txtFrame').textContent = frameNum;
+        document.getElementById('txtDesc').textContent = desc;
+      }
+
+      // ========================================================
+      // 3. LOGIK KEMAS KINI
+      // ========================================================
+      let lastT = performance.now();
+
+      function update(dt) {
+        if (scroll.manualFrame !== null) return;
+
+        const currentAct = SCROLL_CONFIG.actions[scroll.state];
+        scroll.animTimer += dt;
+
+        if (scroll.animTimer >= 1 / currentAct.fps) {
+          scroll.animTimer = 0;
+          scroll.frameIdx++;
+
+          if (scroll.frameIdx >= currentAct.frames.length) {
+            if (currentAct.loop) {
+              scroll.frameIdx = 0;
+            } else {
+              // Jika selesai unsealing, beralih ke mod opened (berkilauan)
+              if (scroll.state === 'unsealing') {
+                scroll.state = 'opened';
+                scroll.frameIdx = 0;
+              } else {
+                scroll.frameIdx = currentAct.frames.length - 1;
+              }
+            }
+          }
+        }
+
+        const activeFrame = currentAct.frames[scroll.frameIdx];
+        document.getElementById('txtState').textContent = scroll.state;
+        document.getElementById('txtFrame').textContent = activeFrame;
+
+        if (scroll.state === 'floating') {
+          document.getElementById('txtDesc').textContent = "Terapung Menunggu Hero";
+        } else if (scroll.state === 'unsealing') {
+          document.getElementById('txtDesc').textContent = "Membuka Mohor Lilin...";
+        } else if (scroll.state === 'opened') {
+          document.getElementById('txtDesc').textContent = "Skrol Terbuka Penuh";
+        }
+      }
+
+      // ========================================================
+      // 4. LUKISAN PADA KANVAS
+      // ========================================================
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Grid Panduan
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < W; x += 40) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+        }
+        for (let y = 0; y < H; y += 40) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+        }
+
+        // Pelantar Altar
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(altarPlatform.x, altarPlatform.y, altarPlatform.w, altarPlatform.h);
+        ctx.fillStyle = '#f59e0b';
+        ctx.fillRect(altarPlatform.x, altarPlatform.y, altarPlatform.w, 4);
+
+        // Sinaran Cahaya Emas Dari Langit
+        const sx = scroll.x;
+        const bob = (scroll.state === 'opened') ? 0 : Math.sin(performance.now() * 0.004) * 6;
+        const sy = scroll.y + bob;
+
+        ctx.save();
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.25)';
+        ctx.fillRect(sx - 45, sy - 180, 90, 200);
+        ctx.restore();
+
+        // Tentukan Nombor Bingkai
+        let targetFrame = 0;
+        if (scroll.manualFrame !== null) {
+          targetFrame = scroll.manualFrame;
+        } else {
+          const currentAct = SCROLL_CONFIG.actions[scroll.state];
+          targetFrame = currentAct.frames[scroll.frameIdx];
+        }
+
+        // Lukis Sprite Skrol Tepat Mengikut Nisbah Aspek
+        if (scrollImg.complete && scrollImg.naturalWidth > 0) {
+          const cellW = scrollImg.naturalWidth / SCROLL_CONFIG.cols;
+          const cellH = scrollImg.naturalHeight / SCROLL_CONFIG.rows;
+
+          const aspect = cellW / cellH;
+          const renderH = SCROLL_CONFIG.renderH;
+          const renderW = Math.round(renderH * aspect);
+
+          ctx.drawImage(
+            scrollImg,
+            targetFrame * cellW, 0, cellW, cellH,
+            Math.round(sx - renderW * 0.5), Math.round(sy - renderH * 0.5), renderW, renderH
+          );
+        } else {
+          ctx.fillStyle = '#fde68a';
+          ctx.fillRect(sx - 30, sy - 20, 60, 40);
+        }
+      }
+
+      function loop(now) {
+        const dt = (now - lastT) / 1000;
+        lastT = now;
+        update(dt);
+        draw();
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+* {
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #030712;
+  color: #f8fafc;
+  font-family: 'Press Start 2P', monospace;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.font-scroll-title {
+  font-family: 'Cinzel Decorative', 'Cinzel', serif;
+}
+
+.font-scroll-body {
+  font-family: 'EB Garamond', serif;
+}
+
+#gameCanvas {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.hud-glass {
+  background: rgba(10, 16, 31, 0.90);
+  border: 1.5px solid rgba(245, 158, 11, 0.5);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+}
+
+.touch-btn {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1.5px solid rgba(245, 158, 11, 0.5);
+  touch-action: none;
+}
+
+.touch-btn:active {
+  transform: scale(0.92);
+  background: rgba(14, 165, 233, 0.5);
+}
+
+.hud-crystal-canvas {
+  width: 20px;
+  height: 26px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+}
+
+kbd {
+  font-family: inherit;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* WADAH GULUNGAN NASKAH KUNO - SENTIASA CENTER & ANJAL IKUT TINGGI SKRIN */
+/* KAWASAN TEKS & BUTANG DI DALAM PERKAMEN */
+
+/* ===== UNIFIED CHAPTER SCROLL (all stages) ===== */
+.scroll-frame-wrapper {
+  position: relative;
+  width: min(94vw, calc(92vh * 880 / 495), 1040px);
+  aspect-ratio: 880 / 495;
+  container-type: inline-size;
+  background-image: url('scroll.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 40px rgba(245, 158, 11, 0.3));
+}
+.scroll-inner-content {
+  position: absolute;
+  inset: 19% 13% 14.5% 13% !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.35cqw !important;
+  padding: 0 !important;
+  color: #381a05;
+  text-shadow: 0 1px 1px rgba(254, 243, 199, 0.8);
+  overflow: hidden;
+  text-align: center;
+}
+.scroll-inner-content::-webkit-scrollbar { display: none; }
+.sc-badge {
+  display: inline-flex; align-items: center; gap: 0.6cqw; padding: 0.3cqw 1.6cqw; border-radius: 999px;
+  background: rgba(69, 26, 3, 0.88); color: #fcd34d; border: 1px solid rgba(217, 119, 6, 0.6);
+  font-family: 'Press Start 2P', monospace; font-size: clamp(5px, 0.75cqw, 9px); letter-spacing: 0.12em;
+}
+.sc-kicker { font-size: clamp(6px, 0.95cqw, 11px); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #78350f; }
+.sc-title { font-size: clamp(10px, 2.1cqw, 24px); font-weight: 900; letter-spacing: 0.05em; line-height: 1.1; color: #381a05; margin: 0; }
+.sc-role { font-style: italic; font-weight: 700; font-size: clamp(8px, 1.3cqw, 15px); color: #78350f; }
+.sc-date { font-size: clamp(7px, 1.02cqw, 12px); font-weight: 700; color: #92400e; letter-spacing: 0.08em; }
+.sc-divider { display: none; }
+.sc-grid { width: 100%; flex: 1; min-height: 0; display: grid; grid-template-columns: 1.55fr 1fr !important; gap: 1cqw; text-align: left; }
+.sc-panel {
+  background: rgba(69, 26, 3, 0.06); border: 1px solid rgba(120, 53, 15, 0.28); border-radius: 0.8cqw;
+  padding: 0.7cqw 1.1cqw; min-height: 0; overflow-y: auto; scrollbar-width: none;
+}
+.sc-panel::-webkit-scrollbar { display: none; }
+.sc-panel-title { font-size: clamp(6.5px, 0.95cqw, 11px); font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #451a03; margin: 0 0 0.4cqw; }
+.sc-list { margin: 0; padding-left: 0; list-style: none; }
+.sc-list li { position: relative; padding-left: 1.2cqw; margin-bottom: 0.35cqw; font-size: clamp(7px, 1.12cqw, 13px); line-height: 1.22; font-weight: 600; color: #291304; }
+.sc-list li::before { content: '◆'; position: absolute; left: 0; top: 0.05em; font-size: 0.7em; color: #b45309; }
+.sc-chips { display: flex; flex-wrap: wrap; gap: 0.4cqw; }
+.sc-chip {
+  padding: 0.25cqw 0.8cqw; border-radius: 999px; background: rgba(120, 53, 15, 0.14); border: 1px solid rgba(120, 53, 15, 0.45);
+  font-size: clamp(6px, 0.92cqw, 11px); font-weight: 700; color: #451a03; white-space: nowrap;
+}
+.sc-stats { display: flex; flex-direction: column; gap: 0.35cqw; }
+.sc-stat { display: flex; align-items: center; gap: 0.9cqw; }
+.sc-stat b {
+  flex: 0 0 auto; min-width: 4.8cqw; text-align: center; padding: 0.2cqw 0.6cqw; border-radius: 0.5cqw; background: #451a03; color: #fde68a;
+  font-family: 'Cinzel', serif; font-size: clamp(7px, 1.2cqw, 14px); text-shadow: none;
+}
+.sc-stat span { font-size: clamp(6px, 0.88cqw, 10.5px); line-height: 1.2; font-weight: 600; color: #291304; }
+.scroll-inner-content > div:last-child { flex-shrink: 0; margin-top: 0.2cqw !important; }
+.scroll-inner-content button { padding: 0.5cqw 1.5cqw !important; font-size: clamp(5px, 0.8cqw, 9px) !important; }
+@media (max-width: 640px) { .sc-grid { grid-template-columns: 1fr !important; } .sc-panel-skills { display: none; } }

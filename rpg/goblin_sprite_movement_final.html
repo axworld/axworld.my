@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ujian Pinpoint Pergerakan Goblin — AXWORLD</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; user-select: none; }
+    body { margin: 0; background: #05070f; color: #f8fafc; font-family: 'Press Start 2P', monospace; overflow: hidden; }
+    canvas {
+      display: block;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -webkit-crisp-edges;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+  </style>
+</head>
+<body class="w-screen h-screen flex flex-col items-center justify-center p-2 bg-[#030712]">
+
+  <!-- KOTAK MAKLUMAT STATUS DI ATAS -->
+  <div class="mb-2 flex flex-wrap gap-4 text-[9px] bg-slate-900 border border-emerald-500/50 px-4 py-2 rounded-xl text-emerald-300">
+    <div>GOBLIN STATUS: <span id="txtState" class="text-amber-300">idle</span></div>
+    <div>FRAME: <span id="txtFrame" class="text-white">0</span></div>
+    <div>POSISI: X=<span id="txtX" class="text-white">0</span>, Y=<span id="txtY" class="text-white">0</span></div>
+    <div>ARAH: <span id="txtFacing" class="text-cyan-400">KANAN</span></div>
+  </div>
+
+  <div class="relative w-full max-w-[960px] aspect-video rounded-xl overflow-hidden border-2 border-emerald-500/50 shadow-2xl bg-[#0a0f1d]">
+    <canvas id="testCanvas" width="960" height="540" class="w-full h-full block"></canvas>
+  </div>
+
+  <!-- PANDUAN BUTANG UJIAN -->
+  <div class="mt-2 text-center text-[8px] text-slate-400 leading-relaxed">
+    [1] Idle | [2] Jalan Kiri/Kanan | [3] Tikam Lembing (Attack) | [4] Kena Tetak & Rebah (Death) | [A / D] Ubah Arah Muka Manual | [R] Reset Goblin
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const canvas = document.getElementById('testCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+
+      const W = 960;
+      const H = 540;
+
+      // ========================================================
+      // 1. PEMUATAN IMEJ SPRITE GOBLIN
+      // ========================================================
+      const goblinImg = new Image();
+      goblinImg.src = 'goblin_spritesheet.png';
+      goblinImg.onerror = () => { goblinImg.src = 'goblin_spritesheet_2.jpg'; };
+
+      // ========================================================
+      // 2. PINPOINT PRESI GOBLIN (GRID 6 KOLUM x 4 BARIS)
+      // ========================================================
+      const GOBLIN_CONFIG = {
+        rows: 4,
+        cols: 6,
+        renderSize: 92,  // Saiz visual berkadar terus dengan Hero (tinggi paras dada)
+        offsetX: -46,    // Titik tengah paksi badan
+        offsetY: -86,    // Kaki jejak garisan lantai
+        actions: {
+          // Baris 0: Idle (4 bingkai)
+          idle:   { row: 0, startCol: 0, count: 4, fps: 6,  loop: true },
+
+          // Baris 1: Jalan / Rondaan (6 bingkai)
+          walk:   { row: 1, startCol: 0, count: 6, fps: 10, loop: true },
+
+          // Baris 2: Tikaman Lembing (4 bingkai)
+          attack: { row: 2, startCol: 0, count: 4, fps: 10, loop: false },
+
+          // Baris 3: Rebah & Menjadi Debu (Kolum 1 hingga 5 = 5 bingkai)
+          death:  { row: 3, startCol: 0, count: 6, fps: 8,  loop: false }
+        }
+      };
+
+      // ========================================================
+      // 3. ENTITI GOBLIN & PELANTAR UJIAN
+      // ========================================================
+      const goblin = {
+        x: 440,
+        y: 350,
+        w: 42,
+        h: 58,
+        vx: 1.2,
+        speed: 1.2,
+        facing: 1,
+        state: 'idle',
+        animFrame: 0,
+        animTimer: 0,
+        actionLock: false,
+        alive: true
+      };
+
+      const testFloor = { x: 80, y: 408, w: 800, h: 30 };
+
+      // Kawalan Papan Kekunci Ujian
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Digit1') triggerGoblinState('idle');
+        if (e.code === 'Digit2') triggerGoblinState('walk');
+        if (e.code === 'Digit3') triggerGoblinState('attack');
+        if (e.code === 'Digit4') triggerGoblinState('death');
+
+        if (e.code === 'KeyA') goblin.facing = -1;
+        if (e.code === 'KeyD') goblin.facing = 1;
+
+        if (e.code === 'KeyR') {
+          goblin.x = 440;
+          goblin.facing = 1;
+          goblin.alive = true;
+          triggerGoblinState('idle');
+        }
+      });
+
+      function triggerGoblinState(stateName) {
+        goblin.state = stateName;
+        goblin.animFrame = 0;
+        goblin.animTimer = 0;
+        goblin.actionLock = (stateName === 'attack' || stateName === 'death');
+      }
+
+      // ========================================================
+      // 4. LOGIK KEMAS KINI
+      // ========================================================
+      let lastT = performance.now();
+
+      function update(dt) {
+        if (!goblin.alive) return;
+
+        // Pergerakan berjalan secara automatik jika state == 'walk'
+        if (goblin.state === 'walk') {
+          goblin.x += goblin.facing * goblin.speed;
+          if (goblin.x > 720) goblin.facing = -1;
+          if (goblin.x < 180) goblin.facing = 1;
+        }
+
+        // Tapak kaki melekat di atas pelantar
+        goblin.y = testFloor.y - goblin.h;
+
+        // Pengiraan Bingkai Animasi
+        const act = GOBLIN_CONFIG.actions[goblin.state] || GOBLIN_CONFIG.actions.idle;
+        goblin.animTimer += dt;
+        if (goblin.animTimer >= 1 / act.fps) {
+          goblin.animTimer = 0;
+          goblin.animFrame++;
+
+          if (goblin.animFrame >= act.count) {
+            if (act.loop) {
+              goblin.animFrame = 0;
+            } else {
+              goblin.animFrame = act.count - 1;
+              if (goblin.state === 'attack') {
+                goblin.actionLock = false;
+                goblin.state = 'idle';
+                goblin.animFrame = 0;
+              } else if (goblin.state === 'death') {
+                goblin.alive = false; // Tamat animasi kematian
+              }
+            }
+          }
+        }
+
+        // Kemas kini UI status
+        document.getElementById('txtState').textContent = goblin.state;
+        document.getElementById('txtFrame').textContent = goblin.animFrame;
+        document.getElementById('txtX').textContent = Math.round(goblin.x);
+        document.getElementById('txtY').textContent = Math.round(goblin.y);
+        document.getElementById('txtFacing').textContent = goblin.facing === 1 ? "KANAN" : "KIRI";
+      }
+
+      // ========================================================
+      // 5. LUKISAN KANVAS
+      // ========================================================
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        // Grid Panduan
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < W; x += 40) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+        }
+        for (let y = 0; y < H; y += 40) {
+          ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+        }
+
+        // Pelantar Ujian
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(testFloor.x, testFloor.y, testFloor.w, testFloor.h);
+        ctx.fillStyle = '#10b981';
+        ctx.fillRect(testFloor.x, testFloor.y, testFloor.w, 4);
+
+        // Hitbox Hijau Goblin
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
+        ctx.strokeRect(goblin.x, goblin.y, goblin.w, goblin.h);
+
+        // Lukisan Sprite Goblin
+        if (goblinImg.complete && goblinImg.naturalWidth > 0 && goblin.alive) {
+          const cellW = goblinImg.naturalWidth / GOBLIN_CONFIG.cols;
+          const cellH = goblinImg.naturalHeight / GOBLIN_CONFIG.rows;
+
+          const act = GOBLIN_CONFIG.actions[goblin.state] || GOBLIN_CONFIG.actions.idle;
+          const sx = Math.floor((act.startCol + goblin.animFrame) * cellW);
+          const sy = Math.floor(act.row * cellH);
+
+          const cx = Math.round(goblin.x + goblin.w * 0.5);
+          const footY = Math.round(goblin.y + goblin.h);
+
+          ctx.save();
+          ctx.translate(cx, footY);
+          ctx.scale(goblin.facing, 1);
+
+          ctx.drawImage(
+            goblinImg,
+            sx, sy, cellW, cellH,
+            GOBLIN_CONFIG.offsetX, GOBLIN_CONFIG.offsetY, GOBLIN_CONFIG.renderSize, GOBLIN_CONFIG.renderSize
+          );
+          ctx.restore();
+        } else if (!goblin.alive) {
+          ctx.fillStyle = '#64748b';
+          ctx.font = '8px "Press Start 2P"';
+          ctx.fillText("[ GOBLIN DEFEATED - PRESS R TO RESET ]", W * 0.5 - 170, testFloor.y - 20);
+        }
+      }
+
+      function loop(now) {
+        const dt = (now - lastT) / 1000;
+        lastT = now;
+        update(dt);
+        draw();
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    })();
+  </script>
+</body>
+</html>
