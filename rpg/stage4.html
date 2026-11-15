@@ -86,7 +86,7 @@
     </div>
 
     <!-- 2. DESKTOP CONTROLS OVERLAY -->
-    <div class="hidden md:flex pointer-events-none absolute bottom-2 inset-x-0 justify-center items-center z-20">
+    <div class="desktop-controls-overlay hidden md:flex pointer-events-none absolute bottom-2 inset-x-0 justify-center items-center z-20">
       <div class="hud-glass rounded-lg px-3 py-1 flex items-center gap-3 text-[7px] text-amber-300 font-bold border border-amber-500/40 shadow-lg">
         <span class="flex items-center gap-1"><kbd class="bg-slate-800 text-cyan-300 px-1 rounded border border-slate-700">A</kbd><kbd class="bg-slate-800 text-cyan-300 px-1 rounded border border-slate-700">D</kbd> MOVE</span>
         <span class="text-slate-600">|</span>
@@ -101,7 +101,7 @@
     </div>
 
     <!-- 3. MOBILE TOUCH CONTROLS -->
-    <div class="pointer-events-none absolute inset-x-0 bottom-2 px-3 flex justify-between items-end z-20 md:hidden">
+    <div class="mobile-touch-controls pointer-events-none absolute inset-x-0 bottom-2 px-3 flex justify-between items-end z-20 md:hidden">
       <div class="pointer-events-auto flex gap-2">
         <button id="btnLeft" class="touch-btn w-12 h-12 rounded-xl text-white text-sm flex flex-col items-center justify-center font-bold">
           <span>◀</span>
@@ -213,17 +213,26 @@
 
   <script>
     (function() {
+      const isTouch = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+      if (isTouch) {
+        document.body.classList.add('is-touch-device');
+      }
       function tryFullscreen() {
         try {
-          if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-            const p = document.documentElement.requestFullscreen?.() || document.documentElement.webkitRequestFullscreen?.();
+          let targetDoc = document;
+          try {
+            if (window.top && window.top.document) targetDoc = window.top.document;
+          } catch {}
+          if (!targetDoc.fullscreenElement && !targetDoc.webkitFullscreenElement) {
+            const root = targetDoc.documentElement;
+            const p = root.requestFullscreen?.() || root.webkitRequestFullscreen?.();
             if (p && typeof p.catch === 'function') p.catch(() => {});
           }
         } catch {}
       }
       const btnFs = document.getElementById('btnFullscreenHud');
       if (btnFs) btnFs.addEventListener('click', tryFullscreen);
-      if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) {
+      if (isTouch) {
         document.querySelectorAll('.touch-btn, #gameCanvas').forEach(el => {
           el.addEventListener('touchstart', tryFullscreen, { once: true, passive: true });
           el.addEventListener('click', tryFullscreen, { once: true });

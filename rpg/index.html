@@ -219,8 +219,24 @@
     </div>
   </section>
 
+  <!-- ========================================== -->
+  <!-- STEP 4: TRUE FULLSCREEN GAME SHELL IFRAME  -->
+  <!-- ========================================== -->
+  <iframe id="gameShellFrame" class="hidden fixed inset-0 w-full h-full border-0 z-50 bg-black" allow="autoplay; fullscreen"></iframe>
+
   <script>
   (function() {
+    if (window.self !== window.top) {
+      try {
+        if (window.parent && typeof window.parent.closeGameShellToHome === 'function') {
+          window.parent.closeGameShellToHome();
+          return;
+        }
+      } catch {}
+      window.top.location.href = 'index.html?quit=1';
+      return;
+    }
+
     const vidLoading = document.getElementById('vidLoading');
     const vidHome = document.getElementById('vidHome');
     const vidIntro = document.getElementById('vidIntro');
@@ -229,6 +245,7 @@
     const loadingScene = document.getElementById('loadingScene');
     const homeScene = document.getElementById('homeScene');
     const introScene = document.getElementById('introScene');
+    const gameShellFrame = document.getElementById('gameShellFrame');
     const loadNum = document.getElementById('loadNum');
     const screenFlash = document.getElementById('screenFlash');
 
@@ -260,13 +277,91 @@
 
     // Helper Fullscreen (Safe Auto-Fullscreen for Touch / Mobile Landscape)
     function requestFullscreenMode() {
-      if (window.innerHeight < 500 || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches)) {
+      if (window.innerHeight < 500 || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) {
         try {
-          const req = document.documentElement.requestFullscreen?.() || document.documentElement.webkitRequestFullscreen?.();
-          if (req && typeof req.catch === 'function') req.catch(() => {});
+          if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            const req = document.documentElement.requestFullscreen?.() || document.documentElement.webkitRequestFullscreen?.();
+            if (req && typeof req.catch === 'function') req.catch(() => {});
+          }
         } catch {}
       }
     }
+
+    function openInGameShell(targetUrl) {
+      if (vidIntro) vidIntro.pause();
+      if (vidHome) vidHome.pause();
+      if (bgmHome) bgmHome.pause();
+
+      if (!gameShellFrame) {
+        window.location.href = targetUrl;
+        return;
+      }
+
+      gameShellFrame.classList.remove('hidden');
+      gameShellFrame.src = targetUrl;
+      try { gameShellFrame.focus(); } catch {}
+      try { gameShellFrame.contentWindow?.focus(); } catch {}
+    }
+
+    if (gameShellFrame) {
+      gameShellFrame.addEventListener('load', () => {
+        if (!gameShellFrame.classList.contains('hidden')) {
+          try { gameShellFrame.focus(); } catch {}
+          try { gameShellFrame.contentWindow?.focus(); } catch {}
+        }
+      });
+    }
+
+    ['keydown', 'keyup'].forEach((evtType) => {
+      window.addEventListener(evtType, (e) => {
+        if (gameShellFrame && !gameShellFrame.classList.contains('hidden') && gameShellFrame.contentWindow) {
+          try {
+            gameShellFrame.contentWindow.focus();
+            const cloned = new KeyboardEvent(evtType, {
+              key: e.key,
+              code: e.code,
+              keyCode: e.keyCode,
+              which: e.which,
+              shiftKey: e.shiftKey,
+              ctrlKey: e.ctrlKey,
+              altKey: e.altKey,
+              metaKey: e.metaKey,
+              bubbles: true,
+              cancelable: true
+            });
+            gameShellFrame.contentWindow.dispatchEvent(cloned);
+          } catch {}
+        }
+      });
+    });
+
+    window.closeGameShellToHome = function() {
+      if (gameShellFrame) {
+        gameShellFrame.classList.add('hidden');
+        gameShellFrame.src = 'about:blank';
+      }
+      if (loadingScene) {
+        loadingScene.classList.add('opacity-0', 'pointer-events-none');
+        loadingScene.style.display = 'none';
+      }
+      if (introScene) {
+        introScene.classList.add('opacity-0', 'pointer-events-none');
+      }
+      if (homeScene) {
+        homeScene.classList.remove('opacity-0', 'pointer-events-none');
+        homeScene.style.removeProperty('display');
+      }
+      if (vidIntro) vidIntro.pause();
+      if (vidHome) {
+        vidHome.muted = true;
+        vidHome.currentTime = 0;
+        vidHome.play().catch(() => {});
+      }
+      if (bgmHome && audioEnabled) {
+        bgmHome.volume = 0.55;
+        bgmHome.play().catch(() => {});
+      }
+    };
 
     window.addEventListener('orientationchange', () => setTimeout(() => window.scrollTo(0, 0), 150));
 
@@ -302,7 +397,7 @@
 
     // JIKA KEMBALI DARI BUTANG QUIT (SKIP INTRO & TERUS KE HOME SCENE)
     const urlParams = new URLSearchParams(window.location.search);
-    const isFromQuit = urlParams.get('skipIntro') === 'true';
+    const isFromQuit = urlParams.get('skipIntro') === 'true' || urlParams.get('quit') === '1';
 
     if (isFromQuit) {
       if (vidLoading) {
@@ -436,8 +531,9 @@
 
     if (btnSkip) {
       btnSkip.addEventListener('click', () => {
+        requestFullscreenMode();
         if (bgmHome) bgmHome.pause();
-        window.location.href = 'credits.html';
+        openInGameShell('credits.html');
       });
     }
 
@@ -445,12 +541,17 @@
       if (vidIntro) vidIntro.pause();
       if (bgmHome) bgmHome.pause();
       flash(() => {
-        window.location.href = "stage1.html";
+        openInGameShell('stage1.html');
       });
     }
 
     if (vidIntro) vidIntro.addEventListener('ended', toGame);
-    if (btnSkipIntro) btnSkipIntro.addEventListener('click', toGame);
+    if (btnSkipIntro) {
+      btnSkipIntro.addEventListener('click', () => {
+        requestFullscreenMode();
+        toGame();
+      });
+    }
   })();
   </script>
 </body>
