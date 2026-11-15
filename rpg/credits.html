@@ -529,15 +529,15 @@
       color: #fde68a;
       text-shadow: 0 0 28px rgba(245, 158, 11, 0.65), 0 4px 14px rgba(0, 0, 0, 0.95);
       letter-spacing: 4px;
-      /* Generous vertical gap above the 2 links */
-      margin-bottom: 68px;
+      /* Generous vertical gap above the links */
+      margin-bottom: 44px;
     }
 
     .final-links-box {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
       position: relative;
       z-index: 30;
     }
@@ -708,6 +708,13 @@
       .rpg-card {
         padding: 18px 16px;
       }
+      .thanks-title {
+        margin-bottom: 28px;
+      }
+      .final-credit-link {
+        font-size: clamp(16px, 4.5vw, 22px);
+        padding: 9px 20px;
+      }
     }
 
     @media (max-width: 600px) and (orientation: portrait) {
@@ -785,16 +792,20 @@
       }
       .thanks-title {
         font-size: clamp(14px, 3vw, 22px);
-        margin-bottom: 18px;
+        margin-bottom: 12px;
       }
       .thanks-sub {
         font-size: 13px;
         margin-bottom: 12px;
       }
       .final-links-box {
-        padding: 10px 18px;
-        margin-bottom: 8px;
-        gap: 10px;
+        padding: 6px 14px;
+        margin-bottom: 4px;
+        gap: 8px;
+      }
+      .final-credit-link {
+        font-size: clamp(14px, 2.2vw, 18px);
+        padding: 6px 18px;
       }
       .end-choice-box {
         padding: 18px 20px;
@@ -1420,6 +1431,7 @@
         <div class="final-links-box">
           <a href="https://axworld.my/" target="_top" rel="noopener noreferrer" class="final-credit-link" id="linkAxworld">axworld.my</a>
           <a href="https://www.linkedin.com/in/khairul-azzumie" target="_blank" rel="noopener noreferrer" class="final-credit-link" id="linkLinkedin">linkedin.com/in/khairul-azzumie</a>
+          <a href="https://www.youtube.com/playlist?list=PLZ_8lM17wjrQ" target="_blank" rel="noopener noreferrer" class="final-credit-link" id="linkOst">🎵 Official OST (YouTube)</a>
         </div>
       </div>
 
@@ -1433,6 +1445,7 @@
     <div class="final-links-box">
       <a href="https://axworld.my/" target="_top" rel="noopener noreferrer" class="final-credit-link" id="linkAxworldHold">axworld.my</a>
       <a href="https://www.linkedin.com/in/khairul-azzumie" target="_blank" rel="noopener noreferrer" class="final-credit-link" id="linkLinkedinHold">linkedin.com/in/khairul-azzumie</a>
+      <a href="https://www.youtube.com/playlist?list=PLZ_8lM17wjrQ" target="_blank" rel="noopener noreferrer" class="final-credit-link" id="linkOstHold">🎵 Official OST (YouTube)</a>
     </div>
   </div>
 
@@ -1475,8 +1488,10 @@
     const btnBackToMainMenu = document.getElementById('btnBackToMainMenu');
     const linkAxworld = document.getElementById('linkAxworld');
     const linkLinkedin = document.getElementById('linkLinkedin');
+    const linkOst = document.getElementById('linkOst');
     const linkAxworldHold = document.getElementById('linkAxworldHold');
     const linkLinkedinHold = document.getElementById('linkLinkedinHold');
+    const linkOstHold = document.getElementById('linkOstHold');
     const bgm = document.getElementById('creditsBgm');
 
     let blackoutInteractive = false;
@@ -1508,7 +1523,7 @@
 
     // Pause the 5s fade timer while user hovers over the 2 links & prevent accidental click propagation
     let linkHovering = false;
-    [linkAxworld, linkLinkedin, linkAxworldHold, linkLinkedinHold].forEach(lnk => {
+    [linkAxworld, linkLinkedin, linkOst, linkAxworldHold, linkLinkedinHold, linkOstHold].forEach(lnk => {
       if (!lnk) return;
       lnk.addEventListener('mouseenter', () => { linkHovering = true; });
       lnk.addEventListener('mouseleave', () => { linkHovering = false; });
