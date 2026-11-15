@@ -359,7 +359,7 @@
   // 6. INPUT CONTROLLER & GAME STATES
   // ===================================================================
   const input = {
-    left: false, right: false,
+    left: false, right: false, up: false, down: false,
     jumpPressed: false, jumpHeld: false, attackPressed: false, interactPressed: false
   };
 
@@ -408,8 +408,10 @@
     if (e.code === 'KeyA' || e.code === 'ArrowLeft') input.left = true;
     if (e.code === 'KeyD' || e.code === 'ArrowRight') input.right = true;
     if (e.code === 'Space' || e.code === 'KeyW' || e.key === 'w' || e.key === 'W' || e.code === 'ArrowUp') {
+      if (e.code === 'KeyW' || e.key === 'w' || e.key === 'W' || e.code === 'ArrowUp') input.up = true;
       if (!input.jumpHeld) triggerJump();
     }
+    if (e.code === 'KeyS' || e.key === 's' || e.key === 'S' || e.code === 'ArrowDown') input.down = true;
     if (e.code === 'KeyJ' || e.code === 'KeyK' || e.code === 'KeyZ') triggerAttack();
     if (e.code === 'KeyE') triggerInteract();
   });
@@ -417,7 +419,11 @@
   window.addEventListener('keyup', (e) => {
     if (e.code === 'KeyA' || e.code === 'ArrowLeft') input.left = false;
     if (e.code === 'KeyD' || e.code === 'ArrowRight') input.right = false;
-    if (e.code === 'Space' || e.code === 'KeyW' || e.key === 'w' || e.key === 'W' || e.code === 'ArrowUp') input.jumpHeld = false;
+    if (e.code === 'Space' || e.code === 'KeyW' || e.key === 'w' || e.key === 'W' || e.code === 'ArrowUp') {
+      input.up = false;
+      input.jumpHeld = false;
+    }
+    if (e.code === 'KeyS' || e.key === 's' || e.key === 'S' || e.code === 'ArrowDown') input.down = false;
   });
 
   function bindTouch(id, onDown, onUp) {
@@ -441,6 +447,8 @@
 
   bindTouch('btnLeft', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) input.left = true; }, () => input.left = false);
   bindTouch('btnRight', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) input.right = true; }, () => input.right = false);
+  bindTouch('btnUp', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) { input.up = true; triggerJump(); } }, () => { input.up = false; input.jumpHeld = false; });
+  bindTouch('btnDown', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) input.down = true; }, () => input.down = false);
   bindTouch('btnJump', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) triggerJump(); }, () => input.jumpHeld = false);
   bindTouch('btnAttack', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) triggerAttack(); });
   bindTouch('btnInteract', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) triggerInteract(); });

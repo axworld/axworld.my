@@ -36,12 +36,12 @@
       </div>
 
       <!-- BOSS HP BAR (DYNAMIC: MALBORO -> GARGOYLE -> TEMPLAR -> DIABLOS) -->
-      <div id="bossHud" class="hidden pointer-events-none hud-glass rounded-xl p-2 max-w-[360px] w-full border-amber-500/60">
-        <div class="flex justify-between items-center text-[9px] mb-1">
+      <div id="bossHud" class="hidden pointer-events-none hud-glass rounded-xl p-2 max-w-[380px] w-full border-amber-500/60">
+        <div class="flex justify-between items-center gap-3 text-[9px] mb-1">
           <span id="bossNameText" class="font-cinzel font-extrabold text-amber-300 flex items-center gap-1 truncate">
             <span>👑</span> THE SOVEREIGN DIABLOS
           </span>
-          <span id="bossHpText" class="text-[7px] text-amber-300 shrink-0">1200 / 1200</span>
+          <span id="bossHpText" class="text-[7px] text-amber-300 shrink-0 ml-3">1200 / 1200</span>
         </div>
         <div class="w-full h-2.5 bg-slate-900 border border-amber-500/60 rounded overflow-hidden">
           <div id="bossHpFill" class="h-full bg-gradient-to-r from-purple-600 via-rose-500 to-amber-400 transition-all duration-75" style="width: 100%;"></div>
@@ -102,15 +102,30 @@
 
     <!-- 3. MOBILE TOUCH CONTROLS -->
     <div class="mobile-touch-controls pointer-events-none absolute inset-x-0 bottom-2 px-3 flex justify-between items-end z-20 md:hidden">
-      <div class="pointer-events-auto flex gap-2">
-        <button id="btnLeft" class="touch-btn w-12 h-12 rounded-xl text-white text-sm flex flex-col items-center justify-center font-bold">
-          <span>◀</span>
-          <span class="text-[6px] text-slate-400">LEFT</span>
-        </button>
-        <button id="btnRight" class="touch-btn w-12 h-12 rounded-xl text-white text-sm flex flex-col items-center justify-center font-bold">
-          <span>▶</span>
-          <span class="text-[6px] text-slate-400">RIGHT</span>
-        </button>
+      <div class="dpad-cross pointer-events-auto flex flex-col items-center">
+        <div class="dpad-row flex justify-center">
+          <button id="btnUp" class="touch-btn rounded-xl text-white flex flex-col items-center justify-center font-bold">
+            <span>▲</span>
+            <span class="text-[6px] text-slate-400">UP</span>
+          </button>
+        </div>
+        <div class="dpad-row flex items-center justify-center">
+          <button id="btnLeft" class="touch-btn rounded-xl text-white flex flex-col items-center justify-center font-bold">
+            <span>◀</span>
+            <span class="text-[6px] text-slate-400">LEFT</span>
+          </button>
+          <div class="dpad-center" aria-hidden="true"></div>
+          <button id="btnRight" class="touch-btn rounded-xl text-white flex flex-col items-center justify-center font-bold">
+            <span>▶</span>
+            <span class="text-[6px] text-slate-400">RIGHT</span>
+          </button>
+        </div>
+        <div class="dpad-row flex justify-center">
+          <button id="btnDown" class="touch-btn rounded-xl text-white flex flex-col items-center justify-center font-bold">
+            <span>▼</span>
+            <span class="text-[6px] text-slate-400">DOWN</span>
+          </button>
+        </div>
       </div>
 
       <div class="pointer-events-auto flex items-end gap-2">

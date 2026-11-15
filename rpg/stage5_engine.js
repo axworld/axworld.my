@@ -551,7 +551,7 @@
 
   // FINAL BOSS: THE SOVEREIGN DIABLOS (Spritesheet 6-Frame: Rows 4, Cols 6, renderSize: 289)
   const diablos = {
-    x: 4320, y: 440, baseY: 440, w: 200, h: 180, hp: 1200, maxHp: 1200, facing: -1,
+    x: 4320, y: 402, baseY: 402, w: 200, h: 180, hp: 1200, maxHp: 1200, facing: -1,
     state: 'emerging',
     stateTimer: 600, // Fasa ritual bangkit perlahan dari kedalaman gaung
     emergeY: 675,    // 👈 TENGGELAM 100% DI BAWAH LANTAI (Y: 675)
@@ -624,7 +624,7 @@
   // 6. INPUT HANDLER (LOMPAT GUNA W & SPACE)
   // ===================================================================
   const input = {
-    left: false, right: false,
+    left: false, right: false, up: false, down: false,
     jumpPressed: false, jumpHeld: false, attackPressed: false, interactPressed: false
   };
 
@@ -681,8 +681,10 @@
 
     // 👈 DIBAIKI: 'W', 'Space', atau 'ArrowUp' semuanya boleh melompat!
     if (e.code === 'Space' || e.code === 'KeyW' || e.key === 'w' || e.key === 'W' || e.code === 'ArrowUp') {
+      if (e.code === 'KeyW' || e.key === 'w' || e.key === 'W' || e.code === 'ArrowUp') input.up = true;
       if (!input.jumpHeld) triggerJump();
     }
+    if (e.code === 'KeyS' || e.key === 's' || e.key === 'S' || e.code === 'ArrowDown') input.down = true;
 
     if (e.code === 'KeyJ' || e.code === 'KeyK' || e.code === 'KeyZ') triggerAttack();
     if (e.code === 'KeyE') triggerInteract();
@@ -692,8 +694,10 @@
     if (e.code === 'KeyA' || e.code === 'ArrowLeft') input.left = false;
     if (e.code === 'KeyD' || e.code === 'ArrowRight') input.right = false;
     if (e.code === 'Space' || e.code === 'KeyW' || e.key === 'w' || e.key === 'W' || e.code === 'ArrowUp') {
+      input.up = false;
       input.jumpHeld = false;
     }
+    if (e.code === 'KeyS' || e.key === 's' || e.key === 'S' || e.code === 'ArrowDown') input.down = false;
   });
 
   function bindTouch(id, onDown, onUp) {
@@ -709,6 +713,8 @@
 
   bindTouch('btnLeft', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) input.left = true; }, () => input.left = false);
   bindTouch('btnRight', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) input.right = true; }, () => input.right = false);
+  bindTouch('btnUp', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) { input.up = true; triggerJump(); } }, () => { input.up = false; input.jumpHeld = false; });
+  bindTouch('btnDown', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) input.down = true; }, () => input.down = false);
   bindTouch('btnJump', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) triggerJump(); }, () => input.jumpHeld = false);
   bindTouch('btnAttack', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) triggerAttack(); });
   bindTouch('btnInteract', () => { if (!isGamePaused && hero.autoVictoryTimer <= 0 && !hero.isRespawning) triggerInteract(); });
@@ -1503,7 +1509,7 @@
       // The Sovereign Diablos (Page 6)
       if (currentRoom === 6 && diablos.alive && diablos.active && diablos.state !== 'emerging') {
         if (slashBox.x + slashBox.w > diablos.x - 120 && slashBox.x < diablos.x + diablos.w + 60 &&
-            slashBox.y + slashBox.h > diablos.y - 230 && slashBox.y < diablos.y + 20) {
+            slashBox.y + slashBox.h > diablos.y - 235 && slashBox.y < diablos.y + 30) {
           diablos.hp = Math.max(0, diablos.hp - 30);
           AudioEngine.hit();
           camera.shakeFrames = 10;
@@ -1792,9 +1798,9 @@
           camera.shakeMag = 2;
         }
 
-        if (diablos.emergeY <= 440 || diablos.stateTimer <= 0) {
-          diablos.emergeY = 440;
-          diablos.y = 440;
+        if (diablos.emergeY <= diablos.baseY || diablos.stateTimer <= 0) {
+          diablos.emergeY = diablos.baseY;
+          diablos.y = diablos.baseY;
           diablos.state = 'idle';
           diablos.stateTimer = 70;
           camera.shakeFrames = 35;
@@ -1832,7 +1838,7 @@
         // Terapung melayang menghampiri hero
         if (diablos.state === 'idle') {
           tickBossIdle(diablos, DIABLOS_CONFIG.actions.idle, dt);
-          diablos.y = 440 + Math.sin(performance.now() * 0.0035) * 16;
+          diablos.y = diablos.baseY + Math.sin(performance.now() * 0.0035) * 14;
           if (dist > 130) diablos.x += diablos.facing * 1.2;
           diablos.x = Math.max(3980, Math.min(4680, diablos.x));
 
@@ -1852,7 +1858,7 @@
             if (diablos.animFrame === 4) {
               voidProjectiles.push({
                 x: diablos.x + (diablos.facing === 1 ? 70 : -70),
-                y: diablos.y - 30, // 👈 Diturunkan agar sejajar dengan paras dada hero (Y ~ 410)
+                y: diablos.y + 8, // 👈 Dilaraskan agar sejajar dengan paras dada hero (Y ~ 410) pada baseY baharu
                 vx: diablos.facing * 5.8, // 👈 Tembak ikut arah hadapan
                 frame: 0,
                 animTimer: 0,
