@@ -76,11 +76,94 @@ html, body {
 }
 
 .touch-btn {
-  background: rgba(15, 23, 42, 0.45);
+  background: rgba(15, 23, 42, 0.42);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  border: 1.5px solid rgba(245, 158, 11, 0.45);
-  touch-action: none;
+  border: 1.5px solid rgba(245, 158, 11, 0.48);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-touch-controls {
+  bottom: 14px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+.mobile-touch-controls > div {
+  gap: 12px !important;
+}
+
+.mobile-touch-controls > div.flex-col {
+  gap: 8px !important;
+}
+
+.mobile-touch-controls .flex.gap-2 {
+  gap: 12px !important;
+}
+
+#btnLeft,
+#btnRight,
+#btnAttack,
+#btnJump {
+  width: 66px !important;
+  height: 66px !important;
+  gap: 3px;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#btnInteract {
+  width: 62px !important;
+  height: 62px !important;
+  gap: 2px;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#btnUp,
+#btnDown {
+  width: 58px !important;
+  height: 48px !important;
+  gap: 2px;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#btnLeft span:first-child,
+#btnRight span:first-child,
+#btnAttack span:first-child,
+#btnJump span:first-child {
+  font-size: 18px !important;
+  line-height: 1 !important;
+}
+
+#btnInteract span:first-child,
+#btnUp span:first-child,
+#btnDown span:first-child {
+  font-size: 15px !important;
+  line-height: 1 !important;
+}
+
+#btnLeft span:last-child,
+#btnRight span:last-child,
+#btnAttack span:last-child,
+#btnJump span:last-child,
+#btnInteract span:last-child {
+  font-size: 7.5px !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0.03em;
+}
+
+#btnUp span:last-child,
+#btnDown span:last-child {
+  font-size: 6.5px !important;
+  line-height: 1.1 !important;
 }
 
 @media (pointer: coarse), (hover: none) {
@@ -142,10 +225,14 @@ kbd {
   align-items: center;
   justify-content: flex-start;
   gap: 0.35cqw !important;
-  padding: 0 !important;
+  padding: 0 6px 0 0 !important;
   color: #381a05;
   text-shadow: 0 1px 1px rgba(254, 243, 199, 0.8);
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  overflow-wrap: break-word;
   text-align: center;
 }
 .scroll-inner-content::-webkit-scrollbar { display: none; }
@@ -162,12 +249,12 @@ kbd {
 .sc-grid { width: 100%; flex: 1; min-height: 0; display: grid; grid-template-columns: 1.55fr 1fr !important; gap: 1cqw; text-align: left; }
 .sc-panel {
   background: rgba(69, 26, 3, 0.06); border: 1px solid rgba(120, 53, 15, 0.28); border-radius: 0.8cqw;
-  padding: 0.7cqw 1.1cqw; min-height: 0; overflow-y: auto; scrollbar-width: none;
+  padding: 0.7cqw 1.1cqw; padding-right: 6px; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y; scrollbar-width: none; overflow-wrap: break-word; word-break: break-word;
 }
 .sc-panel::-webkit-scrollbar { display: none; }
 .sc-panel-title { font-size: clamp(6.5px, 0.95cqw, 11px); font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #451a03; margin: 0 0 0.4cqw; }
 .sc-list { margin: 0; padding-left: 0; list-style: none; }
-.sc-list li { position: relative; padding-left: 1.2cqw; margin-bottom: 0.35cqw; font-size: clamp(7px, 1.12cqw, 13px); line-height: 1.22; font-weight: 600; color: #291304; }
+.sc-list li { position: relative; padding-left: 1.2cqw; padding-right: 6px; margin-bottom: 0.35cqw; font-size: clamp(7px, 1.12cqw, 13px); line-height: 1.22; font-weight: 600; color: #291304; overflow-wrap: break-word; word-break: break-word; }
 .sc-list li::before { content: '◆'; position: absolute; left: 0; top: 0.05em; font-size: 0.7em; color: #b45309; }
 .sc-chips { display: flex; flex-wrap: wrap; gap: 0.4cqw; }
 .sc-chip {
@@ -180,7 +267,74 @@ kbd {
   flex: 0 0 auto; min-width: 4.8cqw; text-align: center; padding: 0.2cqw 0.6cqw; border-radius: 0.5cqw; background: #451a03; color: #fde68a;
   font-family: 'Cinzel', serif; font-size: clamp(7px, 1.2cqw, 14px); text-shadow: none;
 }
-.sc-stat span { font-size: clamp(6px, 0.88cqw, 10.5px); line-height: 1.2; font-weight: 600; color: #291304; }
+.sc-stat span { font-size: clamp(6px, 0.88cqw, 10.5px); line-height: 1.2; font-weight: 600; color: #291304; overflow-wrap: break-word; word-break: break-word; padding-right: 6px; }
 .scroll-inner-content > div:last-child { flex-shrink: 0; margin-top: 0.2cqw !important; }
 .scroll-inner-content button { padding: 0.5cqw 1.5cqw !important; font-size: clamp(5px, 0.8cqw, 9px) !important; }
 @media (max-width: 640px) { .sc-grid { grid-template-columns: 1fr !important; } .sc-panel-skills { display: none; } }
+
+@media (max-height: 500px), (max-width: 960px) {
+  .scroll-frame-wrapper {
+    width: min(96vw, calc(96dvh * 880 / 495), 1040px);
+  }
+  .scroll-inner-content {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    padding-right: 6px !important;
+    overflow-wrap: break-word;
+  }
+  .sc-grid {
+    min-height: 110px;
+  }
+  .sc-panel {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    padding-right: 6px !important;
+  }
+  .sc-badge {
+    font-size: clamp(6px, 0.9cqw, 10px);
+  }
+  .sc-kicker {
+    font-size: clamp(7.5px, 1.12cqw, 13px);
+  }
+  .sc-title {
+    font-size: clamp(12px, 2.35cqw, 26px);
+  }
+  .sc-role {
+    font-size: clamp(9.5px, 1.5cqw, 17px);
+  }
+  .sc-date {
+    font-size: clamp(8.5px, 1.2cqw, 14px);
+  }
+  .sc-panel-title {
+    font-size: clamp(8px, 1.15cqw, 13px);
+  }
+  .sc-list li {
+    font-size: clamp(8.5px, 1.32cqw, 15px);
+    line-height: 1.38;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    padding-right: 6px;
+  }
+  .sc-stat b {
+    font-size: clamp(8.5px, 1.38cqw, 15px);
+  }
+  .sc-stat span {
+    font-size: clamp(7.5px, 1.08cqw, 12.5px);
+    line-height: 1.35;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    padding-right: 4px;
+  }
+  .sc-chip {
+    font-size: clamp(7px, 1.08cqw, 12px);
+  }
+  .scroll-inner-content button {
+    font-size: clamp(6.5px, 0.95cqw, 10.5px) !important;
+    padding: 0.6cqw 1.6cqw !important;
+  }
+}

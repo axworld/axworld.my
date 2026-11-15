@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  const isTouchDevice = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
   // ===================================================================
   // 1. SMART ASSETS LOADER
   // ===================================================================
@@ -1169,7 +1171,11 @@
       const prompt = document.getElementById('interactPrompt');
 
       if (dist < 85) {
-        if (prompt) prompt.classList.remove('hidden');
+        if (prompt) {
+          const promptInner = prompt.querySelector('div') || prompt;
+          promptInner.textContent = isTouchDevice ? '📜 TAP [INTERACT] TO UNSEAL CHAPTER' : '📜 PRESS [E] TO UNSEAL CHAPTER';
+          prompt.classList.remove('hidden');
+        }
         if (input.interactPressed && careerScroll.state === 'floating') {
           careerScroll.state = 'unsealing';
           careerScroll.frameIdx = 0;

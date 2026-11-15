@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  const isTouchDevice = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
   // ===================================================================
   // 1. ASSETS LOADER (STAGE 5 COMPLETE ROSTER)
   // ===================================================================
@@ -1940,7 +1942,11 @@
       const prompt = document.getElementById('interactPrompt');
 
       if (dist < 85) {
-        if (prompt) prompt.classList.remove('hidden');
+        if (prompt) {
+          const promptInner = document.getElementById('interactPromptText') || prompt.querySelector('div') || prompt;
+          promptInner.textContent = isTouchDevice ? '📜 TAP [INTERACT] TO UNSEAL MASTER SCROLL' : '📜 PRESS [E] TO UNSEAL MASTER SCROLL';
+          prompt.classList.remove('hidden');
+        }
         if (input.interactPressed && masterScroll.state === 'floating') {
           masterScroll.state = 'unsealing';
           masterScroll.frameIdx = 0;

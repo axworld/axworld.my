@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  const isTouchDevice = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
   // ===================================================================
   // 1. SMART ASSETS LOADER DENGAN SAFE TIMEOUT
   // ===================================================================
@@ -1127,7 +1129,7 @@
       const nearTome = distToTome < 80 && Math.abs((hero.y + hero.h) - (secretMechanism.tomeY + secretMechanism.tomeH)) < 55;
 
       if (nearTome && !secretMechanism.isOpen && !secretMechanism.isOpening) {
-        activePromptMsg = '📖 PRESS [E] TO ACTIVATE';
+        activePromptMsg = isTouchDevice ? '📖 TAP [INTERACT] TO ACTIVATE' : '📖 PRESS [E] TO ACTIVATE';
         if (input.interactPressed) {
           triggerSecretDoor();
         }
@@ -1141,7 +1143,7 @@
       const distToScroll = Math.hypot(heroMidX - careerScroll.x, heroMidY - careerScroll.y);
 
       if (distToScroll < 85) {
-        activePromptMsg = '📜 PRESS [E] TO UNSEAL CHAPTER';
+        activePromptMsg = isTouchDevice ? '📜 TAP [INTERACT] TO UNSEAL CHAPTER' : '📜 PRESS [E] TO UNSEAL CHAPTER';
         if (input.interactPressed && careerScroll.state === 'floating') {
           careerScroll.state = 'unsealing';
           careerScroll.frameIdx = 0;
