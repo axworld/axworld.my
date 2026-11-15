@@ -566,30 +566,6 @@
       transform: scale(1.04);
     }
 
-    .finale-next-btn {
-      margin-top: 22px;
-      padding: 11px 22px;
-      min-height: 38px;
-      border-radius: 10px;
-      font-family: 'Press Start 2P', monospace;
-      font-size: 9.5px;
-      letter-spacing: 1px;
-      color: #fde68a;
-      background: rgba(69, 26, 3, 0.9);
-      border: 1.5px solid rgba(245, 158, 11, 0.65);
-      box-shadow: 0 0 22px rgba(245, 158, 11, 0.25);
-      cursor: pointer;
-      pointer-events: auto;
-      touch-action: manipulation;
-      transition: all 0.2s ease;
-    }
-    .finale-next-btn:hover {
-      background: rgba(120, 53, 15, 0.95);
-      border-color: #fde047;
-      color: #ffffff;
-      transform: scale(1.04);
-    }
-
     /* FADE TO BLACK & 2 SIDE-BY-SIDE BOXES OVERLAY */
     #blackoutOverlay {
       position: fixed;
@@ -819,12 +795,6 @@
         padding: 10px 18px;
         margin-bottom: 8px;
         gap: 10px;
-      }
-      .finale-next-btn {
-        margin-top: 10px;
-        font-size: 8.5px;
-        padding: 9px 18px;
-        min-height: 34px;
       }
       .end-choice-box {
         padding: 18px 20px;
@@ -1451,7 +1421,6 @@
           <a href="https://axworld.my/" target="_top" rel="noopener noreferrer" class="final-credit-link" id="linkAxworld">axworld.my</a>
           <a href="https://www.linkedin.com/in/khairul-azzumie" target="_blank" rel="noopener noreferrer" class="final-credit-link" id="linkLinkedin">linkedin.com/in/khairul-azzumie</a>
         </div>
-        <button type="button" class="finale-next-btn" id="btnFinaleNext">NEXT / OPTIONS ▸</button>
       </div>
 
     </div>
@@ -1465,7 +1434,6 @@
       <a href="https://axworld.my/" target="_top" rel="noopener noreferrer" class="final-credit-link" id="linkAxworldHold">axworld.my</a>
       <a href="https://www.linkedin.com/in/khairul-azzumie" target="_blank" rel="noopener noreferrer" class="final-credit-link" id="linkLinkedinHold">linkedin.com/in/khairul-azzumie</a>
     </div>
-    <button type="button" class="finale-next-btn" id="btnFinaleNextHold">NEXT / OPTIONS ▸</button>
   </div>
 
   <!-- ===================================================================== -->
@@ -1509,8 +1477,6 @@
     const linkLinkedin = document.getElementById('linkLinkedin');
     const linkAxworldHold = document.getElementById('linkAxworldHold');
     const linkLinkedinHold = document.getElementById('linkLinkedinHold');
-    const btnFinaleNext = document.getElementById('btnFinaleNext');
-    const btnFinaleNextHold = document.getElementById('btnFinaleNextHold');
     const bgm = document.getElementById('creditsBgm');
 
     let blackoutInteractive = false;
@@ -1620,11 +1586,19 @@
       holdElapsedMs = 0;
     }
 
+    function setEndChoiceBoxesPointerEvents(val) {
+      if (!blackoutOverlay) return;
+      blackoutOverlay.querySelectorAll('.end-choice-box').forEach(box => {
+        box.style.pointerEvents = val;
+      });
+    }
+
     function enterBlackoutPhase() {
       if (rollState === 'blackout') return;
       rollState = 'blackout';
       blackoutInteractive = false;
       clearTimeout(blackoutUnlockTimer);
+      setEndChoiceBoxesPointerEvents('none');
       if (finaleHoldOverlay) finaleHoldOverlay.classList.remove('active');
       if (creditsHud) creditsHud.classList.add('hidden-hud');
       if (blackoutOverlay) {
@@ -1635,16 +1609,16 @@
         if (rollState === 'blackout') {
           blackoutInteractive = true;
           if (blackoutOverlay) blackoutOverlay.classList.add('interactive');
+          setEndChoiceBoxesPointerEvents('auto');
         }
-      }, 400);
+      }, 450);
     }
 
-    [btnFinaleNext, btnFinaleNextHold].forEach(btn => {
-      if (!btn) return;
-      btn.addEventListener('pointerdown', (e) => { e.stopPropagation(); });
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        enterBlackoutPhase();
+    [finaleHoldSection, finaleHoldOverlay].forEach(el => {
+      if (!el) return;
+      el.addEventListener('click', (e) => {
+        if (e.target && e.target.closest && e.target.closest('.final-credit-link, a, button')) return;
+        if (rollState === 'holding') enterBlackoutPhase();
       });
     });
 
@@ -1678,6 +1652,7 @@
         }
         clearTimeout(blackoutUnlockTimer);
         blackoutInteractive = false;
+        setEndChoiceBoxesPointerEvents('none');
         if (blackoutOverlay) blackoutOverlay.classList.remove('active', 'interactive');
         if (finaleHoldOverlay) finaleHoldOverlay.classList.remove('active');
         if (finaleHoldSection) finaleHoldSection.style.opacity = '1';

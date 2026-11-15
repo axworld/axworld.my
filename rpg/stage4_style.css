@@ -75,12 +75,19 @@ html, body {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
 }
 
+#gameCanvas,
+.dpad-cross,
+.action-btn,
+.touch-btn {
+  touch-action: none;
+}
+
 .touch-btn {
   background: rgba(15, 23, 42, 0.42);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   border: 1.5px solid rgba(245, 158, 11, 0.48);
-  touch-action: manipulation;
+  touch-action: none;
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -120,7 +127,7 @@ html, body {
   width: 48px !important;
   height: 42px !important;
   gap: 1px;
-  touch-action: manipulation;
+  touch-action: none;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -130,7 +137,7 @@ html, body {
   width: 64px !important;
   height: 64px !important;
   gap: 3px;
-  touch-action: manipulation;
+  touch-action: none;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -139,7 +146,7 @@ html, body {
   width: 60px !important;
   height: 60px !important;
   gap: 2px;
-  touch-action: manipulation;
+  touch-action: none;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -245,7 +252,7 @@ kbd {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
+  touch-action: pan-x pan-y pinch-zoom;
   overflow-wrap: break-word;
   text-align: center;
 }
@@ -263,7 +270,7 @@ kbd {
 .sc-grid { width: 100%; flex: 1; min-height: 0; display: grid; grid-template-columns: 1.55fr 1fr !important; gap: 1cqw; text-align: left; }
 .sc-panel {
   background: rgba(69, 26, 3, 0.06); border: 1px solid rgba(120, 53, 15, 0.28); border-radius: 0.8cqw;
-  padding: 0.7cqw 1.1cqw; padding-right: 6px; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-y; scrollbar-width: none; overflow-wrap: break-word; word-break: break-word;
+  padding: 0.7cqw 1.1cqw; padding-right: 6px; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y pinch-zoom; scrollbar-width: none; overflow-wrap: break-word; word-break: break-word;
 }
 .sc-panel::-webkit-scrollbar { display: none; }
 .sc-panel-title { font-size: clamp(6.5px, 0.95cqw, 11px); font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #451a03; margin: 0 0 0.4cqw; }
@@ -294,7 +301,7 @@ kbd {
     overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
+    touch-action: pan-x pan-y pinch-zoom;
     padding-right: 6px !important;
     overflow-wrap: break-word;
   }
@@ -304,7 +311,7 @@ kbd {
   .sc-panel {
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
+    touch-action: pan-x pan-y pinch-zoom;
     overflow-wrap: break-word;
     word-break: break-word;
     padding-right: 6px !important;
@@ -351,4 +358,140 @@ kbd {
     font-size: clamp(6.5px, 0.95cqw, 10.5px) !important;
     padding: 0.6cqw 1.6cqw !important;
   }
+}
+
+
+#scrollModal {
+  touch-action: pan-x pan-y pinch-zoom;
+  overflow-y: auto;
+}
+
+.sc-top-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.scroll-inner-content button.sc-zoom-btn,
+.sc-zoom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 0.28cqw 1.1cqw !important;
+  border-radius: 999px;
+  background: rgba(69, 26, 3, 0.92);
+  color: #fde68a;
+  border: 1px solid rgba(245, 158, 11, 0.75);
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(5.5px, 0.72cqw, 8.5px) !important;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s ease, background 0.15s ease;
+  touch-action: manipulation;
+}
+
+.scroll-inner-content button.sc-zoom-btn:hover,
+.scroll-inner-content button.sc-zoom-btn.is-active,
+.sc-zoom-btn:hover,
+.sc-zoom-btn.is-active {
+  background: #78350f;
+  color: #ffffff;
+  border-color: #fbbf24;
+}
+
+.scroll-frame-wrapper.is-zoomed {
+  width: min(98vw, calc(98dvh * 880 / 495), 1120px) !important;
+}
+
+.scroll-inner-content.is-zoomed {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  touch-action: pan-x pan-y pinch-zoom !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+  padding: 4px 8px 10px 4px !important;
+}
+
+.scroll-inner-content.is-zoomed button.sc-zoom-btn {
+  font-size: clamp(7.5px, 1cqw, 11px) !important;
+  padding: 0.35cqw 1.25cqw !important;
+}
+
+.scroll-inner-content.is-zoomed .sc-badge {
+  font-size: clamp(7.5px, 1.15cqw, 13px) !important;
+}
+
+.scroll-inner-content.is-zoomed .sc-kicker {
+  font-size: clamp(9.5px, 1.45cqw, 17px) !important;
+}
+
+.scroll-inner-content.is-zoomed .sc-title {
+  font-size: clamp(14px, 2.9cqw, 32px) !important;
+  line-height: 1.15 !important;
+}
+
+.scroll-inner-content.is-zoomed .sc-role {
+  font-size: clamp(12px, 1.9cqw, 21px) !important;
+}
+
+.scroll-inner-content.is-zoomed .sc-date {
+  font-size: clamp(10.5px, 1.5cqw, 17px) !important;
+}
+
+.scroll-inner-content.is-zoomed .sc-grid {
+  flex: 0 0 auto !important;
+  min-height: auto !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+}
+
+.scroll-inner-content.is-zoomed .sc-panel-skills {
+  display: block !important;
+}
+
+.scroll-inner-content.is-zoomed .sc-panel {
+  overflow: visible !important;
+  max-height: none !important;
+  padding: 8px 10px !important;
+}
+
+.scroll-inner-content.is-zoomed .sc-panel-title {
+  font-size: clamp(10.5px, 1.5cqw, 17px) !important;
+  margin-bottom: 5px !important;
+}
+
+.scroll-inner-content.is-zoomed .sc-list li {
+  font-size: clamp(11.5px, 1.78cqw, 19.5px) !important;
+  line-height: 1.45 !important;
+  margin-bottom: 5px !important;
+}
+
+.scroll-inner-content.is-zoomed .sc-stat b {
+  font-size: clamp(11px, 1.8cqw, 19.5px) !important;
+}
+
+.scroll-inner-content.is-zoomed .sc-stat span {
+  font-size: clamp(10px, 1.45cqw, 16.5px) !important;
+  line-height: 1.4 !important;
+}
+
+.scroll-inner-content.is-zoomed .sc-chip {
+  font-size: clamp(9.5px, 1.4cqw, 15.5px) !important;
+  padding: 3px 9px !important;
+}
+
+.scroll-inner-content.is-zoomed > div:last-child {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  padding: 6px 0 2px !important;
+  background: linear-gradient(180deg, rgba(245, 222, 179, 0) 0%, rgba(235, 205, 155, 0.96) 30%);
+  z-index: 5;
+  flex-shrink: 0 !important;
 }

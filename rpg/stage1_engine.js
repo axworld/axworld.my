@@ -3,6 +3,27 @@
 
   const isTouchDevice = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
+  let wakeLockSentinel = null;
+  async function requestWakeLock() {
+    if ('wakeLock' in navigator) {
+      try {
+        if (wakeLockSentinel && !wakeLockSentinel.released) return;
+        wakeLockSentinel = await navigator.wakeLock.request('screen');
+        wakeLockSentinel.addEventListener('release', () => {
+          wakeLockSentinel = null;
+        });
+      } catch {}
+    }
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      requestWakeLock();
+    }
+  });
+  ['pointerdown', 'touchstart', 'keydown', 'click'].forEach((evt) => {
+    window.addEventListener(evt, () => requestWakeLock(), { once: true, passive: true });
+  });
+
   // ===================================================================
   // 1. SMART ASSETS LOADER DENGAN SAFE TIMEOUT
   // ===================================================================
@@ -430,6 +451,7 @@
     const btn = document.getElementById(id);
     if (!btn) return;
     const downHandler = (e) => {
+      requestWakeLock();
       e.preventDefault();
       AudioEngine.init();
       onDown();
@@ -460,6 +482,50 @@
   }
   document.getElementById('btnQuitGame').addEventListener('click', executeQuit);
   document.getElementById('btnPauseQuit').addEventListener('click', executeQuit);
+
+  const btnScrollZoom = document.getElementById('btnScrollZoom');
+  if (btnScrollZoom) {
+    btnScrollZoom.addEventListener('click', (e) => {
+      e.preventDefault();
+      const wrapper = document.querySelector('.scroll-frame-wrapper');
+      const inner = document.querySelector('.scroll-inner-content');
+      if (!wrapper || !inner) return;
+      const zoomed = inner.classList.toggle('is-zoomed');
+      wrapper.classList.toggle('is-zoomed', zoomed);
+      btnScrollZoom.classList.toggle('is-active', zoomed);
+      btnScrollZoom.setAttribute('aria-pressed', zoomed ? 'true' : 'false');
+      btnScrollZoom.textContent = zoomed ? '🔍 ZOOM 1x' : '🔍 ZOOM 1.35x';
+      if (zoomed) inner.scrollTop = 0;
+    });
+  }
+
+  const btnFullscreenHud = document.getElementById('btnFullscreenHud');
+  if (btnFullscreenHud) {
+    btnFullscreenHud.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      try {
+        let targetDoc = document;
+        try {
+          if (window.self !== window.top && window.top && window.top.document) targetDoc = window.top.document;
+        } catch {}
+        if (targetDoc.fullscreenElement || targetDoc.webkitFullscreenElement) {
+          const exitFn = targetDoc.exitFullscreen || targetDoc.webkitExitFullscreen;
+          if (exitFn) {
+            const p = exitFn.call(targetDoc);
+            if (p && typeof p.catch === 'function') p.catch(() => {});
+          }
+        } else {
+          const root = targetDoc.documentElement;
+          const reqFn = root.requestFullscreen || root.webkitRequestFullscreen;
+          if (reqFn) {
+            const p = reqFn.call(root);
+            if (p && typeof p.catch === 'function') p.catch(() => {});
+          }
+        }
+      } catch {}
+    });
+  }
 
   document.getElementById('btnPauseGame').addEventListener('click', () => setPause(!isGamePaused));
   document.getElementById('btnResumeGame').addEventListener('click', () => setPause(false));

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AXWORLD — THE CAREER RPG | Chapter 1: The Event Journey</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -129,15 +129,15 @@
       </div>
 
       <div class="pointer-events-auto flex items-end gap-2">
-        <button id="btnInteract" class="touch-btn w-11 h-11 rounded-full border-emerald-400 text-emerald-300 text-[7px] flex flex-col items-center justify-center shadow-lg">
+        <button id="btnInteract" class="touch-btn action-btn w-11 h-11 rounded-full border-emerald-400 text-emerald-300 text-[7px] flex flex-col items-center justify-center shadow-lg">
           <span class="text-xs">📜</span>
           <span>INTERACT</span>
         </button>
-        <button id="btnAttack" class="touch-btn w-12 h-12 rounded-full border-cyan-400 text-cyan-200 text-[7px] flex flex-col items-center justify-center shadow-lg">
+        <button id="btnAttack" class="touch-btn action-btn w-12 h-12 rounded-full border-cyan-400 text-cyan-200 text-[7px] flex flex-col items-center justify-center shadow-lg">
           <span class="text-sm">⚔️</span>
           <span>SLASH</span>
         </button>
-        <button id="btnJump" class="touch-btn w-12 h-12 rounded-full border-amber-400 text-amber-200 text-[7px] flex flex-col items-center justify-center shadow-lg">
+        <button id="btnJump" class="touch-btn action-btn w-12 h-12 rounded-full border-amber-400 text-amber-200 text-[7px] flex flex-col items-center justify-center shadow-lg">
           <span class="text-sm">▲</span>
           <span>JUMP</span>
         </button>
@@ -170,7 +170,7 @@
       <div class="scroll-frame-wrapper">
         <div class="scroll-inner-content px-2 sm:px-4 py-1 text-center">
           
-          <div class="sc-badge"><span>📜</span><span>CHAPTER I UNSEALED</span></div>
+          <div class="sc-top-bar"><div class="sc-badge"><span>📜</span><span>CHAPTER I UNSEALED</span></div><button type="button" id="btnScrollZoom" class="sc-zoom-btn" aria-pressed="false" title="Toggle Zoom (1x / 1.35x)">🔍 ZOOM</button></div>
           <div class="sc-kicker font-scroll-title">✦ You've Gained The Event Experience ✦</div>
           <h1 class="sc-title font-scroll-title">AMB EXHIBITIONS SDN BHD</h1>
           <div class="sc-role font-scroll-body">Events Coordinator</div>
@@ -244,8 +244,6 @@
           }
         } catch {}
       }
-      const btnFs = document.getElementById('btnFullscreenHud');
-      if (btnFs) btnFs.addEventListener('click', tryFullscreen);
       if (isTouch) {
         document.querySelectorAll('.touch-btn, #gameCanvas').forEach(el => {
           el.addEventListener('touchstart', tryFullscreen, { once: true, passive: true });

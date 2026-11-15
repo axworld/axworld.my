@@ -3,6 +3,27 @@
 
   const isTouchDevice = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
+  let wakeLockSentinel = null;
+  async function requestWakeLock() {
+    if ('wakeLock' in navigator) {
+      try {
+        if (wakeLockSentinel && !wakeLockSentinel.released) return;
+        wakeLockSentinel = await navigator.wakeLock.request('screen');
+        wakeLockSentinel.addEventListener('release', () => {
+          wakeLockSentinel = null;
+        });
+      } catch {}
+    }
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      requestWakeLock();
+    }
+  });
+  ['pointerdown', 'touchstart', 'keydown', 'click'].forEach((evt) => {
+    window.addEventListener(evt, () => requestWakeLock(), { once: true, passive: true });
+  });
+
   // ===================================================================
   // 1. SMART ASSETS LOADER
   // ===================================================================
@@ -298,7 +319,7 @@
   // 5. STATUS ENTITI PERMAINAN
   // ===================================================================
   const hero = {
-    x: 840,
+    x: 860,
     y: 190,
     w: 48,
     h: 76,
@@ -320,7 +341,7 @@
   };
 
   const goblins = [
-    { id: 1, x: 740, y: 222, vx: 1.1, w: 42, h: 58, facing: -1, minX: 660, maxX: 880, hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true },
+    { id: 1, x: 650, y: 222, vx: -1.0, w: 42, h: 58, facing: -1, minX: 640, maxX: 680, hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true },
     { id: 2, x: 340, y: 202, vx: 1.0, w: 42, h: 58, facing: -1, minX: 120, maxX: 460, hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true },
     { id: 3, x: 320, y: 352, vx: 1.0, w: 42, h: 58, facing: 1,  minX: 255, maxX: 398, hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true },
     { id: 4, x: 440, y: 862, vx: 1.2, w: 42, h: 58, facing: 1,  minX: 400, maxX: 500, hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true },
@@ -442,6 +463,7 @@
     const btn = document.getElementById(id);
     if (!btn) return;
     const downHandler = (e) => {
+      requestWakeLock();
       e.preventDefault();
       AudioEngine.init();
       onDown();
@@ -475,6 +497,50 @@
   if (btnQuit) btnQuit.addEventListener('click', executeQuit);
   const btnPauseQ = document.getElementById('btnPauseQuit');
   if (btnPauseQ) btnPauseQ.addEventListener('click', executeQuit);
+  const btnScrollZoom = document.getElementById('btnScrollZoom');
+  if (btnScrollZoom) {
+    btnScrollZoom.addEventListener('click', (e) => {
+      e.preventDefault();
+      const wrapper = document.querySelector('.scroll-frame-wrapper');
+      const inner = document.querySelector('.scroll-inner-content');
+      if (!wrapper || !inner) return;
+      const zoomed = inner.classList.toggle('is-zoomed');
+      wrapper.classList.toggle('is-zoomed', zoomed);
+      btnScrollZoom.classList.toggle('is-active', zoomed);
+      btnScrollZoom.setAttribute('aria-pressed', zoomed ? 'true' : 'false');
+      btnScrollZoom.textContent = zoomed ? '🔍 ZOOM 1x' : '🔍 ZOOM 1.35x';
+      if (zoomed) inner.scrollTop = 0;
+    });
+  }
+
+  const btnFullscreenHud = document.getElementById('btnFullscreenHud');
+  if (btnFullscreenHud) {
+    btnFullscreenHud.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      try {
+        let targetDoc = document;
+        try {
+          if (window.self !== window.top && window.top && window.top.document) targetDoc = window.top.document;
+        } catch {}
+        if (targetDoc.fullscreenElement || targetDoc.webkitFullscreenElement) {
+          const exitFn = targetDoc.exitFullscreen || targetDoc.webkitExitFullscreen;
+          if (exitFn) {
+            const p = exitFn.call(targetDoc);
+            if (p && typeof p.catch === 'function') p.catch(() => {});
+          }
+        } else {
+          const root = targetDoc.documentElement;
+          const reqFn = root.requestFullscreen || root.webkitRequestFullscreen;
+          if (reqFn) {
+            const p = reqFn.call(root);
+            if (p && typeof p.catch === 'function') p.catch(() => {});
+          }
+        }
+      } catch {}
+    });
+  }
+
   const btnPauseG = document.getElementById('btnPauseGame');
   if (btnPauseG) btnPauseG.addEventListener('click', () => setPause(!isGamePaused));
   const btnResumeG = document.getElementById('btnResumeGame');
@@ -561,7 +627,7 @@
 
       setTimeout(() => {
         if (hero.y < 540) {
-          hero.x = 840;
+          hero.x = 860;
           hero.y = 190;
           hero.facing = -1;
         } else {

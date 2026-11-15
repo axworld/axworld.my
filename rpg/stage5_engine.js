@@ -3,6 +3,27 @@
 
   const isTouchDevice = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
+  let wakeLockSentinel = null;
+  async function requestWakeLock() {
+    if ('wakeLock' in navigator) {
+      try {
+        if (wakeLockSentinel && !wakeLockSentinel.released) return;
+        wakeLockSentinel = await navigator.wakeLock.request('screen');
+        wakeLockSentinel.addEventListener('release', () => {
+          wakeLockSentinel = null;
+        });
+      } catch {}
+    }
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      requestWakeLock();
+    }
+  });
+  ['pointerdown', 'touchstart', 'keydown', 'click'].forEach((evt) => {
+    window.addEventListener(evt, () => requestWakeLock(), { once: true, passive: true });
+  });
+
   // ===================================================================
   // 1. ASSETS LOADER (STAGE 5 COMPLETE ROSTER)
   // ===================================================================
@@ -250,9 +271,9 @@
 
     // --- ROOM 5: THRONE ROOM & PORTAL SANCTUM (Y: 0, Platform Selaras Karpet Ungu Y: 460 & Pentas Sihir Y: 365) ---
     { id: 'r5_carpet_floor', type: 'flat', x: 2880, y: 460, w: 960, h: 80 },
-    { id: 'r5_dais_ramp_left', type: 'ramp', x1: 3340, y1: 460, x2: 3430, y2: 365 },
-    { id: 'r5_dais_top', type: 'flat', x: 3430, y: 365, w: 160, h: 35 },
-    { id: 'r5_dais_ramp_right', type: 'ramp', x1: 3590, y1: 365, x2: 3680, y2: 460 },
+    { id: 'r5_dais_ramp_left', type: 'ramp', x1: 3383, y1: 460, x2: 3473, y2: 365 },
+    { id: 'r5_dais_top', type: 'flat', x: 3473, y: 365, w: 160, h: 35 },
+    { id: 'r5_dais_ramp_right', type: 'ramp', x1: 3633, y1: 365, x2: 3723, y2: 460 },
     // (r5_carpet_floor sudah meliputi x: 2880..3840)
 
     // --- ROOM 6: THE ABYSSAL VOID LAIR (Y: 0, Platform Rata Selaras Tengah Magic Circle Y: 450) ---
@@ -294,7 +315,7 @@
   };
 
   const portal = {
-    x: 3510, y: 280, radius: 75, active: false, completed: false, activationTimer: 0, vortexAngle: 0,
+    x: 3553, y: 262, radius: 75, active: false, completed: false, activationTimer: 0, vortexAngle: 0,
     sealWarningTimer: 0
   };
 
@@ -703,7 +724,7 @@
   function bindTouch(id, onDown, onUp) {
     const btn = document.getElementById(id);
     if (!btn) return;
-    const downHandler = (e) => { e.preventDefault(); AudioEngine.init(); onDown(); };
+    const downHandler = (e) => { e.preventDefault(); AudioEngine.init(); requestWakeLock(); onDown(); };
     const upHandler = (e) => { e.preventDefault(); if (onUp) onUp(); };
     btn.addEventListener('pointerdown', downHandler);
     btn.addEventListener('pointerup', upHandler);
@@ -729,6 +750,50 @@
   if (btnQuit) btnQuit.addEventListener('click', executeQuit);
   const btnPauseQ = document.getElementById('btnPauseQuit');
   if (btnPauseQ) btnPauseQ.addEventListener('click', executeQuit);
+  const btnScrollZoom = document.getElementById('btnScrollZoom');
+  if (btnScrollZoom) {
+    btnScrollZoom.addEventListener('click', (e) => {
+      e.preventDefault();
+      const wrapper = document.querySelector('.scroll-frame-wrapper');
+      const inner = document.querySelector('.scroll-inner-content');
+      if (!wrapper || !inner) return;
+      const zoomed = inner.classList.toggle('is-zoomed');
+      wrapper.classList.toggle('is-zoomed', zoomed);
+      btnScrollZoom.classList.toggle('is-active', zoomed);
+      btnScrollZoom.setAttribute('aria-pressed', zoomed ? 'true' : 'false');
+      btnScrollZoom.textContent = zoomed ? '🔍 ZOOM 1x' : '🔍 ZOOM 1.35x';
+      if (zoomed) inner.scrollTop = 0;
+    });
+  }
+
+  const btnFullscreenHud = document.getElementById('btnFullscreenHud');
+  if (btnFullscreenHud) {
+    btnFullscreenHud.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      try {
+        let targetDoc = document;
+        try {
+          if (window.self !== window.top && window.top && window.top.document) targetDoc = window.top.document;
+        } catch {}
+        if (targetDoc.fullscreenElement || targetDoc.webkitFullscreenElement) {
+          const exitFn = targetDoc.exitFullscreen || targetDoc.webkitExitFullscreen;
+          if (exitFn) {
+            const p = exitFn.call(targetDoc);
+            if (p && typeof p.catch === 'function') p.catch(() => {});
+          }
+        } else {
+          const root = targetDoc.documentElement;
+          const reqFn = root.requestFullscreen || root.webkitRequestFullscreen;
+          if (reqFn) {
+            const p = reqFn.call(root);
+            if (p && typeof p.catch === 'function') p.catch(() => {});
+          }
+        }
+      } catch {}
+    });
+  }
+
   const btnPauseG = document.getElementById('btnPauseGame');
   if (btnPauseG) btnPauseG.addEventListener('click', () => setPause(!isGamePaused));
   const btnResumeG = document.getElementById('btnResumeGame');
@@ -1309,14 +1374,14 @@
 
     // E. Ritual 5 Orbs Membuka Portal (Page 5: SYARAT WAJIB 5 ORBS)
     if (currentRoom === 5 && !portal.active && !portal.completed) {
-      if (hero.x > 3440 && hero.x < 3580 && hero.grounded && (hero.y + hero.h) <= 380) {
+      if (hero.x > 3483 && hero.x < 3623 && hero.grounded && (hero.y + hero.h) <= 380) {
         const collectedCount = orbs.filter(o => o.collected).length;
         if (collectedCount >= 5) {
           portal.active = true;
           hero.actionLock = true;
           hero.vx = 0;
           hero.vy = 0;
-          hero.x = 3510 - hero.w * 0.5;
+          hero.x = 3553 - hero.w * 0.5;
           hero.y = 365 - hero.h;
           hero.state = 'idle';
           hero.animFrame = 0;
@@ -1339,7 +1404,7 @@
       hero.actionLock = true;
       hero.vx = 0;
       hero.vy = 0;
-      hero.x = 3510 - hero.w * 0.5;
+      hero.x = 3553 - hero.w * 0.5;
       hero.y = 365 - hero.h;
       hero.state = 'idle';
 

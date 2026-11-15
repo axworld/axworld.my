@@ -275,8 +275,29 @@
       }, 300);
     }
 
+    // Helper Screen Wake Lock API (Elak skrin telefon auto-dim / sleep)
+    let wakeLockSentinel = null;
+    async function requestWakeLock() {
+      if ('wakeLock' in navigator) {
+        try {
+          if (wakeLockSentinel && !wakeLockSentinel.released) return;
+          wakeLockSentinel = await navigator.wakeLock.request('screen');
+          wakeLockSentinel.addEventListener('release', () => {
+            wakeLockSentinel = null;
+          });
+        } catch {}
+      }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        requestWakeLock();
+      }
+    });
+
     // Helper Fullscreen (Safe Auto-Fullscreen for Touch / Mobile Landscape)
     function requestFullscreenMode() {
+      requestWakeLock();
       if (window.innerHeight < 500 || (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) {
         try {
           if (!document.fullscreenElement && !document.webkitFullscreenElement) {
@@ -368,6 +389,7 @@
     // FUNGSI PERALIHAN DARI LOADING KE HOME SCENE BERSAMA AUDIO
     function transitionToHomeScene() {
       requestFullscreenMode();
+      requestWakeLock();
       if (bgmHome && audioEnabled) {
         bgmHome.volume = 0.55;
         bgmHome.play().catch(() => {});
@@ -508,6 +530,7 @@
     if (btnStart) {
       btnStart.addEventListener('click', () => {
         requestFullscreenMode();
+        requestWakeLock();
         if (bgmHome) bgmHome.pause();
 
         flash(() => {
