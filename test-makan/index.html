@@ -290,7 +290,7 @@
                 Sokongan ikhlas anda memastikan web app <b>Makan Apa?</b> kekal percuma, bebas iklan menjengkelkan & pelayan sentiasa aktif! ❤️
             </p>
 
-            <div style="margin-bottom: 14px;">
+            <div style="margin-bottom: 6px;">
                 <a id="btn-kofi-link" href="https://ko-fi.com/axworld" target="_blank" rel="noopener noreferrer" 
                    style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #FF5A36; color: #FFFFFF; font-weight: 800; font-size: 14px; padding: 13px 18px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 14px rgba(255, 90, 54, 0.35); transition: transform 0.2s;">
                     <span style="font-size: 18px;">☕</span> Belanja Kopi via Ko-fi
@@ -298,26 +298,6 @@
                 <span style="font-size: 10px; color: var(--text-muted); display: block; margin-top: 6px;">
                     💳 Sokong Kad Debit/Kredit & PayPal
                 </span>
-            </div>
-
-            <div style="display: flex; align-items: center; margin: 14px 0;">
-                <div style="flex: 1; height: 1px; background: var(--border-color, #E5E7EB);"></div>
-                <span style="padding: 0 8px; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Atau Imbas QR Tempatan</span>
-                <div style="flex: 1; height: 1px; background: var(--border-color, #E5E7EB);"></div>
-            </div>
-
-            <div class="donation-card-box" style="padding: 12px; background: var(--bg-subtle, #F9FAFB); border-radius: 12px; border: 1px solid var(--border-color, #E5E7EB);">
-                <div style="display: inline-block; padding: 6px; background: #ffffff; border-radius: 10px; margin-bottom: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
-                    <img src="qr.jpg" alt="DuitNow QR" style="width: 125px; height: 125px; display: block; object-fit: contain; margin: 0 auto;" onerror="this.style.display='none';">
-                </div>
-                <div style="display: flex; justify-content: center;">
-                    <a href="qr.jpg" download="DuitNow_MakanApa.png" style="width: 100%; background: #0284C7; color: #fff; text-decoration: none; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 11px;">
-                        📥 Simpan QR ke Galeri
-                    </a>
-                </div>
-                <p style="font-size: 10px; color: var(--text-muted); margin-top: 8px; line-height: 1.3;">
-                    💡 <i>Buka aplikasi perbankan atau TnG eWallet > tekan <b>Scan</b> > pilih <b>Scan from Album</b>.</i>
-                </p>
             </div>
         </div>
     </div>
@@ -500,15 +480,11 @@
         function laksanaModPlayStore() {
             if (isPlayStoreApp) {
                 const kofiBtn = document.getElementById('btn-kofi-link');
-                const qrBox = document.querySelector('.donation-card-box');
-                const sepLine = qrBox ? qrBox.previousElementSibling : null;
 
                 if (kofiBtn) {
                     kofiBtn.innerHTML = `<span>⭐</span> Sokong Kami di Google Play`;
                     kofiBtn.href = "market://details?id=axworldmy.makanapa";
                 }
-                if (qrBox) qrBox.style.display = 'none';
-                if (sepLine) sepLine.style.display = 'none';
                 
                 console.log("📱 Mod Google Play Store Aktif: Polisi Pembayaran Dipatuhi!");
             }
