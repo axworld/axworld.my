@@ -46,14 +46,16 @@
       let count = 0;
       let completed = false;
 
+      let fallbackTimer = null;
       const doneCheck = () => {
         if (!completed) {
           completed = true;
+          if (fallbackTimer) clearTimeout(fallbackTimer);
           onComplete();
         }
       };
 
-      setTimeout(doneCheck, 2200);
+      fallbackTimer = setTimeout(doneCheck, 4500);
 
       keys.forEach((k) => {
         const list = CANDIDATES[k];
@@ -1836,6 +1838,20 @@
   }
 
   function startGame() {
+    if (ctx) {
+      ctx.save();
+      ctx.fillStyle = '#030712';
+      ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = '14px "Press Start 2P", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('CITADEL LOADING...', VIEW_W / 2, VIEW_H / 2 - 10);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '8px "Press Start 2P", monospace';
+      ctx.fillText('STAGE 3: CINEMA & BROADCAST CITADEL', VIEW_W / 2, VIEW_H / 2 + 18);
+      ctx.restore();
+    }
+
     Loaded.init(() => {
       renderPortrait();
       updateHud();

@@ -44,15 +44,17 @@
       const keys = Object.keys(CANDIDATES);
       let count = 0;
       let completed = false;
+      let fallbackTimer = null;
 
       const doneCheck = () => {
         if (!completed) {
           completed = true;
+          if (fallbackTimer) clearTimeout(fallbackTimer);
           onComplete();
         }
       };
 
-      setTimeout(doneCheck, 1500);
+      fallbackTimer = setTimeout(doneCheck, 4500);
 
       keys.forEach((k) => {
         const list = CANDIDATES[k];
@@ -341,7 +343,7 @@
   };
 
   const goblins = [
-    { id: 1, x: 650, y: 222, vx: -1.0, w: 42, h: 58, facing: -1, minX: 640, maxX: 680, hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true },
+    { id: 1, x: 665, y: 222, vx: -1.0, w: 42, h: 58, facing: -1, minX: 640, maxX: 745, hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true },
     { id: 2, x: 340, y: 202, vx: 1.0, w: 42, h: 58, facing: -1, minX: 120, maxX: 460, hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true },
     { id: 3, x: 320, y: 352, vx: 1.0, w: 42, h: 58, facing: 1,  minX: 255, maxX: 398, hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true },
     { id: 4, x: 440, y: 862, vx: 1.2, w: 42, h: 58, facing: 1,  minX: 400, maxX: 500, hp: 60, state: 'walk', animFrame: 0, animTimer: 0, attackTimer: 0, hurtTimer: 0, alive: true },
@@ -630,6 +632,15 @@
           hero.x = 860;
           hero.y = 190;
           hero.facing = -1;
+          const g1 = goblins.find(g => g.id === 1);
+          if (g1) {
+            g1.x = 665;
+            g1.minX = 640;
+            g1.maxX = 745;
+            g1.vx = -1.0;
+            g1.facing = -1;
+            if (g1.alive) g1.state = 'walk';
+          }
         } else {
           hero.x = 200;
           hero.y = 830;
