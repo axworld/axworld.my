@@ -4,6 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Career RPG: The Journey</title>
+  <meta name="description" content="Play AXWORLD: The Career RPG — Experience 15+ years of Khairul Azzumie's leadership across Events, Film Production &amp; MarTech in a 5-stage 2D HTML5 Pixel-Art JRPG." />
+  <link rel="canonical" href="https://axworld.my/rpg/" />
+  <link rel="icon" type="image/jpeg" href="../axworld_logo_sq.jpg" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://axworld.my/rpg/" />
+  <meta property="og:site_name" content="AXWORLD.MY — The Career RPG" />
+  <meta property="og:title" content="AXWORLD: The Career RPG — Khairul Azzumie's Interactive Journey" />
+  <meta property="og:description" content="Explore 5 pivotal corporate, film production &amp; MarTech milestones through an original HTML5 Canvas 2D JRPG with custom boss battles and blooper reels." />
+  <meta property="og:image" content="https://axworld.my/axworld_logo_wide.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AXWORLD: The Career RPG — Khairul Azzumie's Interactive Journey" />
+  <meta name="twitter:description" content="Explore 5 pivotal corporate, film production &amp; MarTech milestones through an original HTML5 Canvas 2D JRPG with custom boss battles and blooper reels." />
+  <meta name="twitter:image" content="https://axworld.my/axworld_logo_wide.jpg" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -150,7 +163,7 @@
   <!-- ========================================== -->
   <section id="homeScene" class="opacity-0 pointer-events-none fixed inset-0 z-20 flex flex-col justify-between p-6 bg-black transition-opacity duration-500">
     <!-- Background Looping Video -->
-    <video id="vidHome" class="absolute inset-0 w-full h-full object-cover" loop muted playsinline>
+    <video id="vidHome" class="absolute inset-0 w-full h-full object-cover" loop muted playsinline preload="none">
       <source src="home.mp4" type="video/mp4">
     </video>
 
@@ -160,6 +173,9 @@
     <!-- TOP HEADER -->
     <div class="relative z-10 flex justify-between items-start w-full">
       <div class="flex flex-col">
+        <a href="https://axworld.my/" target="_top" class="hud-btn self-start px-2.5 py-1 rounded-lg text-[9px] sm:text-[10px] text-amber-200 hover:text-white font-cinzel flex items-center gap-1 no-underline mb-1.5">
+          &larr; AXWORLD.MY
+        </a>
         <h1 class="font-cinzel text-lg sm:text-2xl text-amber-300 font-extrabold tracking-widest drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
           THE JOURNEY: EXPERIENCE MILESTONE
         </h1>
@@ -211,7 +227,7 @@
   <!-- STEP 3: INTRO CUTSCENE SCENE               -->
   <!-- ========================================== -->
   <section id="introScene" class="opacity-0 pointer-events-none fixed inset-0 z-30 flex flex-col justify-between p-6 bg-black transition-opacity duration-500">
-    <video id="vidIntro" class="absolute inset-0 w-full h-full object-cover" playsinline>
+    <video id="vidIntro" class="absolute inset-0 w-full h-full object-cover" playsinline preload="none">
       <source src="intro.mp4" type="video/mp4">
     </video>
 
@@ -223,6 +239,43 @@
       </button>
     </div>
   </section>
+
+  <!-- ========================================== -->
+  <!-- SETTINGS / CONTROLS MODAL (GLASSMORPHISM)  -->
+  <!-- ========================================== -->
+  <div id="settingsModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-md rounded-2xl bg-slate-950/90 border border-amber-500/50 p-6 shadow-2xl shadow-amber-950/50 backdrop-blur-xl">
+      <div class="flex justify-between items-center border-b border-amber-500/20 pb-3 mb-4">
+        <h2 class="font-cinzel text-lg font-extrabold text-amber-300 tracking-wider">⚙️ GAME CONTROLS &amp; SETTINGS</h2>
+        <button id="btnCloseSettingsTop" class="text-slate-400 hover:text-white text-sm px-2 py-0.5 rounded border border-slate-700/80">✕</button>
+      </div>
+      <div class="space-y-2.5 text-xs font-sans text-slate-200 mb-5">
+        <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-lg border border-slate-800">
+          <span class="text-slate-300">Move Left / Right</span>
+          <span class="font-pixel text-[9px] text-cyan-300">[A] / [D] or [&larr;] / [&rarr;]</span>
+        </div>
+        <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-lg border border-slate-800">
+          <span class="text-slate-300">Jump / Climb Ladder</span>
+          <span class="font-pixel text-[9px] text-amber-300">[W] / [SPACE] / [&uarr;]</span>
+        </div>
+        <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-lg border border-slate-800">
+          <span class="text-slate-300">Sword Slash</span>
+          <span class="font-pixel text-[9px] text-rose-300">[J] / [K] / [Z]</span>
+        </div>
+        <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-lg border border-slate-800">
+          <span class="text-slate-300">Unseal Chapter Scroll</span>
+          <span class="font-pixel text-[9px] text-emerald-300">[E]</span>
+        </div>
+        <div class="flex justify-between items-center bg-slate-900/80 px-3 py-2 rounded-lg border border-slate-800">
+          <span class="text-slate-300">Pause Game</span>
+          <span class="font-pixel text-[9px] text-amber-300">[P] / [ESC]</span>
+        </div>
+      </div>
+      <button id="btnCloseSettings" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-cinzel font-black text-xs tracking-widest uppercase transition shadow-lg">
+        CLOSE SETTINGS
+      </button>
+    </div>
+  </div>
 
   <!-- ========================================== -->
   <!-- STEP 4: TRUE FULLSCREEN GAME SHELL IFRAME  -->
@@ -380,7 +433,8 @@
       if (vidIntro) vidIntro.pause();
       if (vidHome) {
         vidHome.muted = true;
-        vidHome.currentTime = 0;
+        if (vidHome.readyState === 0) vidHome.load();
+        else vidHome.currentTime = 0;
         vidHome.play().catch(() => {});
       }
       if (bgmHome && audioEnabled) {
@@ -412,7 +466,8 @@
 
         if (vidHome) {
           vidHome.muted = true;
-          vidHome.currentTime = 0;
+          if (vidHome.readyState === 0) vidHome.load();
+          else vidHome.currentTime = 0;
           vidHome.play().catch(() => {});
         }
       });
@@ -443,7 +498,8 @@
 
       if (vidHome) {
         vidHome.muted = true;
-        vidHome.currentTime = 0;
+        if (vidHome.readyState === 0) vidHome.load();
+        else vidHome.currentTime = 0;
         vidHome.play().catch(() => {});
       }
 
@@ -543,7 +599,8 @@
           if (homeScene) homeScene.classList.add('opacity-0', 'pointer-events-none');
           if (introScene) introScene.classList.remove('opacity-0', 'pointer-events-none');
           if (vidIntro) {
-            vidIntro.currentTime = 0;
+            if (vidIntro.readyState === 0) vidIntro.load();
+            else vidIntro.currentTime = 0;
             vidIntro.muted = !audioEnabled;
             vidIntro.play().catch(() => {});
           }
@@ -551,11 +608,31 @@
       });
     }
 
+    const settingsModal = document.getElementById('settingsModal');
+    const btnCloseSettings = document.getElementById('btnCloseSettings');
+    const btnCloseSettingsTop = document.getElementById('btnCloseSettingsTop');
+    const openSettingsModal = () => {
+      if (settingsModal) settingsModal.classList.remove('hidden');
+    };
+    const closeSettingsModal = () => {
+      if (settingsModal) settingsModal.classList.add('hidden');
+    };
+
     if (btnOptions) {
-      btnOptions.addEventListener('click', () => {
-        alert("Controls:\n[A/D] Move\n[W/Space] Jump / Climb\n[J] Slash\n[E] Interact\n[P] Pause Game");
+      btnOptions.addEventListener('click', openSettingsModal);
+    }
+    if (btnCloseSettings) btnCloseSettings.addEventListener('click', closeSettingsModal);
+    if (btnCloseSettingsTop) btnCloseSettingsTop.addEventListener('click', closeSettingsModal);
+    if (settingsModal) {
+      settingsModal.addEventListener('click', (e) => {
+        if (e.target === settingsModal) closeSettingsModal();
       });
     }
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && settingsModal && !settingsModal.classList.contains('hidden')) {
+        closeSettingsModal();
+      }
+    });
 
     if (btnSkip) {
       btnSkip.addEventListener('click', () => {

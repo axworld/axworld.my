@@ -1006,8 +1006,8 @@
         // Goblin sedang meronda / berjalan
         g.state = 'walk';
         g.x += g.vx;
-        if (g.x <= g.minX) { g.vx = Math.abs(g.vx); g.facing = 1; }
-        if (g.x + g.w >= g.maxX) { g.vx = -Math.abs(g.vx); g.facing = -1; }
+        if (g.x <= g.minX) { g.x = g.minX; g.vx = Math.abs(g.vx) || 1.0; g.facing = 1; }
+        if (g.x + g.w >= g.maxX) { g.x = g.maxX - g.w; g.vx = -(Math.abs(g.vx) || 1.0); g.facing = -1; }
 
         g.animTimer += dt;
         const gAct = GOBLIN_CONFIG.actions.walk;
@@ -1552,6 +1552,20 @@
   }
 
   function startGame() {
+    if (ctx) {
+      ctx.save();
+      ctx.fillStyle = '#030712';
+      ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = '14px "Press Start 2P", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('SANCTUARY LOADING...', VIEW_W / 2, VIEW_H / 2 - 10);
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '8px "Press Start 2P", monospace';
+      ctx.fillText('STAGE 4: THE DIGITAL SANCTUARY', VIEW_W / 2, VIEW_H / 2 + 18);
+      ctx.restore();
+    }
+
     Loaded.init(() => {
       renderPortrait();
       updateHud();

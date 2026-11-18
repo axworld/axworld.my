@@ -212,7 +212,8 @@
     }
   };
 
-  document.getElementById('btnAudioToggle').addEventListener('click', () => AudioEngine.toggle());
+  const btnAudioToggle = document.getElementById('btnAudioToggle');
+  if (btnAudioToggle) btnAudioToggle.addEventListener('click', () => AudioEngine.toggle());
 
   // ===================================================================
   // 3. CANVAS, CAMERA & PLATFORM
@@ -1421,7 +1422,7 @@
 
   let lastTime = performance.now();
   function loop(now) {
-    const dt = (now - lastTime) / 1000;
+    const dt = Math.min((now - lastTime) / 1000, 0.1);
     lastTime = now;
     updateGame(dt);
     render();

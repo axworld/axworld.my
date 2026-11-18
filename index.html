@@ -4,6 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AXWORLD.MY — Khairul Azzumie | Digital Architect, Events &amp; MarTech Leader</title>
+  <meta name="description" content="Executive Digital Portfolio &amp; Interactive Studio of Khairul Azzumie Anour — 15+ years leading Events, Film Production (13 Feature Films) &amp; Omnichannel MarTech (+70% Zakat KWSP, &gt;200% Online FPX, 4-Gold Star National Innovation), combined with Full-Stack Web &amp; AI Engineering." />
+  <link rel="canonical" href="https://axworld.my/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://axworld.my/" />
+  <meta property="og:site_name" content="AXWORLD.MY — Khairul Azzumie" />
+  <meta property="og:title" content="AXWORLD.MY — Khairul Azzumie | Digital Architect, Events &amp; MarTech Leader" />
+  <meta property="og:description" content="15+ Yrs Events &amp; MarTech Leader • &gt;200% Online FPX Growth • +70% Zakat KWSP Surge • 13 Feature Films • Full-Stack HTML5 Game &amp; AI Builder." />
+  <meta property="og:image" content="https://axworld.my/axworld_logo_wide.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AXWORLD.MY — Khairul Azzumie | Digital Architect, Events &amp; MarTech Leader" />
+  <meta name="twitter:description" content="15+ Yrs Events &amp; MarTech Leader • &gt;200% Online FPX Growth • +70% Zakat KWSP Surge • 13 Feature Films • Full-Stack HTML5 Game &amp; AI Builder." />
+  <meta name="twitter:image" content="https://axworld.my/axworld_logo_wide.jpg" />
   <!-- Favicon Tab Browser Rasmi -->
   <link rel="icon" type="image/jpeg" href="axworld_logo_sq.jpg" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -95,6 +107,43 @@
       border: 1px solid rgba(245, 158, 11, 0.25);
       backdrop-filter: blur(12px);
     }
+
+    @media print {
+      @page {
+        margin: 12mm;
+      }
+      body, html {
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+      nav, header, #projects, #makanModal, footer, .no-print {
+        display: none !important;
+      }
+      #cv-section {
+        background: #ffffff !important;
+        border: 0 !important;
+        padding: 0 !important;
+      }
+      .glass-panel {
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        backdrop-filter: none !important;
+        box-shadow: none !important;
+        color: #0f172a !important;
+        break-inside: avoid;
+      }
+      #cv-section h2, #cv-section h3, #cv-section h4, #cv-section strong {
+        color: #0f172a !important;
+      }
+      #cv-section p, #cv-section li, #cv-section div, #cv-section span, #cv-section a {
+        color: #1e293b !important;
+        text-decoration: none !important;
+      }
+      #cv-section .bg-slate-900, #cv-section .bg-slate-900\/80 {
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -103,7 +152,7 @@
   <nav class="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-amber-500/20 px-3 sm:px-8 py-3">
     <div class="max-w-7xl mx-auto flex justify-between items-center gap-2 whitespace-nowrap">
       <a href="#" class="flex items-center gap-2 sm:gap-3 group shrink-0">
-        <img src="axworld_logo_sq.jpg" onerror="this.src='axworld_logo_sq.png'" alt="AXWORLD Logo" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border border-amber-400/70 shadow-lg shadow-amber-500/20 group-hover:scale-105 transition" />
+        <img src="axworld_logo_sq.jpg" alt="AXWORLD Logo" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border border-amber-400/70 shadow-lg shadow-amber-500/20 group-hover:scale-105 transition" />
         <div>
           <div class="font-cinzel font-black text-xs sm:text-sm tracking-widest text-amber-300 leading-none">AXWORLD.MY</div>
           <div class="text-[9px] sm:text-[10px] text-slate-400 tracking-wider mt-0.5">KHAIRUL AZZUMIE</div>
@@ -124,11 +173,23 @@
   <!-- ================================================================= -->
   <header class="relative w-full max-w-4xl mx-auto pt-4 pb-2 px-4 flex flex-col items-center">
     <div class="w-full max-w-[680px] aspect-[16/7] relative overflow-hidden flex items-center justify-center">
-      <img src="axworld_logo_wide.jpg" onerror="this.src='axworld_logo_wide.png'" alt="AXWORLD Emblem" class="w-full h-full object-cover logo-hero-mask" />
+      <img src="axworld_logo_wide.jpg" alt="AXWORLD Emblem" class="w-full h-full object-cover logo-hero-mask" />
     </div>
-    <p class="text-slate-400 text-xs sm:text-sm mt-2 text-center max-w-xl">
+    <h1 class="font-cinzel font-bold text-amber-300 text-xs sm:text-sm tracking-wider uppercase text-center mt-1">
+      15+ Yrs Events &amp; MarTech Leader &bull; Film Production &bull; Full-Stack &amp; AI Builder
+    </h1>
+    <p class="text-slate-300 text-xs sm:text-sm mt-1.5 text-center max-w-xl">
       The Sovereign Digital Portfolio &amp; Interactive Studio of <strong class="text-amber-300">Khairul Azzumie</strong>. Click either realm below to explore.
     </p>
+    <div class="flex flex-wrap items-center justify-center gap-2 mt-3">
+      <span class="px-2.5 py-1 rounded-full bg-slate-900/90 border border-amber-500/40 text-amber-300 text-[11px] font-semibold">15+ Yrs Leadership</span>
+      <span class="px-2.5 py-1 rounded-full bg-slate-900/90 border border-cyan-500/40 text-cyan-300 text-[11px] font-semibold">&gt;200% Online FPX</span>
+      <span class="px-2.5 py-1 rounded-full bg-slate-900/90 border border-emerald-500/40 text-emerald-300 text-[11px] font-semibold">+70% Zakat KWSP</span>
+      <span class="px-2.5 py-1 rounded-full bg-slate-900/90 border border-purple-500/40 text-purple-300 text-[11px] font-semibold">13 Films &amp; 4★ Gold Innovator</span>
+    </div>
+    <a href="#cv-section" class="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/50 text-amber-300 text-xs font-semibold transition">
+      View Executive CV &darr;
+    </a>
   </header>
 
   <!-- ================================================================= -->
@@ -139,8 +200,8 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
 
       <!-- BANNER 1: THE CAREER RPG (LANDSCAPE) -->
-      <div id="bannerRpg" onclick="toggleBanner('bannerRpg')" class="banner-card w-full aspect-video sm:min-h-[290px] rounded-2xl border-2 border-amber-500/60 shadow-2xl shadow-amber-950/40">
-        <div class="banner-bg" style="background-image: url('banner_rpg.jpg'), url('banner_rpg.png'), linear-gradient(135deg, #1e1b4b, #451a03);"></div>
+      <div id="bannerRpg" tabindex="0" role="button" aria-label="AXWORLD: The Career RPG" onclick="toggleBanner('bannerRpg')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleBanner('bannerRpg');}" class="banner-card w-full aspect-video sm:min-h-[290px] rounded-2xl border-2 border-amber-500/60 shadow-2xl shadow-amber-950/40">
+        <div class="banner-bg" style="background-image: url('banner_rpg.jpg'), linear-gradient(135deg, #1e1b4b, #451a03);"></div>
         
         <!-- Lencana Bawah Halus Sebelum Klik -->
         <div class="banner-idle-badge absolute inset-x-0 bottom-0 p-4 sm:p-5 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent flex justify-between items-end z-10">
@@ -174,7 +235,7 @@
           </div>
 
             <div class="flex gap-2.5">
-            <a href="rpg/index.html" onclick="event.stopPropagation()" class="flex-1 text-center py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-pixel text-[8px] sm:text-[9px] shadow-lg shadow-amber-500/30 transition">
+            <a href="rpg/index.html" onclick="event.stopPropagation()" class="flex-1 flex items-center justify-center gap-1.5 leading-none py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-pixel text-[8px] sm:text-[9px] shadow-lg shadow-amber-500/30 transition">
               ⚔️ PLAY CAREER RPG
             </a>
             <a href="rpg/credits.html" onclick="event.stopPropagation()" class="px-4 py-2.5 sm:py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-600 text-slate-200 text-xs font-semibold transition flex items-center">
@@ -186,8 +247,8 @@
 
       <!-- BANNER 2: MAKAN APA? KITA PUTAR JE! (LANDSCAPE) -->
       <!-- BANNER 2: MAKAN APA? KITA PUTAR JE! (LANDSCAPE + SMART IMG LOADER) -->
-      <div id="bannerMakan" onclick="toggleBanner('bannerMakan')" class="banner-card w-full aspect-video sm:min-h-[290px] rounded-2xl border-2 border-orange-500/60 shadow-2xl shadow-orange-950/40" style="background: linear-gradient(135deg, #431407, #0f172a);">
-        <img id="bgMakanImg" src="banner_makanapa.jpg" alt="Makan Apa Banner" class="banner-bg w-full h-full object-cover" />
+      <div id="bannerMakan" tabindex="0" role="button" aria-label="Makan Apa? Kita Putar Je!" onclick="toggleBanner('bannerMakan')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleBanner('bannerMakan');}" class="banner-card w-full aspect-video sm:min-h-[290px] rounded-2xl border-2 border-orange-500/60 shadow-2xl shadow-orange-950/40" style="background: linear-gradient(135deg, #431407, #0f172a);">
+        <img id="bgMakanImg" src="banner_makanapa.jpeg" alt="Makan Apa Banner" class="banner-bg w-full h-full object-cover" />
 
         <div class="banner-detail-content p-5 sm:p-7 flex flex-col justify-between bg-slate-950/50">
           <div class="flex justify-between items-start gap-2">
@@ -212,7 +273,7 @@
           </div>
 
           <div class="flex gap-2.5">
-            <a href="https://axworld.my/makan-apa" onclick="event.stopPropagation()" class="flex-1 text-center py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-pixel text-[8px] sm:text-[9px] shadow-lg shadow-orange-500/30 transition">
+            <a href="https://axworld.my/makan-apa" onclick="event.stopPropagation()" class="flex-1 flex items-center justify-center gap-1.5 leading-none py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-pixel text-[8px] sm:text-[9px] shadow-lg shadow-orange-500/30 transition">
               🎡 LAUNCH MAKAN APA?
             </a>
             <button onclick="event.stopPropagation(); openMakanModal()" class="px-4 py-2.5 sm:py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-600 text-slate-200 text-xs font-semibold transition flex items-center">
@@ -235,25 +296,36 @@
       <div class="glass-panel rounded-2xl p-6 sm:p-10 mb-8 shadow-2xl">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-amber-500/20 pb-6 mb-6">
           <div class="flex items-center gap-4">
-            <img src="axworld_logo_sq.jpg" onerror="this.src='axworld_logo_sq.png'" alt="AXWORLD Crest" class="w-16 h-16 rounded-full object-cover border-2 border-amber-400/60 shadow-lg hidden sm:block" />
+            <img src="axworld_logo_sq.jpg" alt="AXWORLD Crest" class="w-16 h-16 rounded-full object-cover border-2 border-amber-400/60 shadow-lg hidden sm:block" />
             <div>
               <div class="text-xs font-bold text-amber-400 tracking-widest uppercase mb-1">Curriculum Vitae // Executive Profile</div>
               <h2 class="font-cinzel text-2xl sm:text-4xl font-black text-white">KHAIRUL AZZUMIE ANOUR</h2>
               <p class="text-cyan-400 font-semibold text-sm sm:text-base mt-1">
-                Senior Executive Marketing &amp; Events • Full-Stack Web &amp; AI Technologist
+                Senior Executive Marketing &amp; Events &bull; Full-Stack Web &amp; AI Technologist
               </p>
             </div>
           </div>
-          <div class="text-xs sm:text-sm text-slate-300 space-y-1 md:text-right">
+          <div class="text-xs sm:text-sm text-slate-300 space-y-1.5 md:text-right">
             <div>📍 40460 Shah Alam, Selangor</div>
-            <div>📞 +60 12 634 9779</div>
+            <div class="flex flex-wrap items-center md:justify-end gap-1.5">
+              <span>📞 <a href="tel:+60126349779" class="text-slate-200 hover:text-amber-300 transition">+60 12 634 9779</a></span>
+              <a href="https://wa.me/60126349779" target="_blank" rel="noopener noreferrer" class="no-print px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500 hover:text-slate-950 text-[10px] font-semibold transition">WhatsApp</a>
+            </div>
             <div>✉️ <a href="mailto:khairul.azzumie1083@gmail.com" class="text-amber-300 hover:underline">khairul.azzumie1083@gmail.com</a></div>
-            <div>🔗 <a href="https://www.linkedin.com/in/khairul-azzumie" target="_blank" class="text-cyan-300 hover:underline">linkedin.com/in/khairul-azzumie</a></div>
+            <div>🔗 <a href="https://www.linkedin.com/in/khairul-azzumie" target="_blank" rel="noopener noreferrer" class="text-cyan-300 hover:underline">linkedin.com/in/khairul-azzumie</a></div>
+            <div class="no-print pt-2 flex flex-wrap items-center md:justify-end gap-2">
+              <button type="button" onclick="copyExecEmail(this)" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-amber-400/60 text-slate-200 hover:text-amber-300 text-[11px] font-semibold transition cursor-pointer">
+                📋 Copy Email
+              </button>
+              <button type="button" onclick="window.print()" class="px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500 border border-amber-500/50 text-amber-300 hover:text-slate-950 text-[11px] font-semibold transition cursor-pointer">
+                📄 Save / Print PDF CV
+              </button>
+            </div>
           </div>
         </div>
 
         <p class="text-slate-300 leading-relaxed text-sm sm:text-base mb-8">
-          With <strong>over 15 years of leadership in Events &amp; Project Management</strong> and <strong>10+ years driving Omnichannel Marketing, Big Data &amp; Digital Ecosystems</strong>, I bridge high-level corporate strategy with hands-on creative &amp; technical execution—from directing 50-crew feature film productions and executing national exhibitions to engineering HTML5 interactive systems and AI-integrated applications.
+          With <strong>over 15 years of leadership in Events &amp; Project Management</strong> and <strong>10+ years driving Omnichannel Marketing, Big Data &amp; Digital Ecosystems</strong>, I bridge high-level corporate strategy with hands-on creative &amp; technical execution—from directing 50-crew feature film productions (13 Feature Films) and executing international exhibitions to engineering HTML5 interactive systems and AI-integrated applications.
         </p>
 
         <!-- Key Metrics Grid -->
@@ -263,7 +335,7 @@
             <div class="text-[11px] text-slate-400 mt-1">Events &amp; Operations</div>
           </div>
           <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 text-center">
-            <div class="text-xl sm:text-2xl whitespace-nowrap font-black text-cyan-400 font-cinzel">+200%</div>
+            <div class="text-xl sm:text-2xl whitespace-nowrap font-black text-cyan-400 font-cinzel">&gt;200%</div>
             <div class="text-[11px] text-slate-400 mt-1">Online FPX Growth</div>
           </div>
           <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4 text-center">
@@ -292,10 +364,12 @@
             <span class="px-3 py-1 rounded bg-slate-900 text-amber-300 text-xs font-semibold border border-slate-700">July 2016 – Present</span>
           </div>
           <ul class="list-disc list-outside pl-4 sm:pl-5 text-sm text-slate-300 space-y-1.5">
-            <li>Spearheaded omnichannel marketing, Big Data consolidation, consumer demand analytics, and executive ROI reporting.</li>
-            <li>Architect of web applications, corporate animations, video editing, and modern MarTech stacks (WIFI Auth, Digital Signage, SEO, Waze/YouTube/FB Ads).</li>
+            <li>Spearheaded integrated traditional &amp; omnichannel marketing, Big Data consolidation, consumer demand analytics, budgets, and quarterly executive ROI reporting.</li>
+            <li>Served as <strong>Acting Manager for 1 year</strong> (managing and leading a team of 5), overseeing internal corporate events, ceremonies, workshops, and seminars.</li>
+            <li>Designated <strong>Project Coordinator</strong> for zakat collection system development, <strong>System Administrator</strong> governing all collection platforms, and <strong>Master Trainer</strong> leading end-user training.</li>
+            <li>Creator of corporate animations, video editing, and modern MarTech stacks: <strong>WIFI Authentication, Digital Displays/Signage, IPTV, Mobile App Popups, GIF Messages, Google SEO, YouTube/Waze/FB/WhatsApp Ads</strong>, and <strong>Big Data analytics</strong>.</li>
             <li>Achieved <strong>+70% growth</strong> in Zakat KWSP payments &amp; <strong>&gt;200% increase</strong> in Zakat Fitrah Online FPX transactions.</li>
-            <li>Awarded <strong>First Staff in LZS history</strong> to earn an <em>Excellent</em> appraisal in 1st year; 4-Gold Star National Winner for <em>i-Wakalah</em> Digital Innovation.</li>
+            <li>Awarded <strong>First Staff in LZS history</strong> to earn an <em>Excellent</em> appraisal in 1st year; 4-Gold Star National Winner (MPC APIC 2018) &amp; Gold Medal winner (LZS 2017, MPC RTEx 2018) for <em>i-Wakalah</em> Digital Innovation.</li>
           </ul>
         </div>
 
@@ -308,8 +382,8 @@
             <span class="px-3 py-1 rounded bg-slate-900 text-amber-300 text-xs font-semibold border border-slate-700">May 2011 – April 2014</span>
           </div>
           <ul class="list-disc list-outside pl-4 sm:pl-5 text-sm text-slate-300 space-y-1.5">
-            <li>Supervised 50 production crews across major feature films (<em>KL Gangster 2, KL Zombi, Penanggal, Sejoli</em>).</li>
-            <li>Managed LPF &amp; FINAS censorship approvals, nationwide cinema road tours, media buys, sponsorships, and Gala Nights (<em>Nur Kasih, Istanbul Aku Datang</em>).</li>
+            <li>Delivered <strong>13 Feature Films</strong> across 3 years: served as <strong>Project Manager for 7 films</strong> (<em>KL Gangster 2, KL Zombi, Penanggal, Sejoli, Balada Pencinta, Anak Jantan, Showdown The Movie</em>) supervising <strong>50 production crews</strong>, and led <strong>A&amp;P for 6 films</strong> (<em>Nur Kasih The Movie, Istanbul Aku Datang, Rock Oo, Pecah, Seefood, Klip3GP</em>).</li>
+            <li>Managed LPF &amp; FINAS censorship submissions, nationwide cinema road tours, TV/radio/print/social media buys, press releases, external sponsorships, Wrap Parties, and Gala Nights.</li>
           </ul>
         </div>
 
@@ -323,7 +397,7 @@
           </div>
           <ul class="list-disc list-outside pl-4 sm:pl-5 text-sm text-slate-300 space-y-1.5">
             <li>Managed executive calendar, priority communications, and confidential operations for the General Manager.</li>
-            <li>Key Committee for 3-day Global <em>Karnival Keluarga PETRONAS</em> &amp; pioneered the 1st KSRP Go-Kart Endurance Race.</li>
+            <li>Key Committee for 3-day Global <em>Karnival Keluarga PETRONAS</em> &amp; pioneered the 1st KSRP Go-Kart Endurance Race (plus Family Day, Rock Climbing, ATV &amp; Treasure Hunt).</li>
           </ul>
         </div>
 
@@ -336,8 +410,8 @@
             <span class="px-3 py-1 rounded bg-slate-900 text-amber-300 text-xs font-semibold border border-slate-700">May 2005 – June 2006</span>
           </div>
           <ul class="list-disc list-outside pl-4 sm:pl-5 text-sm text-slate-300 space-y-1.5">
-            <li>Executed 8 major international MICE trade exhibitions (DSA, Metal Asia, Asia Water, Tenaga/ISF).</li>
-            <li>Coordinated booth logistics, exhibitor operations, and VIP/VVIP/Royalty site visit protocols.</li>
+            <li>Executed <strong>8 international MICE trade exhibitions</strong> (2004–2006: <em>DSA 2004, Metal Asia 2004, Asian Comms &amp; Multimedia 04–05, Tenaga/ISF/Firec 04 &amp; 06, Livestock 2005, Asia Water 2006</em>).</li>
+            <li>Coordinated multi-vendor booth logistics, booth sales support, exhibitor operations, registration databases, and VIP/VVIP/Royalty site visit protocols.</li>
           </ul>
         </div>
       </div>
@@ -356,9 +430,10 @@
         <div class="glass-panel rounded-xl p-6">
           <h4 class="font-cinzel font-bold text-amber-300 mb-3">🤝 CSR, HOSPITALITY &amp; CONSULTING</h4>
           <ul class="text-sm text-slate-300 space-y-2">
-            <li><strong>Dewan Filharmonik PETRONAS (2007–2021):</strong> 14 years VIP Suite Usherer &amp; Front-of-House hospitality.</li>
-            <li><strong>Humanitarian Relief:</strong> East Coast, Northern &amp; Bangkok Flood Missions (NSTP-Media Prima &amp; LZS).</li>
-            <li><strong>SME Brand Consulting &amp; Travel Writer:</strong> Digital advisory &amp; bilingual articles for <em>Fun! Japan</em> &amp; <em>StayList</em>.</li>
+            <li><strong>Dewan Filharmonik PETRONAS (2007–2021):</strong> 14 years VIP Suite Usher &amp; Front-of-House hospitality.</li>
+            <li><strong>Humanitarian Relief:</strong> East Coast, Northern &amp; Bangkok Flood Missions (NSTP–Media Prima &amp; LZS) &amp; IJN Healthcare Missions.</li>
+            <li><strong>Freelance Marketing Consultant (SME Brands):</strong> Digital advisory &amp; social media branding for <em>Jinggo Stickers, Dr Sambal, Lepark Cafe, Hidayah Bakes &amp; Tadika Genius Anakku Soleh</em>.</li>
+            <li><strong>International Travel Writer:</strong> Featured English/BM articles for <em>Fun! Japan (2016–2018)</em> &amp; <em>StayList (2019–Present)</em>.</li>
           </ul>
         </div>
       </div>
@@ -368,7 +443,7 @@
 
   <!-- FOOTER DENGAN LOGO RASMI -->
   <footer class="py-10 text-center text-xs text-slate-500 border-t border-slate-900 bg-slate-950 flex flex-col items-center gap-3">
-    <img src="axworld_logo_sq.jpg" onerror="this.src='axworld_logo_sq.png'" alt="AXWORLD Emblem" class="w-10 h-10 rounded-full object-cover opacity-75 border border-amber-500/40" />
+    <img src="axworld_logo_sq.jpg" alt="AXWORLD Emblem" class="w-10 h-10 rounded-full object-cover opacity-75 border border-amber-500/40" />
     <p>&copy; 2026 AXWORLD.MY — Built with Sovereign Engineering by Khairul Azzumie.</p>
   </footer>
 
@@ -392,7 +467,7 @@
         Status: Google Play Closed Testing (Launching Soon)
       </div>
       <div class="flex gap-2.5">
-        <a href="https://axworld.my/makan-apa" class="flex-1 text-center py-2.5 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-bold text-xs transition">
+        <a href="https://axworld.my/makan-apa" class="flex-1 flex items-center justify-center gap-1.5 leading-none py-2.5 rounded-lg bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-slate-950 font-bold text-xs transition">
           🎡 OPEN MAKAN APA?
         </a>
         <button onclick="closeMakanModal()" class="px-5 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 font-bold text-xs transition">
@@ -425,16 +500,43 @@
     function closeMakanModal() {
       document.getElementById('makanModal').classList.add('hidden');
     }
-// Pengesan Pintar Format Fail Banner Makan Apa? (Cuba 14 Variasi Automatik)
+
+    function copyExecEmail(btn) {
+      const email = 'khairul.azzumie1083@gmail.com';
+      const orig = btn.innerHTML;
+      const done = () => {
+        btn.innerHTML = '✔ Email Copied!';
+        setTimeout(() => { btn.innerHTML = orig; }, 1800);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(email).then(done).catch(() => {
+          const ta = document.createElement('textarea');
+          ta.value = email;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); } catch {}
+          document.body.removeChild(ta);
+          done();
+        });
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = email;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch {}
+        document.body.removeChild(ta);
+        done();
+      }
+    }
+
     (function() {
       const img = document.getElementById('bgMakanImg');
       if (!img) return;
-      const candidates = [
-        'banner_makanapa.jpg', 'banner_makanapa.png', 'banner_makanapa.webp', 'banner_makanapa.jpeg',
-        'banner_makan_apa.jpg', 'banner_makan_apa.png', 'banner_makan_apa.webp',
-        'makan_apa.jpg', 'makan_apa.png', 'makanapa.jpg', 'makanapa.png',
-        'makan_apa_banner.jpg', 'banner_makanapa.jpg.png', 'banner_makanapa.jpg.webp'
-      ];
+      const candidates = ['banner_makanapa.jpeg'];
       let idx = 0;
       img.onerror = function() {
         idx++;
@@ -444,7 +546,7 @@
           img.style.display = 'none';
         }
       };
-   if (img.complete && img.naturalWidth === 0) {
+      if (img.complete && img.naturalWidth === 0) {
         img.onerror();
       }
     })();
