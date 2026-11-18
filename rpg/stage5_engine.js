@@ -1928,7 +1928,7 @@
                 frame: 0,
                 animTimer: 0,
                 radius: 30,
-                life: 100
+                life: 160
               });
               AudioEngine.playTone(180, 0.4, 'sawtooth', 60, 0.25);
             }
@@ -1964,7 +1964,9 @@
         pil.timer -= dt;
         if (pil.timer <= 0) {
           pil.stage = 'erupt';
-          pil.frame = 1;
+          pil.frame = 0;
+          pil.animTimer = 0;
+          AudioEngine.playTone(95, 0.35, 'sawtooth', 32, 0.35);
           camera.shakeFrames = 18;
           camera.shakeMag = 6;
         }
@@ -1979,10 +1981,14 @@
           }
         }
 
-        const hMidX = hero.x + hero.w * 0.5;
-        if (Math.abs(hMidX - pil.x) < pil.width * 0.5 && hero.grounded && hero.invulnFrames <= 0) {
-          inflictDamage(28, hero.x < pil.x ? -1 : 1);
-          if (hero.isRespawning) return;
+        // Hitbox aktif semasa fasa erupt (frame 0..4), meliputi keseluruhan lajur menegak tiang (Y: 140..450) walaupun hero melompat
+        if (pil.frame >= 0 && pil.frame <= 4 && hero.invulnFrames <= 0 && !hero.isRespawning) {
+          const hMidX = hero.x + hero.w * 0.5;
+          const hFoot = hero.y + hero.h;
+          if (Math.abs(hMidX - pil.x) < 48 && hFoot >= 140 && hero.y <= 450) {
+            inflictDamage(28, hero.x < pil.x ? -1 : 1);
+            if (hero.isRespawning) return;
+          }
         }
       }
     }
@@ -1997,7 +2003,9 @@
         p.frame = ((p.frame || 0) + 1) % 6;
       }
       p.life--;
-      if (hero.invulnFrames <= 0 && Math.hypot((hero.x + hero.w * 0.5) - p.x, (hero.y + hero.h * 0.5) - p.y) < p.radius + 25) {
+      const hMidX = hero.x + hero.w * 0.5;
+      const hFoot = hero.y + hero.h;
+      if (hero.invulnFrames <= 0 && !hero.isRespawning && Math.abs(hMidX - p.x) < 46 && hFoot >= p.y - 42 && hero.y <= p.y + 42) {
         inflictDamage(26, p.vx > 0 ? 1 : -1);
         p.life = 0;
         if (hero.isRespawning) return;

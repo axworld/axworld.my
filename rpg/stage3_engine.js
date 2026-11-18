@@ -851,10 +851,11 @@
           }
         }
 
-        const hMidX = hero.x + hero.w * 0.5;
-        const hFoot = hero.y + hero.h;
-        if (lgt.frame >= 1 && lgt.frame <= 2 && hero.invulnFrames <= 0) {
-          if (Math.abs(hMidX - lgt.x) < 40 && hFoot >= 420) {
+        // Hitbox aktif hanya semasa fasa strike (frame 0..3), meliputi keseluruhan lajur kilat dari atas hingga lantai (Y: 80..495)
+        if (lgt.frame >= 0 && lgt.frame <= 3 && hero.invulnFrames <= 0 && !hero.isRespawning) {
+          const hMidX = hero.x + hero.w * 0.5;
+          const hFoot = hero.y + hero.h;
+          if (Math.abs(hMidX - lgt.x) < 44 && hFoot >= 80 && hero.y <= 495) {
             inflictDamage(30, hero.x < lgt.x ? -1 : 1);
           }
         }
