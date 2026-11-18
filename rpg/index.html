@@ -110,7 +110,7 @@
 <body class="relative flex items-center justify-center">
 
   <!-- BGM UTAMA HOME SCREEN -->
-  <audio id="bgmHome" src="homepage_bgm.mp3" loop preload="auto"></audio>
+  <audio id="bgmHome" src="homepage_bgm.mp3" loop preload="metadata"></audio>
 
   <!-- MOBILE LANDSCAPE ROTATION NOTICE -->
   <div id="landscapePrompt" class="hidden fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center p-6 text-center">
@@ -139,22 +139,28 @@
       <span class="text-cyan-400">INITIALIZING SYSTEM</span>
     </div>
 
-    <!-- Loading Counter & Enter Button (Kanan Bawah) -->
-    <div class="relative z-10 flex justify-end items-end w-full">
-      <!-- 1. KOTAK PERATUSAN LOADING (Aktif Semasa 00 -> 99%) -->
-      <div id="loadingCounterBox" class="flex flex-col items-end bg-black/60 border border-amber-900/60 px-4 py-2 rounded-xl backdrop-blur-md">
-        <span class="text-[9px] text-amber-300/80 tracking-widest uppercase mb-0.5">Loading Relics</span>
-        <div class="flex items-baseline gap-1">
-          <span id="loadNum" class="font-pixel text-xl sm:text-2xl text-cyan-300 tracking-wider">00</span>
-          <span class="font-pixel text-xs text-amber-400">%</span>
-        </div>
-      </div>
-
-      <!-- 2. BUTANG ENTER (MUNCUL SEBAIK SAHAJA 100%) -->
-      <button id="btnEnterRealm" class="hidden hud-btn px-5 py-2.5 rounded-xl border-2 border-amber-400 bg-black/85 hover:bg-amber-950 text-amber-300 hover:text-white transition-all transform hover:scale-105 shadow-[0_0_25px_rgba(245,158,11,0.6)] animate-pulse flex items-center gap-2">
-        <span class="text-sm">⚔️</span>
-        <span class="font-cinzel text-xs sm:text-sm font-black tracking-widest uppercase">ENTER REALM</span>
+    <!-- Skip Button (Kiri Bawah) + Loading Counter / Enter Button (Kanan Bawah) -->
+    <div class="relative z-10 flex justify-between items-end w-full">
+      <button id="btnSkipLoading" class="hud-btn px-3 py-1.5 rounded-lg text-[10px] sm:text-xs text-amber-200/90 hover:text-white font-cinzel">
+        Skip ⏭
       </button>
+
+      <div class="flex items-end">
+        <!-- 1. KOTAK PERATUSAN LOADING (Aktif Semasa 00 -> 99%) -->
+        <div id="loadingCounterBox" class="flex flex-col items-end bg-black/60 border border-amber-900/60 px-4 py-2 rounded-xl backdrop-blur-md">
+          <span class="text-[9px] text-amber-300/80 tracking-widest uppercase mb-0.5">Loading Relics</span>
+          <div class="flex items-baseline gap-1">
+            <span id="loadNum" class="font-pixel text-xl sm:text-2xl text-cyan-300 tracking-wider">00</span>
+            <span class="font-pixel text-xs text-amber-400">%</span>
+          </div>
+        </div>
+
+        <!-- 2. BUTANG ENTER (MUNCUL SEBAIK SAHAJA 100%) -->
+        <button id="btnEnterRealm" class="hidden hud-btn px-5 py-2.5 rounded-xl border-2 border-amber-400 bg-black/85 hover:bg-amber-950 text-amber-300 hover:text-white transition-all transform hover:scale-105 shadow-[0_0_25px_rgba(245,158,11,0.6)] animate-pulse flex items-center gap-2">
+          <span class="text-sm">⚔️</span>
+          <span class="font-cinzel text-xs sm:text-sm font-black tracking-widest uppercase">ENTER REALM</span>
+        </button>
+      </div>
     </div>
   </section>
 
@@ -309,6 +315,7 @@
 
     const loadingCounterBox = document.getElementById('loadingCounterBox');
     const btnEnterRealm = document.getElementById('btnEnterRealm');
+    const btnSkipLoading = document.getElementById('btnSkipLoading');
 
     const btnStart = document.getElementById('btnStart');
     const btnOptions = document.getElementById('btnOptions');
@@ -475,6 +482,12 @@
 
     if (btnEnterRealm) {
       btnEnterRealm.addEventListener('click', transitionToHomeScene);
+    }
+    if (btnSkipLoading) {
+      btnSkipLoading.addEventListener('click', () => {
+        if (vidLoading) vidLoading.pause();
+        transitionToHomeScene();
+      });
     }
 
     // JIKA KEMBALI DARI BUTANG QUIT (SKIP INTRO & TERUS KE HOME SCENE)

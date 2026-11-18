@@ -852,7 +852,7 @@
         <div class="badge-completed badge-pill">★ ALL 5 REALMS CONQUERED • MASTER DOSSIER UNSEALED ★</div>
         <h1 class="hero-grand-title">KHAIRUL AZZUMIE ANOUR</h1>
         <div class="hero-sub-class">LVL 99 EVENTS, MARKETING &amp; DIGITAL ARCHITECT</div>
-        <div class="hero-contact-bar">40460 SHAH ALAM, SELANGOR • <span style="white-space: nowrap;">+60 12 634 9779</span> • khairul.azzumie1083@gmail.com</div>
+        <div class="hero-contact-bar">40460 SHAH ALAM, SELANGOR • <span style="white-space: nowrap;"><a href="tel:+60126349779" style="color:inherit;text-decoration:none;">+60 12 634 9779</a></span> • <a href="mailto:khairul.azzumie1083@gmail.com" style="color:inherit;text-decoration:none;">khairul.azzumie1083@gmail.com</a></div>
 
         <div class="rpg-card">
           <div class="rpg-subbox-title">📜 CHARACTER LORE — PROFESSIONAL SUMMARY</div>
@@ -1421,7 +1421,7 @@
             </div>
             <div style="display: flex; justify-content: space-between; padding-bottom: 4px; gap: 12px;">
               <span style="color: #94a3b8;">Contact</span>
-              <strong style="color: #f59e0b; text-align: right;">khairul.azzumie1083@gmail.com</strong>
+              <strong style="color: #f59e0b; text-align: right;"><a href="mailto:khairul.azzumie1083@gmail.com" style="color:inherit;text-decoration:none;">khairul.azzumie1083@gmail.com</a></strong>
             </div>
           </div>
         </div>
@@ -1537,8 +1537,8 @@
       lnk.addEventListener('click', (e) => { e.stopPropagation(); });
     });
 
-    // Audio handling with graceful fallback: homepage_bgm.mp3 -> credits_bgm.mp3 -> stage5_bgm.mp3
-    const bgmCandidates = ['homepage_bgm.mp3', 'credits_bgm.mp3', 'stage5_bgm.mp3'];
+    // Audio handling with graceful fallback: homepage_bgm.mp3 -> stage5_bgm.mp3
+    const bgmCandidates = ['homepage_bgm.mp3', 'stage5_bgm.mp3'];
     let bgmCandidateIdx = 0;
     let bgmMuted = false;
 
@@ -1753,13 +1753,13 @@
 
     // Dual-extension (.png & .jpg) candidate fallback loader for background images
     const bgCandidates = {
-      bg1:  ['stage1_bg_page1.jpg', 'stage1_bg_page1.png'],
-      bg1b: ['stage1_bg_page2.jpg', 'stage1_bg_page2.png'],
-      bg2:  ['stage2_bg_page2.jpg', 'stage2_bg_page2.png'],
-      bg3:  ['stage3_bg_page2.jpg', 'stage3_bg_page2.png'],
-      bg4:  ['stage4_bg_page2.jpg', 'stage4_bg_page2.png'],
-      bg5d: ['stage5_bg_page4.jpg', 'stage5_bg_page4.png'],
-      bg5f: ['stage5_bg_page6.jpg', 'stage5_bg_page6.png']
+      bg1:  ['stage1_bg_page1.jpg'],
+      bg1b: ['stage1_bg_page2.jpg'],
+      bg2:  ['stage2_bg_page2.jpg'],
+      bg3:  ['stage3_bg_page2.jpg'],
+      bg4:  ['stage4_bg_page2.jpg'],
+      bg5d: ['stage5_bg_page4.jpg'],
+      bg5f: ['stage5_bg_page6.jpg']
     };
 
     const imgs = {};
