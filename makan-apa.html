@@ -181,7 +181,7 @@
             margin-bottom: 8px;
         }
 
-        /* --- DUA BUTANG TINDAKAN (WEBAPP AKTIF & PLAY STORE COMING SOON) --- */
+        /* --- DUA BUTANG TINDAKAN (WEBAPP AKTIF & PLAY STORE LIVE) --- */
         .cta-container {
             width: 100%;
             max-width: 420px;
@@ -218,23 +218,32 @@
             box-shadow: 0 8px 25px rgba(255, 90, 54, 0.5);
         }
 
-        /* Butang Play Store Disabled (Coming Soon) */
-        .btn-playstore-disabled {
-            background: #18181B;
-            color: #71717A;
-            border: 1px dashed #3F3F46;
-            cursor: not-allowed;
+        /* Butang Play Store Aktif (Live) */
+        .btn-playstore {
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #FFF;
+            border: 1px solid rgba(52, 211, 153, 0.5);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+            cursor: pointer;
             display: flex;
             flex-direction: column;
-            padding: 12px 20px;
+            padding: 13px 20px;
             gap: 2px;
-            opacity: 0.85;
+        }
+
+        .btn-playstore:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.55);
+            background: linear-gradient(135deg, #34D399, #10B981);
         }
 
         .playstore-sub {
             font-size: 10px;
-            font-weight: 700;
-            color: #F59E0B;
+            font-weight: 800;
+            background: rgba(255, 255, 255, 0.2);
+            color: #FFF;
+            padding: 2px 8px;
+            border-radius: 99px;
             letter-spacing: 0.5px;
         }
 
@@ -469,14 +478,14 @@
                         <span style="font-size: 12px; font-weight: normal; opacity: 0.9;">(iOS & Android)</span>
                     </a>
 
-                    <!-- Butang 2: Google Playstore Disabled (Coming Soon) -->
-                    <div class="btn-cta btn-playstore-disabled">
+                    <!-- Butang 2: Google Play Store Rasmi (Live) -->
+                    <a href="https://play.google.com/store/apps/details?id=axworldmy.makanapa" target="_blank" rel="noopener noreferrer" class="btn-cta btn-playstore">
                         <div style="display:flex; align-items:center; gap:8px;">
-                            <span>📱 Google Play Store</span>
-                            <span class="playstore-sub">⏳ COMING SOON</span>
+                            <span>📱 Dapatkan di Google Play</span>
+                            <span class="playstore-sub">🚀 LIVE</span>
                         </div>
-                        <span style="font-size: 10px; color: #71717A;">(Sedang dalam pembangunan)</span>
-                    </div>
+                        <span style="font-size: 11px; font-weight: 600; color: rgba(255, 255, 255, 0.9);">(Muat Turun di Google Play Store)</span>
+                    </a>
                     
                     <p style="font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 4px;">
                         🛡️ 100% Bebas Iklan & Tidak Perlu Muat Turun Berat. Sedia disimpan terus ke Home Screen!
