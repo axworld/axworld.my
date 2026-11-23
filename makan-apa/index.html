@@ -295,7 +295,7 @@
                    style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #FF5A36; color: #FFFFFF; font-weight: 800; font-size: 14px; padding: 13px 18px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 14px rgba(255, 90, 54, 0.35); transition: transform 0.2s;">
                     <span style="font-size: 18px;">☕</span> Belanja Kopi via Ko-fi
                 </a>
-                <span style="font-size: 10px; color: var(--text-muted); display: block; margin-top: 6px;">
+                <span id="kofi-subtext" style="font-size: 10px; color: var(--text-muted); display: block; margin-top: 6px;">
                     💳 Sokong Kad Debit/Kredit & PayPal
                 </span>
             </div>
@@ -480,10 +480,14 @@
         function laksanaModPlayStore() {
             if (isPlayStoreApp) {
                 const kofiBtn = document.getElementById('btn-kofi-link');
+                const kofiSub = document.getElementById('kofi-subtext') || (kofiBtn ? kofiBtn.nextElementSibling : null);
 
                 if (kofiBtn) {
                     kofiBtn.innerHTML = `<span>⭐</span> Sokong Kami di Google Play`;
                     kofiBtn.href = "market://details?id=axworldmy.makanapa";
+                }
+                if (kofiSub) {
+                    kofiSub.style.display = 'none';
                 }
                 
                 console.log("📱 Mod Google Play Store Aktif: Polisi Pembayaran Dipatuhi!");
