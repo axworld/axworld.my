@@ -290,6 +290,31 @@
                 Sokongan ikhlas anda memastikan web app <b>Makan Apa?</b> kekal percuma, bebas iklan menjengkelkan & pelayan sentiasa aktif! ❤️
             </p>
 
+            <!-- Seksyen Google Play Billing (Hanya Aktif dalam Mod TWA v2/v3+) -->
+            <div id="play-billing-section" style="display: none; margin-bottom: 14px;">
+                <div id="play-billing-buttons" style="display: flex; flex-direction: column; gap: 8px;">
+                    <button type="button" class="btn-play-sku" data-sku="kopi_rm5" onclick="beliKopiPlayStore('kopi_rm5')"
+                            style="display: flex; align-items: center; justify-content: space-between; width: 100%; background: var(--bg-subtle, #27272A); color: var(--text-main, #F4F4F5); border: 1.5px solid #FF5A36; border-radius: 12px; padding: 11px 14px; font-family: inherit; font-weight: 800; font-size: 13px; cursor: pointer; transition: transform 0.15s, background 0.2s;">
+                        <span style="display: flex; align-items: center; gap: 8px;"><span>☕</span> <span class="sku-title">Kopi O Kaw</span></span>
+                        <span class="sku-price" style="background: #FF5A36; color: #FFFFFF; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800;">RM 5.00</span>
+                    </button>
+                    <button type="button" class="btn-play-sku" data-sku="kopi_rm10" onclick="beliKopiPlayStore('kopi_rm10')"
+                            style="display: flex; align-items: center; justify-content: space-between; width: 100%; background: var(--bg-subtle, #27272A); color: var(--text-main, #F4F4F5); border: 1.5px solid #FF5A36; border-radius: 12px; padding: 11px 14px; font-family: inherit; font-weight: 800; font-size: 13px; cursor: pointer; transition: transform 0.15s, background 0.2s;">
+                        <span style="display: flex; align-items: center; gap: 8px;"><span>🧋</span> <span class="sku-title">Kopi Latte Padu</span></span>
+                        <span class="sku-price" style="background: #FF5A36; color: #FFFFFF; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800;">RM 10.00</span>
+                    </button>
+                    <button type="button" class="btn-play-sku" data-sku="kopi_rm20" onclick="beliKopiPlayStore('kopi_rm20')"
+                            style="display: flex; align-items: center; justify-content: space-between; width: 100%; background: linear-gradient(135deg, rgba(255,90,54,0.15), rgba(245,158,11,0.15)); color: var(--text-main, #F4F4F5); border: 1.5px solid #F59E0B; border-radius: 12px; padding: 11px 14px; font-family: inherit; font-weight: 800; font-size: 13px; cursor: pointer; transition: transform 0.15s, background 0.2s;">
+                        <span style="display: flex; align-items: center; gap: 8px;"><span>🍱</span> <span class="sku-title">Set Sarapan Juara</span></span>
+                        <span class="sku-price" style="background: linear-gradient(135deg, #FF5A36, #F59E0B); color: #FFFFFF; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800;">RM 20.00</span>
+                    </button>
+                </div>
+                <div id="play-billing-status" style="display: none; margin-top: 10px; padding: 10px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; line-height: 1.4;"></div>
+                <span style="font-size: 10px; color: var(--text-muted); display: block; margin-top: 8px;">
+                    🛡️ Pembayaran Rasmi & Selamat melalui Google Play
+                </span>
+            </div>
+
             <div style="margin-bottom: 6px;">
                 <a id="btn-kofi-link" href="https://ko-fi.com/axworld" target="_blank" rel="noopener noreferrer" 
                    style="display: flex; align-items: center; justify-content: center; gap: 8px; background: #FF5A36; color: #FFFFFF; font-weight: 800; font-size: 14px; padding: 13px 18px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 14px rgba(255, 90, 54, 0.35); transition: transform 0.2s;">
@@ -298,6 +323,10 @@
                 <span id="kofi-subtext" style="font-size: 10px; color: var(--text-muted); display: block; margin-top: 6px;">
                     💳 Sokong Kad Debit/Kredit & PayPal
                 </span>
+                <a id="btn-play-rating" href="market://details?id=axworldmy.makanapa"
+                   style="display: none; align-items: center; justify-content: center; gap: 8px; background: #18181B; color: #FBBF24; border: 1.5px solid #F59E0B; font-weight: 800; font-size: 13px; padding: 12px 16px; border-radius: 12px; text-decoration: none; margin-top: 6px; transition: transform 0.2s;">
+                    <span>⭐</span> Beri Rating 5 Bintang di Google Play
+                </a>
             </div>
         </div>
     </div>
@@ -477,17 +506,131 @@
             localStorage.setItem('is_playstore_app', 'true');
         }
 
-        function laksanaModPlayStore() {
+        window.__playBillingService = null;
+
+        window.beliKopiPlayStore = async function(sku) {
+            const statusEl = document.getElementById('play-billing-status');
+            const showStatus = (msg, isSuccess) => {
+                if (!statusEl) return;
+                statusEl.style.display = 'block';
+                statusEl.style.background = isSuccess ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+                statusEl.style.border = isSuccess ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(239, 68, 68, 0.4)';
+                statusEl.style.color = isSuccess ? '#10B981' : '#EF4444';
+                statusEl.innerHTML = msg;
+            };
+
+            try {
+                if (statusEl) statusEl.style.display = 'none';
+                const service = window.__playBillingService || (
+                    'getDigitalGoodsService' in window
+                        ? await window.getDigitalGoodsService('https://play.google.com/billing')
+                        : null
+                );
+
+                const request = new PaymentRequest(
+                    [{
+                        supportedMethods: 'https://play.google.com/billing',
+                        data: { sku: sku }
+                    }],
+                    {
+                        total: {
+                            label: 'Belanja Kopi Pembangun',
+                            amount: { currency: 'MYR', value: '0' }
+                        }
+                    }
+                );
+
+                const response = await request.show();
+                const purchaseToken = response && response.details ? response.details.purchaseToken : null;
+                await response.complete('success');
+
+                if (service && purchaseToken) {
+                    if (typeof service.consume === 'function') {
+                        await service.consume(purchaseToken);
+                    } else if (typeof service.acknowledge === 'function') {
+                        await service.acknowledge(purchaseToken, 'repeatable');
+                    }
+                }
+
+                showStatus('🎉 Terima kasih atas sokongan ikhlas anda! Semoga dimurahkan rezeki selalu! ❤️☕', true);
+            } catch (err) {
+                if (err && err.name === 'AbortError') {
+                    return;
+                }
+                console.warn('Ralat pembayaran Google Play:', err);
+                showStatus('⚠️ Transaksi tidak dapat diteruskan buat masa ini. Sila cuba sebentar lagi.', false);
+            }
+        };
+
+        async function laksanaModPlayStore() {
             if (isPlayStoreApp) {
                 const kofiBtn = document.getElementById('btn-kofi-link');
                 const kofiSub = document.getElementById('kofi-subtext') || (kofiBtn ? kofiBtn.nextElementSibling : null);
+                const ratingBtn = document.getElementById('btn-play-rating');
+                const billingSection = document.getElementById('play-billing-section');
 
                 if (kofiBtn) {
-                    kofiBtn.innerHTML = `<span>⭐</span> Sokong Kami di Google Play`;
-                    kofiBtn.href = "market://details?id=axworldmy.makanapa";
+                    kofiBtn.style.display = 'none';
                 }
                 if (kofiSub) {
                     kofiSub.style.display = 'none';
+                }
+                if (ratingBtn) {
+                    ratingBtn.style.display = 'flex';
+                }
+
+                if ('getDigitalGoodsService' in window) {
+                    try {
+                        const service = await window.getDigitalGoodsService('https://play.google.com/billing');
+                        if (service) {
+                            window.__playBillingService = service;
+
+                            try {
+                                if (typeof service.listPurchases === 'function') {
+                                    const existingPurchases = await service.listPurchases();
+                                    if (Array.isArray(existingPurchases)) {
+                                        for (const p of existingPurchases) {
+                                            if (p && p.purchaseToken) {
+                                                if (typeof service.consume === 'function') {
+                                                    await service.consume(p.purchaseToken);
+                                                } else if (typeof service.acknowledge === 'function') {
+                                                    await service.acknowledge(p.purchaseToken, 'repeatable');
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch (cleanupErr) {
+                                console.warn('Semakan pembelian terdahulu:', cleanupErr);
+                            }
+
+                            const details = await service.getDetails(['kopi_rm5', 'kopi_rm10', 'kopi_rm20']);
+                            if (Array.isArray(details) && details.length > 0) {
+                                details.forEach((item) => {
+                                    const btn = document.querySelector(`.btn-play-sku[data-sku="${item.itemId}"]`);
+                                    if (btn && item.price && item.price.value) {
+                                        const priceEl = btn.querySelector('.sku-price');
+                                        if (priceEl) {
+                                            try {
+                                                const numVal = parseFloat(item.price.value);
+                                                if (!isNaN(numVal) && item.price.currency) {
+                                                    priceEl.textContent = new Intl.NumberFormat('ms-MY', {
+                                                        style: 'currency',
+                                                        currency: item.price.currency
+                                                    }).format(numVal);
+                                                }
+                                            } catch (_) {}
+                                        }
+                                    }
+                                });
+                                if (billingSection) {
+                                    billingSection.style.display = 'block';
+                                }
+                            }
+                        }
+                    } catch (dgErr) {
+                        console.warn('Digital Goods API belum tersedia:', dgErr);
+                    }
                 }
                 
                 console.log("📱 Mod Google Play Store Aktif: Polisi Pembayaran Dipatuhi!");

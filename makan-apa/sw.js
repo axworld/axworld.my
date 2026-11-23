@@ -3,7 +3,7 @@
  * Co-Architects: Khairul Azzumie & Mia
  */
 
-const CACHE_NAME = 'makan-apa-v19-playstore-polish';
+const CACHE_NAME = 'makan-apa-v20-play-billing';
 
 const ASSETS_TO_CACHE = [
   './',
