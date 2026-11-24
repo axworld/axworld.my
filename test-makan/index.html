@@ -305,7 +305,7 @@
                     </button>
                     <button type="button" class="btn-play-sku" data-sku="kopi_rm20" onclick="beliKopiPlayStore('kopi_rm20')"
                             style="display: flex; align-items: center; justify-content: space-between; width: 100%; background: linear-gradient(135deg, rgba(255,90,54,0.15), rgba(245,158,11,0.15)); color: var(--text-main, #F4F4F5); border: 1.5px solid #F59E0B; border-radius: 12px; padding: 11px 14px; font-family: inherit; font-weight: 800; font-size: 13px; cursor: pointer; transition: transform 0.15s, background 0.2s;">
-                        <span style="display: flex; align-items: center; gap: 8px;"><span>🍱</span> <span class="sku-title">Set Sarapan Juara</span></span>
+                        <span style="display: flex; align-items: center; gap: 8px;"><span>🍗</span> <span class="sku-title">Set Nasi Ayam Gepuk</span></span>
                         <span class="sku-price" style="background: linear-gradient(135deg, #FF5A36, #F59E0B); color: #FFFFFF; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 800;">RM 20.00</span>
                     </button>
                 </div>
@@ -608,7 +608,15 @@
                             if (Array.isArray(details) && details.length > 0) {
                                 details.forEach((item) => {
                                     const btn = document.querySelector(`.btn-play-sku[data-sku="${item.itemId}"]`);
-                                    if (btn && item.price && item.price.value) {
+                                    if (!btn) return;
+                                    if (item.title) {
+                                        const titleEl = btn.querySelector('.sku-title');
+                                        const cleanTitle = String(item.title).replace(/\s*\(Makan Apa\?.*?\)\s*$/i, '').trim();
+                                        if (titleEl && cleanTitle) {
+                                            titleEl.textContent = cleanTitle;
+                                        }
+                                    }
+                                    if (item.price && item.price.value) {
                                         const priceEl = btn.querySelector('.sku-price');
                                         if (priceEl) {
                                             try {
