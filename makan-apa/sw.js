@@ -3,7 +3,7 @@
  * Co-Architects: Khairul Azzumie & Mia
  */
 
-const CACHE_NAME = 'makan-apa-v22-terms-collab';
+const CACHE_NAME = 'makan-apa-v23-legal-foolproof';
 
 const ASSETS_TO_CACHE = [
   './',
